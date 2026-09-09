@@ -3,7 +3,8 @@
 Pipeline pengumpulan data makro, politik, dan sosial Indonesia — untuk memberi
 konteks pada keputusan pasar. Dipakai satu orang, bukan produk multi-user.
 
-**Status: dokumen keputusan. Belum ada kode.**
+**Status: fase 1 baru dimulai.** Dokumen keputusan lengkap; dari kode, baru
+`inti/notifikasi.py` yang ada.
 
 Tiga dokumen di bawah ditulis lebih dulu supaya pilihan teknisnya punya alasan
 yang bisa ditelusuri, bukan warisan kebiasaan. Implementasi menyusul mengikuti
@@ -16,6 +17,19 @@ roadmap di `ARSITEKTUR.md` §14.
 | [ARSITEKTUR.md](ARSITEKTUR.md) | Keputusan teknis: bahasa, penyimpanan, skema, reliabilitas, legal, anti-pattern |
 | [SUMBER-DATA.md](SUMBER-DATA.md) | Inventaris sumber beserta status verifikasinya |
 | [KEPUTUSAN-TOOLING.md](KEPUTUSAN-TOOLING.md) | Evaluasi Scrapling, ScrapeGraphAI, agent-reach — apa yang diambil dan kenapa |
+
+## Menjalankan
+
+```bash
+python -m venv .venv
+.venv/Scripts/python -m pip install -e ".[uji]"   # Linux/macOS: .venv/bin/python
+.venv/Scripts/python -m pytest
+```
+
+Uji tidak menyentuh jaringan sama sekali — itu syarat, bukan kebetulan
+(`ARSITEKTUR.md` §13). Salin `.env.example` jadi `.env` kalau mau notifikasi
+benar-benar terkirim ke Telegram; kalau dibiarkan kosong, notifikasi turun ke
+terminal dan tidak ada yang error.
 
 ## Prinsip yang mengikat semuanya
 

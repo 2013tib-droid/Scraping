@@ -1,0 +1,36 @@
+[project]
+name = "intel-makro"
+version = "0.1.0"
+description = "Sistem intelijen data makro-mikro Indonesia"
+requires-python = ">=3.12"
+
+# Semua versi di-pin. ARSITEKTUR.md §3: dependensi ">=" membuat "jalan di lokal,
+# rusak di CI" tidak bisa dibedakan dari perubahan perilaku sumber.
+dependencies = [
+    "httpx==0.28.1",
+]
+
+[project.optional-dependencies]
+uji = ["pytest==9.1.1"]
+
+# Scrapling sengaja TIDAK di sini. KEPUTUSAN-TOOLING.md §1: extra [fetchers]
+# menarik playwright/camoufox/curl_cffi, dan hanya dipakai sebagai alat
+# eksplorasi lokal saat menambah sumber baru — tidak pernah di CI.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# Ini aplikasi, bukan paket yang didistribusikan. Auto-discovery setuptools
+# tersandung layout datar (inti/, sumber/, alur/, nlp/, uji/) dan mem-package-nya
+# tidak ada gunanya. Dimatikan, sehingga `pip install -e ".[uji]"` hanya memasang
+# dependensi — modul tetap diimpor dari root repo lewat `pythonpath` di bawah.
+[tool.setuptools]
+py-modules = []
+
+[tool.pytest.ini_options]
+testpaths = ["uji"]
+python_files = ["uji_*.py"]
+python_functions = ["uji_*"]
+pythonpath = ["."]
+addopts = "-q"
