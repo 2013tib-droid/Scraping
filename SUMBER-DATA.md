@@ -176,6 +176,43 @@ meminta UA jujur beralamat kontak; kalau di dalamnya ada em dash, httpx melempar
 `UnicodeEncodeError` sebelum request keluar, dan gejalanya terlihat seperti semua
 situs mati serempak.
 
+## C3. Blokir IP dari runner GitHub
+
+Terungkap saat workflow benar-benar dipicu, bukan saat diuji lokal. **Delapan feed
+membalas HTTP 403 dari runner GitHub Actions** (yang berlokasi di AS), padahal
+semuanya normal dari jaringan Indonesia:
+
+CNBC Indonesia (news + market), CNN Indonesia (ekonomi + nasional),
+Kontan (nasional, industri, investasi), Media Indonesia ekonomi.
+
+Menariknya `keuangan.kontan.co.id` lolos sementara tiga subdomain Kontan lain
+diblokir — aturannya tidak seragam bahkan dalam satu penerbit.
+
+**Bukan soal header.** Sudah diuji dengan menambahkan `Accept` dan
+`Accept-Language` yang benar; hasilnya persis sama. Ini blokir berbasis IP
+(datacenter/geografis). Header tetap dipertahankan karena memang seharusnya ada.
+
+**Yang tidak dilakukan:** memakai proxy residensial atau memalsukan fingerprint
+supaya lolos. `ARSITEKTUR.md` §11 menyatakan itu tanda batas sudah dilewati, dan
+403 dari sebuah IP adalah penerbit yang menolak IP itu — bukan undangan mencari
+jalan lain.
+
+**Penawarnya:** Google News tidak diblokir, dan justru mengagregasi penerbit yang
+sama. Feed `Google News ekonomi ID` memulihkan CNBC Indonesia, CNN Indonesia, dan
+Kompas.com — yang terakhir bahkan tidak punya feed langsung sama sekali (§C2).
+Tautannya tetap menuju penerbit aslinya.
+
+Dua kandidat penambal lain diuji dan **ditolak** karena kualitasnya:
+
+| Kandidat | Sumber teratas yang muncul | Putusan |
+|---|---|---|
+| Google News "moneter" | fxstreet-id.com, Vietnam.vn | Tolak — noise tinggi |
+| Google News "politik ID" | Berita Cilegon, Kompasiana, Pemprov Banten | Tolak — blog dan situs pemda, bukan berita nasional |
+
+Kalau nanti dijalankan dari IP Indonesia (PC sendiri atau VPS Indonesia),
+kedelapan feed itu hidup lagi tanpa perubahan kode — daftarnya tetap di
+`sumber/feed.toml`, hanya statusnya yang berubah.
+
 ## C2. Feed yang ditolak, dan alasannya
 
 Dicatat supaya tidak dicoba ulang tiap beberapa bulan.

@@ -171,3 +171,21 @@ url = "https://www.ecb.europa.eu/rss/press.html"
 kategori = "global"
 bobot = 3.0
 catatan = "judul saja; jarang terbit, sama seperti Fed"
+
+# --------------------------------------------------------------------------- #
+# Penambal blokir IP. Delapan feed (CNN ID, CNBC ID, Kontan, Media Indonesia)
+# membalas 403 dari runner GitHub yang ada di AS — blokir berbasis IP, bukan
+# header. Google News tidak diblokir dan justru mengagregasi penerbit yang sama,
+# jadi isinya tetap masuk lewat sini. Lihat SUMBER-DATA.md §C3.
+
+[[feed]]
+nama = "Google News ekonomi ID"
+url = "https://news.google.com/rss/search?q=ekonomi+Indonesia+when:1d&hl=id&gl=ID&ceid=ID:id"
+kategori = "makro"
+catatan = "memulihkan CNBC ID, CNN ID, dan Kompas.com yang tidak terjangkau langsung"
+
+[[feed]]
+nama = "Google News fiskal"
+url = "https://news.google.com/rss/search?q=(APBN+OR+pajak+OR+Kemenkeu+OR+%22utang+pemerintah%22)+when:1d&hl=id&gl=ID&ceid=ID:id"
+kategori = "makro"
+catatan = "DDTCNews dan Kontan; topik fiskal jarang tertangkap feed umum"
