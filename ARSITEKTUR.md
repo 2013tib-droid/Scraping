@@ -30,6 +30,7 @@ data realtime tick-level), bagian 4, 7, dan 8 harus ditinjau ulang.
 | Validasi | `pydantic` (bentuk) + `pandera` (nilai) | Gagal keras di batas, bukan di hilir |
 | NLP berita | Lexicon → IndoBERT → LLM bertingkat | Biaya terkontrol, akurasi di tempat yang perlu |
 | Notifikasi | Telegram bot (pola `IDX Screener`) | Sudah ada, tidak menambah stack |
+| Keluaran harian | Telegram (push) + HTML statis (arsip) | Bukan PDF — alasannya di §16 |
 
 ## 2. Prinsip utama: scraping adalah pilihan terakhir
 
@@ -376,3 +377,99 @@ Kesalahan yang paling sering dan paling mahal:
    tampil. Data pasar + rilis pemerintah + berita global bercampur — ini akan
    menggigit.
 10. **Satu file raksasa** `scraper.py`. Satu sumber rusak = semua ikut mati.
+
+## 16. Keluaran
+
+Bab ini ditambahkan belakangan karena §12 hanya mengatur setengah dari kebutuhan.
+Ada dua hal berbeda yang mudah tertukar:
+
+| | Menjawab | Diatur di |
+|---|---|---|
+| **Notifikasi operasional** | Cron jalan? Parser rusak? BPS cuma keluar 2 baris? | §9, §12 |
+| **Rangkuman isi** | Apa yang terjadi di makro/politik hari ini? | Bab ini |
+
+Yang pertama soal kesehatan pipeline, yang kedua soal isi datanya. Keduanya lewat
+Telegram, tapi jangan digabung dalam satu pesan — kegagalan teknis harus tetap
+terbaca saat rangkuman harian kosong karena memang tidak ada rilis.
+
+### Format: Telegram untuk push, HTML statis untuk arsip
+
+**Bukan PDF.** Empat alasan, semuanya konkret:
+
+1. Dibaca di HP. PDF harus diunduh, dibuka di aplikasi lain, di-zoom. Pesan
+   Telegram terbaca di notifikasi.
+2. Link praktis mati rasa di PDF — padahal §11 memutuskan keluaran berisi **link
+   + kutipan pendek + metadata**, bukan artikel utuh. Jadi isi rangkuman ini
+   sebagian besar memang link.
+3. Tidak bisa dicari. "Kapan terakhir ada berita soal DHE" tidak terjawab oleh 90
+   file PDF; terjawab oleh satu query DuckDB.
+4. Butuh dependensi baru (weasyprint/reportlab) untuk keuntungan nol. §1 sudah
+   memutuskan: jangan tambah stack.
+
+**Telegram — kanal harian.** Push, bukan pull; tidak perlu ingat membuka apa pun.
+Pakai ulang pola `signal_bot/notifier.py` di `IDX Screener`, termasuk sifatnya
+yang turun otomatis ke terminal saat token kosong — supaya bisa dikembangkan
+tanpa mengirim pesan sungguhan.
+
+**HTML statis — arsip.** Untuk menelusuri ke belakang dan melihat detail yang
+tidak muat di Telegram. Di-generate dari DuckDB, di-commit, dilayani GitHub
+Pages — pola `_site/` yang sudah dipakai di `Screening-Saham`. Nol server, dan
+riwayatnya otomatis ada di git.
+
+### Aturan yang mengikat: rangkuman di-generate dari gold
+
+`alur/rangkuman.py` membaca lapisan gold dan menghasilkan teks. Rangkuman untuk
+tanggal berapa pun harus bisa dibuat ulang kapan saja; pesan Telegram adalah
+**tampilan, bukan catatan**.
+
+Kalau rangkuman disusun langsung di dalam job harian sambil jalan, kemampuan itu
+hilang permanen — kesalahan yang sejenis dengan tidak menyimpan raw (§5).
+Konsekuensi praktisnya: `rangkuman.py` menerima parameter tanggal, dan job harian
+hanyalah pemanggilan dengan tanggal hari ini.
+
+### Isi
+
+Mengikuti keluaran yang sudah dirancang di §10 — bukan sekadar daftar judul
+berita:
+
+- **Rilis hari ini** — angka baru dari `seri_makro`, berikut nilai sebelumnya dan
+  arahnya. Kalau sebuah angka adalah revisi, katakan itu revisi.
+- **Indeks sentimen per tema** (fiskal, moneter, stabilitas politik) — nilai dan
+  pergeserannya dari 7 hari lalu.
+- **Anomali volume liputan** — §10 mencatat lonjakan jumlah artikel per topik
+  sering jadi sinyal lebih awal daripada nada beritanya. Ini yang paling layak
+  masuk push harian.
+- **Peristiwa baru** dari tabel peristiwa, dengan link ke arsip.
+
+Contoh bentuknya:
+
+```
+📊 Makro — 9 Sep 2026
+
+Rilis hari ini
+• BPS: IHK Agustus 2,1% yoy (Jul: 2,3%) ↓
+• BI: JISDOR 16.240 (+0,3% w/w)
+
+Indeks sentimen (7h)
+• Fiskal          -0,12  ↓ dari -0,04
+• Moneter         +0,31  ↑
+• Stab. politik   +0,05  →
+
+⚠️ Volume liputan "subsidi energi" naik 3,2x vs baseline 30h
+   → 14 artikel, puncak sejak Mar 2026
+
+3 peristiwa baru → [arsip]
+```
+
+Batas isinya diatur §11: link, kutipan pendek, dan metadata — bukan teks artikel
+utuh, sekalipun rangkuman ini hanya dibaca sendiri.
+
+### Kapan
+
+**Fase 3–4**, bukan sekarang. Di fase 1 hanya ada BPS yang rilis bulanan; tidak
+ada yang bisa dirangkum tiap hari, dan indeks sentimen belum terkalibrasi.
+Sampai fase itu, Telegram dipakai untuk kegagalan dan anomali saja, seperti §9.
+
+Yang tetap berlaku sejak sekarang: lapisan gold dirancang agar rangkuman bisa
+dibaca darinya. Kalau gold hanya menyimpan time series tanpa tabel peristiwa dan
+indeks harian, bab ini tidak bisa dikerjakan tanpa membongkar ulang §6.
