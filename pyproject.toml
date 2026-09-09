@@ -9,6 +9,7 @@ requires-python = ">=3.12"
 dependencies = [
     "httpx==0.28.1",
     "feedparser==6.0.14",
+    "duckdb==1.5.5",
     # Memakai certificate store Windows. Wajib di jaringan kantor: proxy
     # TLS-inspection membongkar TLS dan sertifikatnya tidak ada di bundel CA
     # bawaan Python, jadi mayoritas feed gagal CERTIFICATE_VERIFY_FAILED.
