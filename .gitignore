@@ -1,0 +1,47 @@
+# Data — tidak pernah masuk repo. Lihat ARSITEKTUR.md §5 dan §7.
+# Bronze/silver/gold bisa puluhan GB dan bisa dibangun ulang dari sumbernya.
+data/
+*.duckdb
+*.duckdb.wal
+*.parquet
+
+# Pengecualian: fixture uji WAJIB ikut ter-commit.
+# ARSITEKTUR.md §13 — uji parser tidak boleh menyentuh jaringan, jadi respons
+# asli per sumber disimpan di repo.
+!uji/fixtures/**
+
+# Rahasia — kunci BPS WebAPI, token FRED, token bot Telegram
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Cache alat
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Cache Development Mode Scrapling — KEPUTUSAN-TOOLING.md §1.
+# Hasil eksplorasi yang layak disimpan adalah fixture-nya, bukan cache-nya.
+.scrapling/
+
+# Log run
+*.log
+log/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
