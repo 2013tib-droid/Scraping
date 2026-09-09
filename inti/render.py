@@ -34,8 +34,10 @@ BULAN = ("Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli",
          "Agustus", "September", "Oktober", "November", "Desember")
 HARI = ("Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu")
 
-# Urutan di sini = urutan di halaman.
+# Urutan di sini = urutan di halaman. "utama" hanya ada kalau penilai dampak
+# (inti/dampak.py) aktif; di dalamnya semua item tampil sebagai kartu.
 BAGIAN = {
+    "utama": ("Penting Pagi Ini", "dampak tinggi, lintas bagian"),
     "makro": ("Makro &amp; Kebijakan", "BPS, BI, APBN, pajak, kurs, regulasi"),
     "pasar": ("Pasar &amp; Emiten", "IHSG, aksi korporasi, laporan keuangan"),
     "politik": ("Politik &amp; Sosial", "yang berpotensi menggerakkan pasar"),
@@ -51,14 +53,14 @@ GAYA = """
 :root {
   --bg: #f7f5f0; --kertas: #fffdf9; --teks: #1c1b18; --redup: #6f6c65;
   --garis: #e4e0d7; --sorot: #efebe2; --tautan: #8a3324;
-  --makro: #b5462f; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0;
+  --utama: #a5700a; --makro: #b5462f; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0;
   --bayang: 0 1px 2px rgba(30,25,15,.06), 0 6px 20px -8px rgba(30,25,15,.12);
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #131417; --kertas: #1b1c20; --teks: #e9e6e0; --redup: #9a978f;
     --garis: #2b2d33; --sorot: #22242a; --tautan: #e8a88f;
-    --makro: #e58a72; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0;
+    --utama: #e9c060; --makro: #e58a72; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0;
     --bayang: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.6);
   }
 }
@@ -111,6 +113,8 @@ a { color: inherit; }
 
 /* --- bagian --------------------------------------------------------------- */
 section { --warna: var(--makro); margin-top: 2.6rem; }
+section.utama { --warna: var(--utama); }
+section.utama .sorotan { margin-bottom: .8rem; }
 section.pasar { --warna: var(--pasar); }
 section.politik { --warna: var(--politik); }
 section.global { --warna: var(--global); }
@@ -158,6 +162,14 @@ h3 a:hover { color: var(--tautan); text-decoration: underline; text-underline-of
   font-weight: 700; color: var(--warna); background: color-mix(in srgb, var(--warna) 12%, transparent);
   padding: .05rem .5rem; border-radius: 999px;
 }
+.tinggi {
+  font-weight: 700; color: var(--utama); background: color-mix(in srgb, var(--utama) 14%, transparent);
+  padding: .05rem .5rem; border-radius: 999px;
+}
+.alasan {
+  margin: 0 0 .4rem; font-size: .88rem; font-weight: 600; color: var(--warna);
+  padding-left: .6rem; border-left: 2px solid var(--warna);
+}
 .ringkas { margin: 0; font-size: .92rem; opacity: .86; }
 .juga { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; margin: .5rem 0 0; font-size: .72rem; color: var(--redup); }
 .juga a {
@@ -194,8 +206,16 @@ def _ringkasan(teks: str | None) -> str:
     return f'<p class="ringkas">{escape(DATELINE.sub("", teks, count=1))}</p>'
 
 
+def _alasan(p) -> str:
+    """Satu kalimat "kenapa penting" dari penilai dampak, kalau ada."""
+    alasan = getattr(p, "alasan", None)
+    return f'<p class="alasan">{escape(alasan)}</p>' if alasan else ""
+
+
 def _meta(p) -> str:
     bagian = []
+    if getattr(p, "dampak", None) == 3:
+        bagian.append('<span class="tinggi">dampak tinggi</span>')
     if p.jumlah_media > 1:
         bagian.append(f'<span class="media">{p.jumlah_media} media</span>')
     bagian.append(f'<span class="sumber">{escape(p.domain)}</span>')
@@ -218,6 +238,7 @@ def _sorotan(p) -> str:
     return f"""      <article class="sorotan">
         <h3><a href="{escape(p.url)}">{escape(p.judul)}</a></h3>
         {_meta(p)}
+        {_alasan(p)}
         {_ringkasan(p.ringkasan)}
         {_juga(p)}
       </article>"""
@@ -229,6 +250,7 @@ def _item(nomor: int, p) -> str:
           <div>
             <h3><a href="{escape(p.url)}">{escape(p.judul)}</a></h3>
             {_meta(p)}
+            {_alasan(p)}
             {_ringkasan(p.ringkasan)}
             {_juga(p)}
           </div>
@@ -237,6 +259,13 @@ def _item(nomor: int, p) -> str:
 
 def _bagian(kunci: str, peristiwa: list) -> str:
     judul, keterangan = BAGIAN[kunci]
+    if kunci == "utama":
+        # Semuanya berdampak tinggi; tidak ada yang "sisa".
+        sorotan = "\n".join(_sorotan(p) for p in peristiwa)
+        return f"""    <section class="{kunci}" id="{kunci}">
+      <div class="judul-bagian"><h2>{judul}</h2><small>{keterangan}</small></div>
+{sorotan}
+    </section>"""
     sorotan = _sorotan(peristiwa[0])
     sisa = ""
     if len(peristiwa) > 1:

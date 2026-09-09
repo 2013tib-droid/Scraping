@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
-from inti import notifikasi, render
+from inti import dampak, notifikasi, render
 from inti.dedup import kelompokkan
 from inti.penyimpanan import buka
 
@@ -34,6 +34,10 @@ JAM_EDISI = time(5, 0)  # 05:00 WIB — §16
 # Batas per bagian. Ini fitur, bukan keterbatasan: halaman yang tidak habis dalam
 # lima menit tidak akan dibaca sama sekali.
 BATAS = {"makro": 12, "pasar": 10, "politik": 6, "global": 8}
+
+# Blok "Penting Pagi Ini": peristiwa berdampak 3 menurut penilai (inti/dampak.py),
+# lintas kategori. Hanya ada kalau penilai aktif.
+BATAS_UTAMA = 6
 
 KELUARAN = Path("docs")
 
@@ -83,6 +87,9 @@ class Peristiwa:
     jumlah_media: int
     bobot: float
     juga: list[tuple[str, str]] = field(default_factory=list)
+    # Diisi oleh inti/dampak.py kalau penilai aktif; None = belum dinilai.
+    dampak: int | None = None
+    alasan: str | None = None
 
     @property
     def skor(self) -> float:
@@ -193,15 +200,43 @@ def relevan(p: Peristiwa) -> bool:
     return True
 
 
+def _lolos(p: Peristiwa) -> bool:
+    """Kalau sudah dinilai, penilaian menggantikan saringan kata kunci: yang
+    bernilai 0 dibuang di bagian mana pun, dan politik bernilai tinggi lolos
+    walau tidak memuat kata kunci. Kalau belum dinilai, saringan lama berlaku."""
+    if p.dampak is None:
+        return relevan(p)
+    return p.dampak >= 1
+
+
+def _urutan(p: Peristiwa) -> tuple:
+    # Dampak dulu (kalau ada), lalu jumlah media, lalu yang terbaru.
+    return (
+        -(p.dampak or 0),
+        -p.skor,
+        -(p.waktu_terbit or datetime.min).timestamp(),
+    )
+
+
 def per_bagian(peristiwa: list[Peristiwa]) -> dict[str, list[Peristiwa]]:
     bagian: dict[str, list[Peristiwa]] = {}
+    terpakai: set[int] = set()
+
+    # Blok utama hanya kalau ada yang dinilai; tanpa penilai, halaman sama
+    # persis seperti sebelumnya — supaya kunci API yang hilang tidak mengubah
+    # bentuk halaman diam-diam.
+    utama = sorted((p for p in peristiwa if p.dampak == 3), key=_urutan)[:BATAS_UTAMA]
+    if utama:
+        bagian["utama"] = utama
+        terpakai = {id(p) for p in utama}
+
     for kategori, batas in BATAS.items():
         terpilih = sorted(
-            (p for p in peristiwa if p.kategori == kategori and relevan(p)),
-            key=lambda p: (
-                -p.skor,
-                -(p.waktu_terbit or datetime.min).timestamp(),
+            (
+                p for p in peristiwa
+                if p.kategori == kategori and id(p) not in terpakai and _lolos(p)
             ),
+            key=_urutan,
         )
         bagian[kategori] = terpilih[:batas]
     return bagian
@@ -210,7 +245,16 @@ def per_bagian(peristiwa: list[Peristiwa]) -> dict[str, list[Peristiwa]]:
 def bangun(con, tanggal: date) -> tuple[str, dict[str, list[Peristiwa]], int]:
     mulai, akhir = jendela(tanggal)
     artikel = ambil(con, mulai, akhir)
-    bagian = per_bagian(jadikan_peristiwa(artikel))
+    peristiwa = jadikan_peristiwa(artikel)
+
+    # Penilaian dampak menempel ke peristiwa, bukan ke artikel: yang dinilai
+    # adalah "kejadian"-nya, dan URL wakil stabil untuk kelompok yang sama.
+    penilaian = dampak.nilai(con, peristiwa)
+    for p in peristiwa:
+        if n := penilaian.get(p.url):
+            p.dampak, p.alasan = n.dampak, n.alasan
+
+    bagian = per_bagian(peristiwa)
     # Tautan ke edisi kemarin hanya kalau berkasnya memang ada di arsip —
     # tautan mati lebih buruk daripada tidak ada tautan.
     kemarin = tanggal - timedelta(days=1)
@@ -269,9 +313,12 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     rincian = ", ".join(f"{k} {len(v)}" for k, v in bagian.items() if v)
+    # Yang berdampak tinggi ikut di pesan: itu yang mau dibaca dari notifikasi
+    # tanpa harus membuka halaman dulu.
+    utama = "".join(f"\n• {p.judul}" for p in bagian.get("utama", []))
     notifikasi.kirim_rangkuman(
         f"Ringkas Pagi {tanggal:%d/%m}\n{dipilih} peristiwa ({rincian})\n"
-        f"dari {total} artikel semalam."
+        f"dari {total} artikel semalam.{utama}"
     )
     return 0
 

@@ -58,6 +58,9 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Penilai dampak. Kalau secret ini kosong, edisi tetap terbit tanpa
+          # blok "Penting Pagi Ini" — bukan gagal.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         # Tanpa argumen = edisi hari ini menurut WIB. Karena job jalan 22:00 UTC,
         # tanggal WIB-nya sudah hari berikutnya — persis edisi yang mau dibaca.
         run: python -m alur.edisi

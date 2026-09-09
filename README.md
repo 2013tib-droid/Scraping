@@ -39,6 +39,14 @@ Uji tidak menyentuh jaringan sama sekali — itu syarat, bukan kebetulan
 benar-benar terkirim ke Telegram; kalau dibiarkan kosong, notifikasi turun ke
 terminal dan tidak ada yang error.
 
+**Penilai dampak** (`inti/dampak.py`) memisahkan yang high impact dari yang
+sekadar enak diketahui: sekali per edisi, seluruh peristiwa yang sudah ter-dedup
+dinilai Claude pada skala 0–3 plus satu kalimat "kenapa penting". Yang 3 naik ke
+blok *Penting Pagi Ini*, yang 0 dibuang. Aktif hanya kalau `ANTHROPIC_API_KEY`
+ada (lokal lewat `.env`, di Actions lewat `gh secret set ANTHROPIC_API_KEY`);
+tanpa itu halaman diurutkan jumlah media saja, seperti sebelumnya. Hasil
+penilaian disimpan per URL, jadi membangun ulang edisi tidak memanggil API lagi.
+
 ## Prinsip yang mengikat semuanya
 
 Scraping adalah **pilihan terakhir**, bukan titik awal:
