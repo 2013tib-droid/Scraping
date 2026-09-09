@@ -40,12 +40,22 @@ benar-benar terkirim ke Telegram; kalau dibiarkan kosong, notifikasi turun ke
 terminal dan tidak ada yang error.
 
 **Penilai dampak** (`inti/dampak.py`) memisahkan yang high impact dari yang
-sekadar enak diketahui: sekali per edisi, seluruh peristiwa yang sudah ter-dedup
-dinilai Claude pada skala 0–3 plus satu kalimat "kenapa penting". Yang 3 naik ke
-blok *Penting Pagi Ini*, yang 0 dibuang. Aktif hanya kalau `ANTHROPIC_API_KEY`
-ada (lokal lewat `.env`, di Actions lewat `gh secret set ANTHROPIC_API_KEY`);
-tanpa itu halaman diurutkan jumlah media saja, seperti sebelumnya. Hasil
-penilaian disimpan per URL, jadi membangun ulang edisi tidak memanggil API lagi.
+sekadar enak diketahui, pada skala 0–3. Yang 3 naik ke blok *Penting Pagi Ini*,
+yang 0 dibuang. Aturannya deterministik dan seluruhnya lokal — frasa penanda di
+judul, luas liputan, bobot sumber, dan saringan noise — jadi tidak ada kunci API,
+tidak ada biaya, tidak ada kuota, dan tidak ada jalur gagal karena jaringan.
+
+Ambangnya dikalibrasi ke sebaran nyata, bukan ke intuisi: 95% peristiwa hanya
+diliput satu media dan maksimumnya lima, karena dedup mencocokkan kemiripan judul
+sementara redaksi menuliskan hal yang sama dengan judul yang jauh berbeda. Itu
+sebabnya liputan dipakai sebagai bukti hanya ketika angkanya ekstrem, dan frasa
+yang memikul sebagian besar beban. Daftar frasanya ada di berkas itu juga dan
+memang dimaksudkan untuk diubah — kalau blok utama terasa longgar atau ketat
+setelah beberapa hari, di situ tempatnya.
+
+Yang tidak dilakukan: kalimat "kenapa penting bagi investor". Itu tidak bisa
+dihitung dari aturan, jadi `alasan` diisi label aturan yang menyala
+("Kebijakan moneter", "Liputan luas") — bukan analisis yang dikarang.
 
 ## Prinsip yang mengikat semuanya
 

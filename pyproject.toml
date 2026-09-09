@@ -15,10 +15,6 @@ dependencies = [
     # bawaan Python, jadi mayoritas feed gagal CERTIFICATE_VERIFY_FAILED.
     # Ini penawar yang benar — bukan mematikan verifikasi. Lihat SUMBER-DATA.md §C1.
     "truststore==0.10.4",
-    # Penilai dampak (inti/dampak.py): satu panggilan per edisi atas peristiwa
-    # yang sudah ter-dedup. Tanpa ANTHROPIC_API_KEY modul itu diam dan halaman
-    # disusun seperti biasa. SDK 1.x memakai httpx2, terpisah dari httpx di atas.
-    "anthropic==1.4.0",
 ]
 
 [project.optional-dependencies]

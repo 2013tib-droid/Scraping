@@ -1,5 +1,8 @@
-"""Uji `inti/dampak.py` dan integrasinya ke `alur/edisi.py`. Tanpa jaringan:
-pemanggil Claude diganti fungsi palsu lewat parameter `panggil`."""
+"""Uji `inti/dampak.py` dan integrasinya ke `alur/edisi.py`.
+
+Penilai ini deterministik dan tanpa I/O, jadi tidak ada yang perlu dipalsukan:
+uji memanggil fungsi yang sama persis dengan yang jalan di CI.
+"""
 
 from datetime import date, datetime
 
@@ -17,90 +20,108 @@ def con(tmp_path):
     c.close()
 
 
-def peristiwa(judul, url, kategori="makro", jumlah_media=1):
+def peristiwa(judul, url="u1", *, ringkasan="isi", kategori="makro",
+              jumlah_media=1, bobot=1.0, domain="a.test"):
     return edisi.Peristiwa(
-        judul=judul, url=url, domain="a.test", ringkasan="isi",
+        judul=judul, url=url, domain=domain, ringkasan=ringkasan,
         waktu_terbit=datetime(2026, 9, 8, 10, 0), kategori=kategori,
-        jumlah_media=jumlah_media, bobot=1.0,
+        jumlah_media=jumlah_media, bobot=bobot,
     )
 
 
-def artikel(judul, jam_utc, kategori="makro"):
+def satu(p) -> dampak.Penilaian:
+    return dampak.nilai([p])[p.url]
+
+
+def artikel(judul, jam_utc, kategori="makro", domain="a.test", bobot=1.0,
+            ringkasan="isi"):
     return Artikel(
-        artikel_id=judul[:60], url=f"https://a.test/{abs(hash(judul)) % 99999}",
-        domain="a.test", judul=judul, ringkasan="isi",
+        artikel_id=f"{domain}:{judul}"[:60], url=f"https://{domain}/{abs(hash(judul)) % 99999}",
+        domain=domain, judul=judul, ringkasan=ringkasan,
         waktu_terbit=datetime(2026, 9, 8, jam_utc, 0),
-        waktu_fetch=datetime(2026, 9, 9, 0, 0), feed="a.test",
-        kategori=kategori, bobot=1.0,
+        waktu_fetch=datetime(2026, 9, 9, 0, 0), feed=domain,
+        kategori=kategori, bobot=bobot,
     )
 
 
+def diliput(judul, jam_utc, n, **kw):
+    """Peristiwa yang sama diliput `n` media — inilah yang menaikkan skor."""
+    return [artikel(judul, jam_utc, domain=f"m{i}.test", **kw) for i in range(n)]
+
+
 # --------------------------------------------------------------------------- #
-# dampak.nilai
+# skala
 # --------------------------------------------------------------------------- #
 
 
-def uji_tanpa_kunci_tidak_menilai(con, monkeypatch):
-    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    assert dampak.nilai(con, [peristiwa("BI Rate turun", "u1")]) == {}
+def uji_noise_dibuang():
+    for judul in [
+        "Bupati resmikan gerai Samsat baru di Cibeber",
+        "Pembunuhan berencana di Banyuasin terungkap",
+        "Timnas menang 2-0 atas Vietnam",
+        "Tips hemat listrik ala ibu rumah tangga",
+    ]:
+        assert satu(peristiwa(judul)).dampak == 0, judul
 
 
-def uji_masukan_bernomor_dan_ringkas():
-    p = peristiwa("Judul", "u1", kategori="pasar", jumlah_media=3)
-    p.ringkasan = "x" * 500
-    teks = dampak._susun_masukan([p])
-    assert teks.startswith("1 | pasar | 3 media | a.test | Judul — ")
-    assert len(teks) < 200, "ringkasan harus dipotong"
+def uji_frasa_besar_yang_ramai_jadi_utama():
+    n = satu(peristiwa("BI Rate dipangkas 25 bps ke 5 persen", jumlah_media=6))
+    assert n == dampak.Penilaian(3, "Kebijakan moneter")
 
 
-def uji_jawaban_ditafsirkan_dan_dicache(con):
-    panggilan = []
-
-    def palsu(teks):
-        panggilan.append(teks)
-        return {"nilai": [
-            {"i": 1, "d": 3, "k": "Arah suku bunga menentukan valuasi seluruh pasar."},
-            {"i": 2, "d": 0, "k": ""},
-            {"i": 3, "d": 1, "k": "alasan ini harus dibuang karena d<2"},
-            {"i": 99, "d": 3, "k": "nomor tak dikenal"},
-        ]}
-
-    daftar = [
-        peristiwa("BI Rate turun 25 bps", "u1"),
-        peristiwa("Gerai Samsat baru di Cibeber", "u2"),
-        peristiwa("Ekonom proyeksikan ekonomi resilien", "u3"),
-    ]
-    hasil = dampak.nilai(con, daftar, panggil=palsu)
-    assert hasil["u1"] == dampak.Penilaian(3, "Arah suku bunga menentukan valuasi seluruh pasar.")
-    assert hasil["u2"] == dampak.Penilaian(0, None)
-    assert hasil["u3"] == dampak.Penilaian(1, None)
-    assert "u99" not in hasil and len(panggilan) == 1
-
-    # Kedua kali: semua sudah di cache, pemanggil tidak disentuh.
-    assert dampak.nilai(con, daftar, panggil=palsu) == hasil
-    assert len(panggilan) == 1
+def uji_siaran_pers_bank_sentral_lolos_sendirian():
+    """Bobot 2.0 di feed.toml = BOBOT_PRIMER, jadi liputan tak perlu dihitung."""
+    n = satu(peristiwa("FOMC statement on policy rate", jumlah_media=1, bobot=2.0))
+    assert n == dampak.Penilaian(3, "Kebijakan moneter")
 
 
-def uji_pemanggil_gagal_tidak_menjatuhkan(con, capsys):
-    def rusak(teks):
-        raise RuntimeError("jaringan putus")
+def uji_kolom_analis_bukan_keputusan():
+    """FRASA_BESAR menyimpan "suku bunga acuan", bukan "suku bunga". Bedanya
+    persis ini: kolom pengamat turun ke 2, keputusannya tetap 3."""
+    assert satu(peristiwa("Ekonom: arah suku bunga masih akan datar")).dampak == 2
+    assert satu(peristiwa("BI tahan suku bunga acuan di 5 persen")).dampak == 3
 
-    assert dampak.nilai(con, [peristiwa("Apa saja", "u1")], panggil=rusak) == {}
-    assert "penilaian gagal" in capsys.readouterr().err
+
+def uji_liputan_luas_cukup_tanpa_frasa():
+    n = satu(peristiwa("Kabar yang diliput di mana-mana", jumlah_media=6))
+    assert n == dampak.Penilaian(3, "Liputan luas")
 
 
-def uji_dipecah_per_kelompok(con, monkeypatch):
-    monkeypatch.setattr(dampak, "UKURAN_KELOMPOK", 2)
-    ukuran = []
+def uji_frasa_sedang_jadi_dua():
+    n = satu(peristiwa("Emiten X umumkan rights issue Rp2 triliun"))
+    assert n == dampak.Penilaian(2, "Aksi korporasi")
 
-    def palsu(teks):
-        n = len(teks.splitlines())
-        ukuran.append(n)
-        return {"nilai": [{"i": i, "d": 1, "k": ""} for i in range(1, n + 1)]}
 
-    daftar = [peristiwa(f"Judul {i}", f"u{i}") for i in range(5)]
-    assert len(dampak.nilai(con, daftar, panggil=palsu)) == 5
-    assert ukuran == [2, 2, 1]
+def uji_sisanya_nice_to_know():
+    n = satu(peristiwa("Perusahaan targetkan pabrik kedua tahun depan"))
+    assert n == dampak.Penilaian(1, None)
+
+
+def uji_frasa_besar_mengalahkan_saringan_buang():
+    """"peresmian" itu noise, tapi tidak kalau BI Rate ikut diumumkan di sana."""
+    assert satu(peristiwa("Peresmian gedung diwarnai pengumuman BI Rate")).dampak == 3
+    # Tanpa frasa besarnya, judul serupa memang dibuang.
+    assert satu(peristiwa("Peresmian gedung baru bank daerah")).dampak == 0
+
+
+def uji_cocok_per_kata_bukan_substring():
+    """" ecb " tidak boleh kena "necbot"; " ump " tidak boleh kena "kumpul"."""
+    assert satu(peristiwa("Warga berkumpul di necbotan", ringkasan=None)).dampak == 1
+
+
+def uji_ringkasan_kosong_tidak_meledak():
+    assert satu(peristiwa("Judul saja", ringkasan=None)).dampak == 1
+
+
+def uji_semua_peristiwa_dinilai():
+    daftar = [peristiwa(f"Judul {i}", f"u{i}") for i in range(20)]
+    hasil = dampak.nilai(daftar)
+    assert len(hasil) == 20
+    assert dampak.nilai(daftar) == hasil, "harus deterministik"
+
+
+def uji_daftar_kosong():
+    assert dampak.nilai([]) == {}
 
 
 # --------------------------------------------------------------------------- #
@@ -108,54 +129,50 @@ def uji_dipecah_per_kelompok(con, monkeypatch):
 # --------------------------------------------------------------------------- #
 
 
-def uji_edisi_memisahkan_utama_dan_membuang_noise(con, monkeypatch, tmp_path):
+def uji_edisi_memisahkan_utama_dan_membuang_noise(con):
     penyimpanan.simpan_artikel(con, [
-        artikel("BI Rate dipangkas 25 bps ke 5 persen", 10),
-        artikel("Gerai Samsat baru diresmikan di Cibeber", 11),
-        artikel("Emiten X targetkan kredit tumbuh 8 persen", 12),
-        artikel("Pemerkosaan dan pembunuhan di Banyuasin", 13, kategori="politik"),
-        artikel("Prabowo terbitkan Inpres larang bakar lahan", 14, kategori="politik"),
+        *diliput("BI Rate dipangkas 25 bps ke 5 persen", 10, 6),
+        *diliput("Prabowo terbitkan inpres larang bakar lahan", 11, 9, kategori="politik"),
+        artikel("Gerai Samsat baru diresmikan di Cibeber", 12),
+        artikel("Perusahaan targetkan kredit tumbuh 8 persen", 13),
+        artikel("Pemerkosaan dan pembunuhan di Banyuasin", 14, kategori="politik"),
     ])
 
-    def palsu_nilai(con_, peristiwa, **_):
-        skor = {
-            "BI Rate": (3, "Suku bunga acuan menggeser valuasi bank dan obligasi."),
-            "Samsat": (0, None),
-            "Emiten X": (1, None),
-            "Banyuasin": (0, None),
-            "Inpres": (3, "Larangan bakar lahan menekan biaya sawit dan HTI."),
-        }
-        hasil = {}
-        for p in peristiwa:
-            for kunci, (d, k) in skor.items():
-                if kunci in p.judul:
-                    hasil[p.url] = dampak.Penilaian(d, k)
-        return hasil
-
-    monkeypatch.setattr(edisi.dampak, "nilai", palsu_nilai)
     html, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
 
     utama = [p.judul for p in bagian["utama"]]
     assert utama == [
-        "Prabowo terbitkan Inpres larang bakar lahan",  # lebih baru, skor sama
-        "BI Rate dipangkas 25 bps ke 5 persen",
+        "Prabowo terbitkan inpres larang bakar lahan",  # 9 media -> liputan luas
+        "BI Rate dipangkas 25 bps ke 5 persen",         # 6 media + frasa moneter
     ]
     # Yang sudah di blok utama tidak muncul lagi di bagiannya.
     assert not any("BI Rate" in p.judul for p in bagian["makro"])
-    assert not bagian["politik"]
-    # Noise dibuang; nice-to-know tetap ada di bagiannya.
+
     semua = [p.judul for v in bagian.values() for p in v]
     assert not any("Samsat" in j or "Banyuasin" in j for j in semua)
-    assert any("Emiten X" in j for j in semua)
-    # Politik yang bernilai tinggi lolos tanpa saringan kata kunci.
+    assert any("kredit tumbuh" in j for j in semua)
+
     assert "Penting Pagi Ini" in html
-    assert "Larangan bakar lahan menekan biaya sawit" in html
+    assert "Kebijakan moneter" in html
 
 
-def uji_tanpa_penilaian_perilaku_lama(con, monkeypatch):
-    penyimpanan.simpan_artikel(con, [artikel("Gerai Samsat baru di Cibeber", 10)])
-    monkeypatch.setattr(edisi.dampak, "nilai", lambda con_, p, **_: {})
-    html, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
+def uji_saringan_kata_politik_tetap_berlaku(con):
+    """Daftar-tolak tidak bisa menebak apa yang *tidak* ekonomi. Berita umum
+    yang tidak menyentuh kata apa pun harus tetap tersaring KATA_POLITIK."""
+    penyimpanan.simpan_artikel(con, [
+        artikel("Ratusan warga antre di posko pengungsian Ciamis", 10, kategori="politik"),
+    ])
+    _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
+    assert not bagian["politik"]
+
+
+def uji_obrolan_bank_sentral_tidak_menembus_blok_utama(con):
+    """Nilai 3 tidak boleh jadi pintu belakang yang melewati DOMAIN_BANK_SENTRAL."""
+    penyimpanan.simpan_artikel(con, [
+        artikel("Fireside chat with the Chair", 10, kategori="global",
+                domain="federalreserve.gov", bobot=2.0,
+                ringkasan="Remarks at a Federal Reserve community event"),
+    ])
+    _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
     assert "utama" not in bagian
-    assert [p.judul for p in bagian["makro"]] == ["Gerai Samsat baru di Cibeber"]
-    assert "Penting Pagi Ini" not in html
+    assert not bagian["global"]

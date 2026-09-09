@@ -1,102 +1,154 @@
 """
-dampak.py — nilai seberapa penting tiap peristiwa, sekali sehari, lewat Claude.
+dampak.py — nilai seberapa penting tiap peristiwa. Deterministik, tanpa jaringan.
 
 Kenapa modul ini ada (ARSITEKTUR.md §16): "berapa banyak media meliput" hanya
 membedakan puncaknya. Dari ~550 peristiwa sehari, 95% diliput satu media, jadi
 di ekor panjang urutannya efektif "yang paling baru" — dan halaman pagi terisi
 berita yang cuma enak diketahui, bukan yang mengubah keputusan.
 
-Yang dilakukan di sini sengaja sempit, dan bukan anti-pattern #8 ("semua artikel
-dikirim ke LLM"):
+Penilaian di sini memakai empat sinyal yang **sudah ada di basis data**. Tidak
+memanggil layanan apa pun: tidak butuh kunci, tidak punya kuota, tidak berbiaya,
+dan tidak bisa gagal karena jaringan.
 
-- Masukannya **peristiwa yang sudah ter-dedup**, judul plus sepotong ringkasan —
-  bukan 1.000 artikel penuh. Satu panggilan per edisi, bukan per artikel.
-- Keluarannya **skala 0–3 plus satu kalimat "kenapa penting"** (§10: keluaran yang
-  berguna untuk hilir, bukan sekadar skor sentimen).
-- Hasilnya **disimpan di tabel terpisah** per URL dan versi prompt (§6:
-  anotasi dipisah dari artikel — model berubah, teks tidak). Edisi yang dibangun
-  ulang tidak memanggil API lagi.
-- **Tanpa kunci API modul ini diam** dan halaman disusun seperti biasa. Tidak ada
-  jalur yang membuat edisi gagal terbit karena penilai tidak tersedia (§9).
+1. **Frasa** di judul dan ringkasan — keputusan moneter, rilis data makro,
+   APBN/pajak, nilai tukar, komoditas utama. Daftarnya di bawah, bisa dibaca
+   dan diubah dalam satu menit; prinsip yang sama dengan KATA_POLITIK di
+   alur/edisi.py, yaitu saringan kasar yang alasannya kelihatan.
+2. **Luas liputan** — berapa redaksi meliput hal yang sama. Kalau delapan
+   memilihnya dari ~1.000 artikel semalam, itu bukti empiris, bukan tebakan.
+3. **Bobot sumber** — siaran pers bank sentral hampir tidak pernah diliput
+   ulang media Indonesia, jadi menghitung liputan akan selalu salah untuknya.
+4. **Saringan noise** — seremonial, promosi, olahraga, selebriti, kriminal
+   biasa. Ini yang paling banyak membersihkan halaman.
 
 Skala:
 
     3  harus tahu hari ini — menggerakkan pasar atau ekonomi luas
     2  penting — mengubah pandangan tentang sektor/emiten, arah kebijakan
     1  nice to know — menarik, tidak mengubah keputusan
-    0  abaikan — seremonial, promosi, daerah kecil, tips, selebriti, kriminal biasa
+    0  abaikan — seremonial, promosi, tips, selebriti, kriminal biasa
 
 Halaman memisahkan yang 3 ke blok teratas, menampilkan alasan untuk 2 dan 3, dan
 membuang 0 sama sekali.
+
+**`alasan` di sini adalah label aturan yang menyala, bukan analisis.** "Kebijakan
+moneter" berarti frasa moneter yang cocok, titik. Kalimat "kenapa penting bagi
+investor" tidak bisa dihitung dari aturan, jadi tidak dikarang — menaruh tebakan
+di slot itu lebih buruk daripada mengosongkannya.
 """
 
 from __future__ import annotations
 
-import json
-import os
-import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Callable, Iterable
 
-import anthropic
+# Ambang liputan dikalibrasi ke sebaran yang **sebenarnya**, bukan ke intuisi.
+# Pada data 9 Sep 2026 (552 peristiwa): 524 diliput 1 media, 24 diliput 2, dan
+# hanya 4 peristiwa diliput >=3. Maksimumnya 5.
+#
+# Sebabnya dedup mencocokkan kemiripan judul, sementara redaksi Indonesia
+# menuliskan peristiwa yang sama dengan judul yang sangat berbeda — jadi
+# `jumlah_media` **kurang menghitung**, sering jauh. Itu membuat liputan tidak
+# bisa jadi gerbang; ia hanya bisa jadi bukti kalau angkanya sudah ekstrem.
+# Kalau dedup diperbaiki, angka-angka di bawah harus dihitung ulang.
+BATAS_RAMAI = 5    # ~99,8 persentil: seramai ini sudah bukti sendiri
+BATAS_SEDANG = 2   # ~95 persentil: cukup untuk "penting"
 
-MODEL = "claude-opus-5"
+# Sumber primer (feed.toml memberi bank sentral bobot 2.0). Siaran pers BI dan
+# Fed hampir tidak pernah diliput ulang media Indonesia, jadi menghitung liputan
+# akan selalu salah untuknya.
+BOBOT_PRIMER = 2.0
 
-# Naikkan kalau SISTEM atau skemanya berubah — hasil lama tidak akan dipakai lagi.
-VERSI_PROMPT = 1
-
-UKURAN_KELOMPOK = 250  # peristiwa per panggilan; cukup kecil untuk satu jawaban
-PANJANG_RINGKASAN = 110
-PANJANG_ALASAN = 140
-
-SKEMA_TABEL = """
-CREATE TABLE IF NOT EXISTS dampak_peristiwa (
-    url           VARCHAR NOT NULL,
-    versi_prompt  INTEGER NOT NULL,
-    model         VARCHAR NOT NULL,
-    dampak        INTEGER NOT NULL,      -- 0..3
-    alasan        VARCHAR,
-    waktu         TIMESTAMP NOT NULL,    -- UTC polos
-    PRIMARY KEY (url, versi_prompt)
-);
-"""
-
-SISTEM = """Kamu analis makro untuk satu investor saham Indonesia yang membaca ringkasan pagi dalam lima menit. Tugasmu memilah: mana yang benar-benar berdampak, mana yang cuma enak diketahui.
-
-Nilai SETIAP nomor yang diberikan dengan skala dampak:
-
-3 = harus tahu hari ini. Menggerakkan IHSG, rupiah, obligasi, atau sektor besar. Contoh: keputusan BI Rate atau The Fed, rilis inflasi/PDB/neraca dagang/cadangan devisa, perubahan APBN, pajak, tarif, atau regulasi sektor yang sudah diputuskan, guncangan politik nasional (reshuffle, konflik lembaga, kebijakan presiden), aksi korporasi emiten besar, bencana atau gejolak sosial berskala nasional, kejutan geopolitik atau harga komoditas utama.
-2 = penting. Mengubah pandangan tentang satu sektor atau emiten menengah, arah kebijakan yang sedang dibahas serius, data pendukung yang menguatkan tren, sinyal awal masalah (kredit macet, PHK massal, gagal bayar).
-1 = nice to know. Menarik tapi tidak mengubah keputusan apa pun: pernyataan normatif pejabat, proyeksi umum ekonom, kinerja emiten kecil, target perusahaan.
-0 = abaikan. Seremonial, peresmian, promosi produk, berita pemda atau daerah kecil, tips dan edukasi, evergreen, selebriti, olahraga, kriminal biasa, kecelakaan, opini tanpa fakta baru.
-
-Pegang ketat. Dari ~500 peristiwa sehari biasanya hanya 3-8 yang bernilai 3 dan 20-40 yang bernilai 2. Jumlah media yang meliput adalah petunjuk, bukan penentu: berita ramai bisa bernilai 1, siaran pers sepi bisa bernilai 3.
-
-Untuk nilai 2 dan 3, isi "k" dengan SATU kalimat maksimal 15 kata, bahasa Indonesia, yang menjelaskan kenapa ini penting bagi investor — jangan mengulang judul. Untuk nilai 0 dan 1, "k" kosong.
-
-Masukan berbentuk satu baris per peristiwa: nomor | kategori | jumlah media | domain | judul — ringkasan."""
-
-SKEMA_JAWABAN = {
-    "type": "object",
-    "properties": {
-        "nilai": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "i": {"type": "integer"},
-                    "d": {"type": "integer", "enum": [0, 1, 2, 3]},
-                    "k": {"type": "string"},
-                },
-                "required": ["i", "d", "k"],
-                "additionalProperties": False,
-            },
-        }
-    },
-    "required": ["nilai"],
-    "additionalProperties": False,
+# Frasa penanda dampak 3, dikelompokkan supaya labelnya bisa menyebut sebabnya.
+#
+# Sengaja **sempit**, dan setiap pelonggaran harus diukur ulang ke data asli.
+# Yang pernah dicoba dan dibuang, semuanya karena membanjiri blok utama:
+#
+#   "ihsg", "rupiah", "nilai tukar"  -> 28 dari 51 kandidat sehari. Laporan
+#       harian indeks dan kurs ditulis belasan redaksi dengan judul berbeda,
+#       jadi dedup gagal menggabungkannya dan masing-masing masuk sendiri.
+#       Ini wallpaper berita keuangan, bukan "harus tahu hari ini".
+#   "pertumbuhan ekonomi", "daya beli" -> muncul di hampir setiap kutipan
+#       pengamat dan pidato pejabat.
+#   "bank indonesia", "suku bunga" (tanpa "acuan") -> kena sosialisasi kantor
+#       perwakilan daerah dan kolom analis.
+#
+# Semuanya turun ke FRASA_SEDANG: tetap tampil di bagiannya, tidak menyandera
+# blok teratas.
+FRASA_BESAR: dict[str, tuple[str, ...]] = {
+    "Kebijakan moneter": (
+        "bi rate", "bi7drr", "suku bunga acuan", "rapat dewan gubernur",
+        "bank sentral", "the fed", "fomc", "federal reserve",
+        "pelonggaran moneter", "pengetatan moneter",
+    ),
+    "Data makro": (
+        "inflasi", "deflasi", "produk domestik bruto", "neraca dagang",
+        "neraca perdagangan", "cadangan devisa", "transaksi berjalan",
+        "pmi manufaktur", "angka pengangguran",
+    ),
+    "Fiskal & pajak": (
+        "apbn", "defisit anggaran", "utang negara", "tarif ppn", "ppn naik",
+        "pph badan", "kenaikan cukai", "bea masuk", "tarif impor",
+        "subsidi bbm", "subsidi energi",
+    ),
+    "Komoditas & energi": (
+        "larangan ekspor", "opec", "harga acuan batu bara",
+    ),
+    "Risiko global": (
+        "perang dagang", "resesi", "krisis keuangan", "devaluasi",
+        "sanksi ekonomi", "gagal bayar utang",
+    ),
 }
+
+# Frasa penanda dampak 2: menggeser pandangan atas satu sektor atau emiten.
+FRASA_SEDANG: dict[str, tuple[str, ...]] = {
+    "Aksi korporasi": (
+        "emiten", "ipo", "rights issue", "right issue", "dividen",
+        "laba bersih", "rugi bersih", "akuisisi", "merger", "buyback",
+        "obligasi korporasi", "gagal bayar", "pailit", "pkpu", "delisting",
+    ),
+    "Pasar & nilai tukar": (
+        "ihsg", "rupiah", "nilai tukar", "kurs", "yield sbn",
+        "surat berharga negara", "obligasi negara", "modal asing",
+        "suku bunga", "bank indonesia", "harga minyak", "harga emas",
+        "harga batu bara", "harga nikel", "harga cpo",
+    ),
+    "Sektor & industri": (
+        "phk", "pemutusan hubungan kerja", "kredit macet", "npl",
+        "likuiditas", "investasi asing", "penanaman modal", "ekspor",
+        "impor", "manufaktur", "properti", "otomotif", "perbankan",
+        "kapasitas produksi", "upah minimum", "ump", "hilirisasi",
+        "pertumbuhan ekonomi", "daya beli", "pdb",
+    ),
+    "Regulasi": (
+        "ruu", "peraturan menteri", "perpres", "perppu", "inpres",
+        "regulasi", "moratorium", "relaksasi", "kuota impor",
+        "pajak", "cukai", "subsidi", "izin usaha", "insentif pajak",
+    ),
+}
+
+# Frasa yang membuang peristiwa dari halaman. Ini bagian yang paling banyak
+# bekerja: bagian politik ditarik dari feed berita umum, jadi isinya bercampur
+# kriminal, selebriti, dan kecelakaan.
+#
+# Kena di sini tidak selalu berarti dibuang — lihat `_dibuang`: frasa besar
+# menang, supaya "Peresmian diwarnai pengumuman BI Rate" tidak hilang gara-gara
+# "peresmian".
+FRASA_BUANG: tuple[str, ...] = (
+    # seremonial & promosi
+    "resmikan", "diresmikan", "peresmian", "groundbreaking", "seremoni",
+    "hut ke", "ulang tahun", "santunan", "bakti sosial",
+    "promo", "diskon", "giveaway", "undian berhadiah",
+    # olahraga & hiburan
+    "lomba", "juara", "pertandingan", "liga", "piala", "timnas", "klasemen",
+    "prediksi skor", "artis", "selebriti", "sinetron", "drakor", "konser",
+    # layanan & evergreen
+    "tips", "cara mudah", "cara cek", "resep", "wisata", "kuliner",
+    "zodiak", "horoskop", "ramalan", "link download", "jadwal sholat",
+    # kriminal & kecelakaan biasa
+    "begal", "pencurian", "pembunuhan", "pemerkosaan", "pelecehan",
+    "narkoba", "sabu", "kecelakaan", "tabrakan", "laka lantas",
+    "curanmor", "penganiayaan", "tawuran",
+)
 
 
 @dataclass(slots=True, frozen=True)
@@ -105,45 +157,28 @@ class Penilaian:
     alasan: str | None
 
 
-Pemanggil = Callable[[str], dict]
+def nilai(peristiwa: list) -> dict[str, Penilaian]:
+    """Penilaian per URL wakil peristiwa. Murni fungsi dari isi `peristiwa` —
+    tidak ada I/O, tidak ada cache, tidak ada jalur gagal."""
+    hasil: dict[str, Penilaian] = {}
+    for p in peristiwa:
+        teks = _teks(p)
+        besar = _cocok(teks, FRASA_BESAR)
+        sedang = _cocok(teks, FRASA_SEDANG)
+        primer = p.bobot >= BOBOT_PRIMER
 
+        if _dibuang(teks, besar):
+            d, label = 0, None
+        elif besar or p.jumlah_media >= BATAS_RAMAI:
+            d, label = 3, besar or "Liputan luas"
+        elif sedang:
+            d, label = 2, sedang
+        elif p.jumlah_media >= BATAS_SEDANG or primer:
+            d, label = 2, "Liputan meluas" if not primer else "Sumber primer"
+        else:
+            d, label = 1, None
 
-def aktif() -> bool:
-    """True kalau kunci API ada. Tanpa ini, `nilai()` mengembalikan kosong."""
-    return bool(os.environ.get("ANTHROPIC_API_KEY", "").strip())
-
-
-def nilai(con, peristiwa: list, *, panggil: Pemanggil | None = None) -> dict[str, Penilaian]:
-    """Penilaian per URL wakil peristiwa. Kosong kalau penilai tidak tersedia.
-
-    `panggil` adalah titik sisip untuk uji — uji tidak boleh menyentuh jaringan
-    (§13). Di produksi dibiarkan None dan Claude yang dipanggil.
-    """
-    if not peristiwa:
-        return {}
-
-    con.execute(SKEMA_TABEL)
-    hasil = _dari_cache(con, [p.url for p in peristiwa])
-    belum = [p for p in peristiwa if p.url not in hasil]
-
-    if not belum or (panggil is None and not aktif()):
-        return hasil
-
-    panggil = panggil or _panggil_claude
-    for awal in range(0, len(belum), UKURAN_KELOMPOK):
-        kelompok = belum[awal : awal + UKURAN_KELOMPOK]
-        try:
-            jawaban = panggil(_susun_masukan(kelompok))
-        except Exception as e:  # noqa: BLE001 — penilai gagal != edisi gagal
-            # Dilaporkan, tidak dilempar: halaman tetap terbit dengan urutan
-            # lama, dan yang belum dinilai dicoba lagi saat edisi dibangun ulang.
-            _lapor(f"penilaian gagal ({type(e).__name__}): {str(e)[:200]}")
-            break
-        baru = _tafsir(jawaban, kelompok)
-        _simpan(con, baru)
-        hasil.update(baru)
-        _lapor(f"{len(baru)} dari {len(kelompok)} peristiwa dinilai")
-
+        hasil[p.url] = Penilaian(d, label)
     return hasil
 
 
@@ -152,77 +187,27 @@ def nilai(con, peristiwa: list, *, panggil: Pemanggil | None = None) -> dict[str
 # --------------------------------------------------------------------------- #
 
 
-def _susun_masukan(kelompok: list) -> str:
-    baris = []
-    for i, p in enumerate(kelompok, start=1):
-        ringkas = (p.ringkasan or "")[:PANJANG_RINGKASAN].strip()
-        ekor = f" — {ringkas}" if ringkas else ""
-        baris.append(f"{i} | {p.kategori} | {p.jumlah_media} media | {p.domain} | {p.judul}{ekor}")
-    return "\n".join(baris)
+def _teks(p) -> str:
+    """Judul dan ringkasan jadi satu, huruf kecil, tanda baca jadi spasi, lalu
+    diapit spasi. Pengapit itu yang membuat pencocokan `in` tetap per kata:
+    " ecb " tidak cocok dengan "necbot", " ump " tidak cocok dengan "kumpul"."""
+    mentah = f"{p.judul} {p.ringkasan or ''}".lower()
+    bersih = "".join(c if c.isalnum() else " " for c in mentah)
+    return f" {' '.join(bersih.split())} "
 
 
-def _panggil_claude(teks: str) -> dict:
-    klien = anthropic.Anthropic()
-    # Streaming supaya jawaban panjang (ratusan objek JSON) tidak kena timeout HTTP.
-    with klien.messages.stream(
-        model=MODEL,
-        max_tokens=32000,
-        system=SISTEM,
-        messages=[{"role": "user", "content": teks}],
-        output_config={
-            "effort": "medium",
-            "format": {"type": "json_schema", "schema": SKEMA_JAWABAN},
-        },
-    ) as aliran:
-        pesan = aliran.get_final_message()
-
-    if pesan.stop_reason == "refusal":
-        raise RuntimeError("permintaan ditolak model")
-    jawaban = next(b.text for b in pesan.content if b.type == "text")
-    return json.loads(jawaban)
+def _cocok(teks: str, kelompok: dict[str, tuple[str, ...]]) -> str | None:
+    """Label kelompok pertama yang salah satu frasanya ada di teks."""
+    for label, frasa in kelompok.items():
+        if any(f" {f} " in teks for f in frasa):
+            return label
+    return None
 
 
-def _tafsir(jawaban: dict, kelompok: list) -> dict[str, Penilaian]:
-    """Cocokkan nomor ke URL. Nomor yang tidak dikenal atau hilang dilewati —
-    yang hilang tetap tidak ter-cache, jadi dicoba lagi lain kali."""
-    hasil: dict[str, Penilaian] = {}
-    for baris in jawaban.get("nilai", []):
-        try:
-            i, d = int(baris["i"]), int(baris["d"])
-        except (KeyError, TypeError, ValueError):
-            continue
-        if not 1 <= i <= len(kelompok):
-            continue
-        d = max(0, min(3, d))
-        alasan = str(baris.get("k") or "").strip()[:PANJANG_ALASAN] or None
-        hasil[kelompok[i - 1].url] = Penilaian(d, alasan if d >= 2 else None)
-    return hasil
-
-
-def _dari_cache(con, url: Iterable[str]) -> dict[str, Penilaian]:
-    url = list(url)
-    if not url:
-        return {}
-    baris = con.execute(
-        f"""SELECT url, dampak, alasan FROM dampak_peristiwa
-            WHERE versi_prompt = ? AND url IN ({",".join("?" * len(url))})""",
-        [VERSI_PROMPT, *url],
-    ).fetchall()
-    return {u: Penilaian(d, a) for u, d, a in baris}
-
-
-def _simpan(con, hasil: dict[str, Penilaian]) -> None:
-    if not hasil:
-        return
-    kini = datetime.now(timezone.utc).replace(tzinfo=None)
-    con.executemany(
-        """INSERT INTO dampak_peristiwa (url, versi_prompt, model, dampak, alasan, waktu)
-           VALUES (?,?,?,?,?,?)
-           ON CONFLICT (url, versi_prompt) DO NOTHING""",
-        [(u, VERSI_PROMPT, MODEL, n.dampak, n.alasan, kini) for u, n in hasil.items()],
-    )
-
-
-def _lapor(pesan: str) -> None:
-    sys.stderr.write(f"[dampak] {pesan}\n")
-    sys.stderr.flush()
+def _dibuang(teks: str, besar: str | None) -> bool:
+    """Noise dibuang kecuali peristiwanya juga menyentuh frasa besar — peresmian
+    pabrik tetap seremonial, tapi "Prabowo teken inpres di sela peresmian"
+    bukan."""
+    if besar:
+        return False
+    return any(f" {f} " in teks for f in FRASA_BUANG)

@@ -115,11 +115,13 @@ def uji_hanya_artikel_dalam_jendela(con):
 
 
 def uji_diurutkan_menurut_jumlah_media(con):
+    # Keduanya bernilai dampak 2, supaya yang diuji memang jumlah media —
+    # bukan tingkat dampak, yang diurutkan lebih dulu.
     penyimpanan.simpan_artikel(con, [
         artikel("Sendirian tapi terbaru soal pajak", "solo.test", 20),
-        artikel("Bank Indonesia tahan suku bunga acuan", "a.test", 10),
-        artikel("BI tahan suku bunga acuan bulan ini", "b.test", 10),
-        artikel("Bank Indonesia menahan suku bunga acuannya", "c.test", 10),
+        artikel("Bank Mandiri bagikan dividen interim", "a.test", 10),
+        artikel("Bank Mandiri membagikan dividen interim", "b.test", 10),
+        artikel("Bank Mandiri bagikan dividen interim tahun ini", "c.test", 10),
     ])
     _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
     teratas = bagian["makro"][0]
@@ -176,7 +178,10 @@ def uji_wakil_memilih_yang_punya_ringkasan(con):
                 ringkasan="Alokasi subsidi energi dipangkas dalam RAPBN."),
     ])
     _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
-    assert bagian["makro"][0].domain == "besar.test"
+    # "subsidi energi" bernilai dampak 3, jadi peristiwanya ada di blok utama —
+    # yang diuji di sini wakilnya, bukan bagian tempatnya mendarat.
+    semua = [p for v in bagian.values() for p in v]
+    assert [p.domain for p in semua] == ["besar.test"]
 
 
 def uji_bobot_mengangkat_sumber_jarang(con):
@@ -187,7 +192,11 @@ def uji_bobot_mengangkat_sumber_jarang(con):
                 kategori="global"),
     ])
     _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
-    assert bagian["global"][0].domain == "federalreserve.gov"
+    # Sejak penilai dampak jalan, pengangkatan itu terjadi satu tingkat lebih
+    # tinggi: siaran pers FOMC bukan lagi "teratas di bagian Global", tapi pindah
+    # ke blok utama — dan yang biasa tetap tinggal di bagiannya.
+    assert [p.domain for p in bagian["utama"]] == ["federalreserve.gov"]
+    assert [p.domain for p in bagian["global"]] == ["x.test"]
 
 
 def uji_pidato_bank_sentral_disaring(con):

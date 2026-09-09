@@ -36,7 +36,7 @@ JAM_EDISI = time(5, 0)  # 05:00 WIB — §16
 BATAS = {"makro": 12, "pasar": 10, "politik": 6, "global": 8}
 
 # Blok "Penting Pagi Ini": peristiwa berdampak 3 menurut penilai (inti/dampak.py),
-# lintas kategori. Hanya ada kalau penilai aktif.
+# lintas kategori. Kosong pada hari yang memang sepi, dan itu jawaban yang benar.
 BATAS_UTAMA = 6
 
 KELUARAN = Path("docs")
@@ -87,7 +87,7 @@ class Peristiwa:
     jumlah_media: int
     bobot: float
     juga: list[tuple[str, str]] = field(default_factory=list)
-    # Diisi oleh inti/dampak.py kalau penilai aktif; None = belum dinilai.
+    # Diisi oleh inti/dampak.py di `bangun()`; None hanya sebelum itu.
     dampak: int | None = None
     alasan: str | None = None
 
@@ -201,12 +201,14 @@ def relevan(p: Peristiwa) -> bool:
 
 
 def _lolos(p: Peristiwa) -> bool:
-    """Kalau sudah dinilai, penilaian menggantikan saringan kata kunci: yang
-    bernilai 0 dibuang di bagian mana pun, dan politik bernilai tinggi lolos
-    walau tidak memuat kata kunci. Kalau belum dinilai, saringan lama berlaku."""
-    if p.dampak is None:
-        return relevan(p)
-    return p.dampak >= 1
+    """Dua saringan yang menumpuk, bukan saling menggantikan.
+
+    `relevan()` adalah daftar-izin: bagian politik harus menyentuh kata ekonomi,
+    feed bank sentral harus menyentuh kata kebijakan. `dampak == 0` adalah
+    daftar-tolak: seremonial, olahraga, kriminal. Keduanya menangkap hal yang
+    berbeda, jadi keduanya dipakai — daftar-tolak tidak bisa menebak apa yang
+    *tidak* ekonomi, dan daftar-izin tidak menyaring peresmian pabrik."""
+    return relevan(p) and p.dampak != 0
 
 
 def _urutan(p: Peristiwa) -> tuple:
@@ -222,10 +224,13 @@ def per_bagian(peristiwa: list[Peristiwa]) -> dict[str, list[Peristiwa]]:
     bagian: dict[str, list[Peristiwa]] = {}
     terpakai: set[int] = set()
 
-    # Blok utama hanya kalau ada yang dinilai; tanpa penilai, halaman sama
-    # persis seperti sebelumnya — supaya kunci API yang hilang tidak mengubah
-    # bentuk halaman diam-diam.
-    utama = sorted((p for p in peristiwa if p.dampak == 3), key=_urutan)[:BATAS_UTAMA]
+    # `_lolos` juga berlaku di sini. Tanpa itu, pidato pejabat Fed yang
+    # menyebut "federal reserve" bisa menembus blok teratas justru lewat pintu
+    # yang dibuat untuk mengangkatnya — padahal DOMAIN_BANK_SENTRAL ada supaya
+    # yang naik hanya yang menyebut keputusan.
+    utama = sorted(
+        (p for p in peristiwa if p.dampak == 3 and _lolos(p)), key=_urutan
+    )[:BATAS_UTAMA]
     if utama:
         bagian["utama"] = utama
         terpakai = {id(p) for p in utama}
@@ -249,7 +254,7 @@ def bangun(con, tanggal: date) -> tuple[str, dict[str, list[Peristiwa]], int]:
 
     # Penilaian dampak menempel ke peristiwa, bukan ke artikel: yang dinilai
     # adalah "kejadian"-nya, dan URL wakil stabil untuk kelompok yang sama.
-    penilaian = dampak.nilai(con, peristiwa)
+    penilaian = dampak.nilai(peristiwa)
     for p in peristiwa:
         if n := penilaian.get(p.url):
             p.dampak, p.alasan = n.dampak, n.alasan
