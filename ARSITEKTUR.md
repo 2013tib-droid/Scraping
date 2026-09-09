@@ -492,10 +492,34 @@ dedup diperbaiki, edisi lama bisa dinilai ulang dengan aturan baru. Kalau halama
 disusun langsung di dalam job harian sambil mengambil feed, kemampuan itu hilang
 permanen — kesalahan yang sejenis dengan tidak menyimpan raw (§5).
 
-Karena itu urutannya dua langkah terpisah, bukan satu: **ambil dan simpan** (jalan
-beberapa kali sehari, murah), lalu **susun edisi** (jalan sekali pagi). Mengambil
-feed hanya sekali sehari berarti kehilangan berita yang sudah digeser dari feed
-oleh berita yang lebih baru — sebagian media hanya menyimpan 20 item terakhir.
+Karena itu urutannya tetap **dua langkah terpisah**, bukan satu: `alur/berita.py`
+mengambil dan menyimpan, `alur/edisi.py` menyusun halaman. Pemisahan ini soal
+bisa-diulang, bukan soal frekuensi — keduanya boleh jalan di job yang sama.
+
+### Frekuensi: sekali sehari, jam 05:00 WIB
+
+Diputuskan setelah mengukur retensi tiap feed (`SUMBER-DATA.md` §C1). Sekali ambil
+per hari menangkap **28% dari item yang terbit** — angka yang terdengar buruk tapi
+menyesatkan:
+
+- Yang hilang terkonsentrasi di feed paling berisik. Investing.com menerbitkan
+  ~67 item/jam dan hanya menyimpan 6 menit terakhir; Antara terkini ~42 item/jam.
+  Isinya persis bagian yang dibuang oleh penyaringan 97% di atas.
+- Feed yang paling berguna justru **tertangkap 100%**: CNN Indonesia ekonomi
+  (retensi 45 jam), Detik finance (31j), CNBC Indonesia market (47j), ketiga feed
+  Google News, dan Fed/ECB/BBC yang menyimpan berminggu-minggu.
+- Pengaman struktural: peristiwa penting diliput banyak media sekaligus — dasar
+  pengurutan yang dipakai bab ini. Kalau satu feed menggeser berita penting
+  keluar, feed lain hampir pasti masih menyimpannya. Yang benar-benar hilang
+  adalah berita yang hanya diliput satu media berisi tinggi.
+
+**Jamnya 05:00 WIB, bukan tengah malam.** Sesi pasar Amerika tutup 03:00–04:00
+WIB; job yang jalan jam 23:00 membuat kategori global selalu tertinggal sehari.
+Cron GitHub Actions: `0 22 * * *` (22:00 UTC hari sebelumnya), memberi margin
+terhadap keterlambatan runner yang dicatat §8 sebelum halaman dibaca jam 06:00.
+
+Kalau nanti ternyata ada berita penting yang sering terlewat, penawarnya menambah
+satu pengambilan sore — bukan mengubah arsitektur. Langkahnya sudah terpisah.
 
 ### Menambahkan angka makro, nanti
 

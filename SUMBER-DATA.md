@@ -139,10 +139,19 @@ media yang menghasilkan ratusan item.
 1. **1.291 item dalam jendela 24 jam** dari 29 feed. Target bacanya lima menit —
    sekitar 30–40 item. Artinya **97% harus dibuang**. Dedup dan pembatasan per
    bagian (`ARSITEKTUR.md` §16) bukan penyempurnaan, itu keseluruhan produknya.
-2. **Feed Kontan, Katadata, Sindonews, Liputan6, dan Pasardana seluruh isinya
-   lebih muda dari 24 jam.** Artinya jendela retensinya di bawah sehari: ambil
-   sekali sehari jam 05:30 = pasti kehilangan berita. Ini bukti empiris untuk
-   pemisahan ambil-dan-simpan dari susun-edisi di §16.
+2. **Retensi feed sangat timpang** — diukur dari umur item tertua. Sekali ambil
+   per hari menangkap 28% dari total item terbit, tapi sebarannya yang penting:
+
+   | Retensi | Feed | Tertangkap 1x/hari |
+   |---|---|---|
+   | < 4 jam | Investing.com (0,1j), Antara terkini (1,2j), Republika utama (2,5j), Katadata (3,9j) | 1–16% |
+   | 7–10 jam | Al Jazeera, Detik news, Kontan investasi, IDN Financials, MarketWatch | 31–41% |
+   | 14–21 jam | Media Indonesia, Republika ekonomi, 3× Kontan, Sindonews, CNBC ID news, Pasardana, Bloomberg Technoz, Liputan6 | 61–88% |
+   | > 24 jam | CNN ID ekonomi (45j), CNBC ID market (47j), Detik finance (31j), CNBC US (32j), 3× Google News, Fed/ECB/BBC (berminggu) | 100% |
+
+   Yang hilang terkonsentrasi di feed berlaju tinggi — Investing.com ~67 item/jam,
+   Antara terkini ~42 item/jam — yaitu bagian yang memang dibuang penyaringan.
+   Feed paling berguna justru tertangkap penuh. Dasar keputusan frekuensi di §16.
 3. **Semua feed yang lolos bertanggal 100%.** Tidak perlu menebak waktu terbit
    dari isi — dan `published` sudah beroffset benar (`+0700` untuk media ID).
 

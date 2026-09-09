@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Uji Media - Ekonomi</title>
+    <link>https://contoh.test/</link>
+    <description>Fixture untuk uji parser. Tidak pernah menyentuh jaringan.</description>
+    <item>
+      <title>Inflasi Agustus tercatat 2,1 persen secara tahunan</title>
+      <link>https://contoh.test/berita/inflasi-agustus?utm_source=rss&amp;id=101</link>
+      <description>&lt;p&gt;BPS mengumumkan indeks harga konsumen Agustus naik &lt;b&gt;2,1 persen&lt;/b&gt; dibanding tahun lalu.&lt;/p&gt;</description>
+      <pubDate>Tue, 09 Sep 2026 09:00:00 +0700</pubDate>
+    </item>
+    <item>
+      <title>BI pertahankan suku bunga acuan</title>
+      <link>https://contoh.test/berita/bi-rate#ringkasan</link>
+      <description>Rapat Dewan Gubernur memutuskan menahan BI-Rate di level yang sama.</description>
+      <pubDate>Tue, 09 Sep 2026 07:30:00 +0700</pubDate>
+    </item>
+    <item>
+      <title>Emiten tambang umumkan dividen interim</title>
+      <link>https://contoh.test/berita/dividen-interim</link>
+      <description>Perseroan membagikan dividen interim kepada pemegang saham.</description>
+      <pubDate>Mon, 08 Sep 2026 20:15:00 +0700</pubDate>
+    </item>
+    <item>
+      <title></title>
+      <link>https://contoh.test/berita/tanpa-judul</link>
+      <pubDate>Mon, 08 Sep 2026 19:00:00 +0700</pubDate>
+    </item>
+  </channel>
+</rss>
