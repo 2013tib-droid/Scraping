@@ -1,0 +1,173 @@
+# Daftar feed RSS. Hasil verifikasi langsung 2026-09-09 — lihat SUMBER-DATA.md §C1
+# untuk angka per feed dan §C2 untuk kandidat yang ditolak beserta alasannya.
+#
+# Dibaca dengan `tomllib` (stdlib sejak Python 3.11), tanpa dependensi tambahan.
+#
+# kategori: makro | pasar | politik | global
+# bobot   : pengali prioritas saat pengurutan. Feed bank sentral jarang terbit,
+#           tapi kalau terbit hampir pasti layak dibaca — jumlah item bukan
+#           ukuran nilai.
+
+[[feed]]
+nama = "CNBC Indonesia news"
+url = "https://www.cnbcindonesia.com/news/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Bloomberg Technoz"
+url = "https://www.bloombergtechnoz.com/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Media Indonesia ekonomi"
+url = "https://mediaindonesia.com/rss/ekonomi"
+kategori = "makro"
+
+[[feed]]
+nama = "Detik finance"
+url = "https://finance.detik.com/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "CNN Indonesia ekonomi"
+url = "https://www.cnnindonesia.com/ekonomi/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Liputan6 bisnis"
+url = "https://feed.liputan6.com/rss/bisnis"
+kategori = "makro"
+
+[[feed]]
+nama = "Sindonews ekbis"
+url = "https://ekbis.sindonews.com/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Kontan nasional"
+url = "https://nasional.kontan.co.id/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Kontan keuangan"
+url = "https://keuangan.kontan.co.id/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Kontan industri"
+url = "https://industri.kontan.co.id/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Katadata"
+url = "https://katadata.co.id/rss"
+kategori = "makro"
+
+[[feed]]
+nama = "Republika ekonomi"
+url = "https://www.republika.co.id/rss/ekonomi"
+kategori = "makro"
+
+[[feed]]
+nama = "Antara terkini"
+url = "https://www.antaranews.com/rss/terkini.xml"
+kategori = "makro"
+catatan = "labil: satu dari dua percobaan gagal RemoteProtocolError. Retry menutupinya."
+
+# --------------------------------------------------------------------------- #
+
+[[feed]]
+nama = "CNBC Indonesia market"
+url = "https://www.cnbcindonesia.com/market/rss"
+kategori = "pasar"
+
+[[feed]]
+nama = "Google News IHSG/BEI"
+url = "https://news.google.com/rss/search?q=IHSG+OR+%22Bursa+Efek+Indonesia%22&hl=id&gl=ID&ceid=ID:id"
+kategori = "pasar"
+catatan = "penambal celah emiten; ringkasannya paling panjang di kategori ini"
+
+[[feed]]
+nama = "Google News emiten"
+url = "https://news.google.com/rss/search?q=emiten+when:1d&hl=id&gl=ID&ceid=ID:id"
+kategori = "pasar"
+
+[[feed]]
+nama = "IDN Financials"
+url = "https://www.idnfinancials.com/id/feed"
+kategori = "pasar"
+catatan = "tidak diiklankan; ditemukan lewat autodiscovery di HTML beranda"
+
+[[feed]]
+nama = "Pasardana"
+url = "https://pasardana.id/rss"
+kategori = "pasar"
+
+[[feed]]
+nama = "Kontan investasi"
+url = "https://investasi.kontan.co.id/rss"
+kategori = "pasar"
+
+# --------------------------------------------------------------------------- #
+
+[[feed]]
+nama = "Detik news"
+url = "https://news.detik.com/rss"
+kategori = "politik"
+
+[[feed]]
+nama = "CNN Indonesia nasional"
+url = "https://www.cnnindonesia.com/nasional/rss"
+kategori = "politik"
+
+[[feed]]
+nama = "Republika utama"
+url = "https://republika.co.id/rss"
+kategori = "politik"
+
+# --------------------------------------------------------------------------- #
+
+[[feed]]
+nama = "Google News Reuters business"
+url = "https://news.google.com/rss/search?q=site:reuters.com+business+when:1d&hl=en-US&gl=US&ceid=US:en"
+kategori = "global"
+
+[[feed]]
+nama = "CNBC US"
+url = "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+kategori = "global"
+
+[[feed]]
+nama = "Al Jazeera"
+url = "https://www.aljazeera.com/xml/rss/all.xml"
+kategori = "global"
+
+[[feed]]
+nama = "BBC business"
+url = "https://feeds.bbci.co.uk/news/business/rss.xml"
+kategori = "global"
+
+[[feed]]
+nama = "MarketWatch"
+url = "https://feeds.content.dowjones.io/public/rss/mw_topstories"
+kategori = "global"
+
+[[feed]]
+nama = "Investing.com"
+url = "https://www.investing.com/rss/news.rss"
+kategori = "global"
+catatan = "judul saja, tanpa ringkasan"
+
+[[feed]]
+nama = "Federal Reserve"
+url = "https://www.federalreserve.gov/feeds/press_all.xml"
+kategori = "global"
+bobot = 3.0
+catatan = "0 item dalam 24 jam itu normal; kalau terbit, hampir pasti layak dibaca"
+
+[[feed]]
+nama = "ECB press"
+url = "https://www.ecb.europa.eu/rss/press.html"
+kategori = "global"
+bobot = 3.0
+catatan = "judul saja; jarang terbit, sama seperti Fed"

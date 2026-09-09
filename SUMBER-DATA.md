@@ -49,16 +49,138 @@ vintage** — satu-satunya cara murah memvalidasi apakah logika point-in-time
 |---|---|---|---|---|
 | **GDELT DOC 2.0 API** | Berita global terindeks, filter negara/bahasa/rentang waktu, **tone −100..+100** | REST, gratis | Tidak | ✅ |
 | **GDELT Events / GKG** | Peristiwa terstruktur, aktor, tema, tone — via file bulk atau BigQuery | Bulk CSV / BigQuery | Tidak (BigQuery berbayar) | ⚠️ |
-| **RSS media ekonomi ID** | Antara, Kontan, Bisnis, CNBC Indonesia, Katadata, Tempo, Detik Finance | `feedparser` | Tidak | ⚠️ cek URL feed satu per satu |
+| **RSS media ID + global** | 29 feed terverifikasi lintas 4 kategori | `feedparser` | Tidak | ✅ **lihat §C1** — ditembak langsung 2026-09-09 |
 | **peraturan.go.id / JDIH** | Regulasi baru, PP, Perpres, PMK | Halaman + PDF | Tidak | ⚠️ |
 | **Google Trends** | Minat pencarian per topik/wilayah | `pytrends` (tidak resmi) | Tidak | ⚠️ sering rate-limit; jangan jadi ketergantungan |
 | **ACLED** | Data konflik & protes | REST | Ya, registrasi | ⚠️ cek lisensi non-komersial |
 | **Reddit / X** | Sentimen ritel | API resmi | Ya, X sekarang mahal | ⚠️ nilai rendah dibanding biayanya |
 
-**Prioritas realistis untuk fase 3:** GDELT + RSS media Indonesia. Dua ini menutup
-sebagian besar kebutuhan berita dengan biaya nyaris nol dan tanpa masalah legal.
-Media sosial sebaiknya ditunda — biaya tinggi, kualitas sinyal rendah, dan paling
-rawan secara UU PDP.
+**Prioritas realistis:** RSS media Indonesia. Menutup sebagian besar kebutuhan
+berita dengan biaya nyaris nol dan tanpa masalah legal. GDELT ditunda — baru
+relevan kalau §10 (NLP) dikerjakan, dan `ARSITEKTUR.md` §14 kini menyatakan fase
+itu boleh tidak pernah ada. Media sosial juga ditunda: biaya tinggi, kualitas
+sinyal rendah, dan paling rawan secara UU PDP.
+
+---
+
+## C1. Feed RSS — hasil verifikasi 2026-09-09
+
+Semua baris di bawah **ditembak langsung**, bukan diambil dari dokumentasi.
+Kolom "dlm 24j" = jumlah item yang jatuh di dalam jendela edisi (`ARSITEKTUR.md`
+§16). Kolom "teks" = panjang ringkasan di item pertama; `judul` berarti feed itu
+hanya memberi judul tanpa ringkasan.
+
+### A. Makro & kebijakan Indonesia
+
+| Feed | URL | Item | dlm 24j | Teks |
+|---|---|---:|---:|---|
+| CNBC Indonesia news | `cnbcindonesia.com/news/rss` | 100 | 100 | 274c |
+| Bloomberg Technoz | `bloombergtechnoz.com/rss` | 100 | 100 | 155c |
+| Media Indonesia ekonomi | `mediaindonesia.com/rss/ekonomi` | 100 | 100 | 134c |
+| Detik finance | `finance.detik.com/rss` | 100 | 71 | 300c |
+| CNN Indonesia ekonomi | `cnnindonesia.com/ekonomi/rss` | 100 | 50 | 283c |
+| Liputan6 bisnis | `feed.liputan6.com/rss/bisnis` | 50 | 50 | 145c |
+| Sindonews ekbis | `ekbis.sindonews.com/rss` | 30 | 30 | 155c |
+| Kontan nasional | `nasional.kontan.co.id/rss` | 25 | 25 | 139c |
+| Kontan keuangan | `keuangan.kontan.co.id/rss` | 25 | 25 | 137c |
+| Kontan industri | `industri.kontan.co.id/rss` | 25 | 25 | 152c |
+| Katadata | `katadata.co.id/rss` | 25 | 25 | 362c |
+| Republika ekonomi | `republika.co.id/rss/ekonomi` | 15 | 15 | 223c |
+| Antara terkini | `antaranews.com/rss/terkini.xml` | 50 | — | 259c |
+
+Antara terkini hidup tapi **labil** — satu dari dua percobaan gagal dengan
+`RemoteProtocolError`. Retry (§9 #1) menutupinya; jangan sampai dianggap mati.
+
+### B. Pasar & emiten IDX
+
+| Feed | URL | Item | dlm 24j | Teks |
+|---|---|---:|---:|---|
+| CNBC Indonesia market | `cnbcindonesia.com/market/rss` | 100 | 42 | 374c |
+| Google News "IHSG/BEI" | `news.google.com/rss/search?q=IHSG…` | 100 | 87 | 447c |
+| Google News "emiten" | `news.google.com/rss/search?q=emiten…` | 71 | 71 | 405c |
+| IDN Financials | `idnfinancials.com/id/feed` | 30 | 30 | 123c |
+| Pasardana | `pasardana.id/rss` | 30 | 30 | 54c |
+| Kontan investasi | `investasi.kontan.co.id/rss` | 25 | 25 | 108c |
+
+Ini kategori paling tipis, sesuai dugaan. Media khusus pasar modal sebagian besar
+tidak lagi menyediakan RSS (lihat C2). Dua feed Google News menambal celahnya:
+formatnya rapi, bertanggal, dan ringkasannya justru paling panjang. Feed IDN
+Financials tidak diiklankan di mana pun — ditemukan lewat autodiscovery
+`<link rel="alternate">` di HTML beranda.
+
+### C. Politik & sosial
+
+| Feed | URL | Item | dlm 24j | Teks |
+|---|---|---:|---:|---|
+| Detik news | `news.detik.com/rss` | 100 | 100 | 322c |
+| CNN Indonesia nasional | `cnnindonesia.com/nasional/rss` | 100 | 80 | 268c |
+| Republika utama | `republika.co.id/rss` | 15 | 15 | 236c |
+
+### D. Global
+
+| Feed | URL | Item | dlm 24j | Teks |
+|---|---|---:|---:|---|
+| Google News "Reuters business" | `news.google.com/rss/search?q=site:reuters.com…` | 100 | 100 | 425c |
+| CNBC US | `cnbc.com/id/100003114/device/rss/rss.html` | 30 | 29 | 149c |
+| Al Jazeera | `aljazeera.com/xml/rss/all.xml` | 25 | 25 | 91c |
+| BBC business | `feeds.bbci.co.uk/news/business/rss.xml` | 53 | 20 | 111c |
+| MarketWatch | `feeds.content.dowjones.io/public/rss/mw_topstories` | 10 | 10 | 90c |
+| Investing.com | `investing.com/rss/news.rss` | 10 | 10 | judul |
+| Federal Reserve | `federalreserve.gov/feeds/press_all.xml` | 20 | 0 | 154c |
+| ECB press | `ecb.europa.eu/rss/press.html` | 15 | 1 | judul |
+
+Fed dan ECB nol/satu item dalam 24 jam bukan tanda rusak — siaran pers bank
+sentral memang jarang. Justru itu yang membuat keduanya bernilai tinggi: kalau
+muncul, hampir pasti layak dibaca. Jangan disamakan perlakuannya dengan feed
+media yang menghasilkan ratusan item.
+
+### Tiga angka yang menentukan desain
+
+1. **1.291 item dalam jendela 24 jam** dari 29 feed. Target bacanya lima menit —
+   sekitar 30–40 item. Artinya **97% harus dibuang**. Dedup dan pembatasan per
+   bagian (`ARSITEKTUR.md` §16) bukan penyempurnaan, itu keseluruhan produknya.
+2. **Feed Kontan, Katadata, Sindonews, Liputan6, dan Pasardana seluruh isinya
+   lebih muda dari 24 jam.** Artinya jendela retensinya di bawah sehari: ambil
+   sekali sehari jam 05:30 = pasti kehilangan berita. Ini bukti empiris untuk
+   pemisahan ambil-dan-simpan dari susun-edisi di §16.
+3. **Semua feed yang lolos bertanggal 100%.** Tidak perlu menebak waktu terbit
+   dari isi — dan `published` sudah beroffset benar (`+0700` untuk media ID).
+
+### Catatan environment: proxy TLS-inspection
+
+Dari jaringan kantor, sebagian besar host di atas gagal dengan
+`CERTIFICATE_VERIFY_FAILED` — proxy kantor membongkar TLS, dan sertifikatnya
+tidak ada di bundel CA bawaan Python. Bukan masalah feed-nya.
+
+Penawarnya `truststore`, yang membuat Python memakai certificate store Windows:
+
+```python
+import truststore
+truststore.inject_into_ssl()
+```
+
+Ini cara yang benar — bukan mematikan verifikasi TLS. Lihat `inti/notifikasi.py`
+untuk sikap yang sama.
+
+Satu jebakan lagi yang sudah memakan waktu: **User-Agent wajib ASCII.** §9 #4
+meminta UA jujur beralamat kontak; kalau di dalamnya ada em dash, httpx melempar
+`UnicodeEncodeError` sebelum request keluar, dan gejalanya terlihat seperti semua
+situs mati serempak.
+
+## C2. Feed yang ditolak, dan alasannya
+
+Dicatat supaya tidak dicoba ulang tiap beberapa bulan.
+
+| Kandidat | Alasan |
+|---|---|
+| **Bisnis.com** | Tidak ada feed yang bisa ditemukan. Lima pola URL 404/bozo, dan beranda tidak mendeklarasikan autodiscovery |
+| **Kompas** | Sama — semua pola 403/404, tanpa autodiscovery |
+| **Antara ekonomi & politik** | Hidup, tapi isinya artikel *evergreen* SEO ("Apa itu IKD", "PHK dan resign apa bedanya"), bukan berita. Feed politik basi 11 hari |
+| **Tempo bisnis & nasional** | Item terbaru berumur 60 jam. Tanggalnya benar — feed-nya memang tertinggal |
+| **Okezone economy** | Tanggal rusak — item pertama terbaca berumur ~10 tahun |
+| **Emitennews** | HTTP 500 di `/feed` dan `/rss` |
+| **Investor.id, Bareksa, Stockwatch, IQPlus, Tirto, Kumparan** | 404 / 403 / bukan XML |
+| **Kemenkeu, BI** | Tidak menyediakan RSS. Rilisnya lewat halaman dan file — jalur berbeda (§A) |
 
 ## D. Yang sebaiknya tidak dikejar
 

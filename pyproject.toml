@@ -8,6 +8,12 @@ requires-python = ">=3.12"
 # rusak di CI" tidak bisa dibedakan dari perubahan perilaku sumber.
 dependencies = [
     "httpx==0.28.1",
+    "feedparser==6.0.14",
+    # Memakai certificate store Windows. Wajib di jaringan kantor: proxy
+    # TLS-inspection membongkar TLS dan sertifikatnya tidak ada di bundel CA
+    # bawaan Python, jadi mayoritas feed gagal CERTIFICATE_VERIFY_FAILED.
+    # Ini penawar yang benar — bukan mematikan verifikasi. Lihat SUMBER-DATA.md §C1.
+    "truststore==0.10.4",
 ]
 
 [project.optional-dependencies]
