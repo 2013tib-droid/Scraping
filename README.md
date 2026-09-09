@@ -5,8 +5,14 @@ ter-dedup dan terurut, cukup dibaca lima menit sambil ngopi. Di belakangnya,
 pipeline yang lama-lama juga menyimpan seri data makro untuk dipakai
 `Screening-Saham`. Dipakai satu orang, bukan produk multi-user.
 
-**Status: fase 1 baru dimulai.** Dokumen keputusan lengkap; dari kode, baru
-`inti/notifikasi.py` yang ada.
+**Halaman paginya: <https://2013tib-droid.github.io/Scraping/>**
+
+Terbit sendiri tiap 05:00 WIB, berisi berita 24 jam terakhir yang sudah
+di-dedup dan diurutkan menurut berapa banyak media meliputnya. Edisi lama ada di
+`docs/arsip/`.
+
+**Status: fase 1 jalan.** Pengambil, dedup, dan halaman sudah ada dan
+terjadwal. Seri makro (fase 3) belum.
 
 Tiga dokumen di bawah ditulis lebih dulu supaya pilihan teknisnya punya alasan
 yang bisa ditelusuri, bukan warisan kebiasaan. Implementasi menyusul mengikuti
