@@ -55,6 +55,20 @@ KATA_POLITIK = {
     "korupsi", "kpk", "kejaksaan", "ojk", "bi", "sri", "purbaya", "prabowo",
     "utang", "defisit", "inflasi", "rupiah", "pertamina", "pln", "energi",
     "pangan", "beras", "bbm", "sawit", "nikel", "tambang", "infrastruktur",
+    # Sosial yang menggerakkan pasar: bencana mengganggu rantai pasok, PHK dan
+    # upah menggeser konsumsi, program besar seperti MBG menggeser anggaran.
+    "karhutla", "bencana", "banjir", "gempa", "erupsi", "phk", "mbg", "gaji",
+    "ump", "umk", "listrik", "harga", "bpjs", "kesehatan", "pendidikan",
+}
+
+# Feed bank sentral memuat pidato, wawancara, dan "fireside chat" — bukan hanya
+# keputusan. Bobotnya (feed.toml) mengangkat semuanya sama rata, sehingga sebuah
+# obrolan santai bisa memuncaki bagian Global. Yang layak diangkat hanya yang
+# menyebut keputusan, pernyataan, atau notulen kebijakan.
+DOMAIN_BANK_SENTRAL = {"federalreserve.gov", "ecb.europa.eu"}
+KATA_BANK_SENTRAL = {
+    "decision", "decisions", "statement", "fomc", "minutes", "monetary",
+    "rate", "rates", "policy", "projections", "press", "conference",
 }
 
 
@@ -165,13 +179,18 @@ def jadikan_peristiwa(artikel: list[dict]) -> list[Peristiwa]:
     return peristiwa
 
 
+def _kata(teks: str) -> set[str]:
+    return set("".join(c if c.isalnum() else " " for c in teks.lower()).split())
+
+
 def relevan(p: Peristiwa) -> bool:
-    """Saring bagian politik saja; bagian lain sudah dari feed ekonomi."""
-    if p.kategori != "politik":
-        return True
-    teks = f"{p.judul} {p.ringkasan or ''}".lower()
-    kata = {k for k in "".join(c if c.isalnum() else " " for c in teks).split()}
-    return bool(kata & KATA_POLITIK)
+    """Dua saringan sempit; bagian lain lewat apa adanya karena sudah dari feed
+    ekonomi."""
+    if p.domain in DOMAIN_BANK_SENTRAL:
+        return bool(_kata(p.judul) & KATA_BANK_SENTRAL)
+    if p.kategori == "politik":
+        return bool(_kata(f"{p.judul} {p.ringkasan or ''}") & KATA_POLITIK)
+    return True
 
 
 def per_bagian(peristiwa: list[Peristiwa]) -> dict[str, list[Peristiwa]]:

@@ -181,13 +181,37 @@ def uji_wakil_memilih_yang_punya_ringkasan(con):
 
 def uji_bobot_mengangkat_sumber_jarang(con):
     penyimpanan.simpan_artikel(con, [
-        artikel("Federal Reserve announces policy decision", "fed.gov", 10,
+        artikel("Federal Reserve issues FOMC statement", "federalreserve.gov", 10,
                 kategori="global", bobot=2.0),
         artikel("Some company reports quarterly earnings", "x.test", 11,
                 kategori="global"),
     ])
     _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
-    assert bagian["global"][0].domain == "fed.gov"
+    assert bagian["global"][0].domain == "federalreserve.gov"
+
+
+def uji_pidato_bank_sentral_disaring(con):
+    """Kasus nyata: 'Frank Elderson: Fireside chat' memuncaki bagian Global."""
+    penyimpanan.simpan_artikel(con, [
+        artikel("Frank Elderson: Fireside chat", "ecb.europa.eu", 10,
+                kategori="global", bobot=2.0, ringkasan=None),
+        artikel("Monetary policy decisions", "ecb.europa.eu", 11,
+                kategori="global", bobot=2.0, ringkasan=None),
+        artikel("Oil prices slip on demand worries", "x.test", 12, kategori="global"),
+    ])
+    _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
+    judul = [p.judul for p in bagian["global"]]
+    assert "Monetary policy decisions" in judul
+    assert "Frank Elderson: Fireside chat" not in judul
+
+
+def uji_kata_sosial_penggerak_pasar_lolos(con):
+    penyimpanan.simpan_artikel(con, [
+        artikel("Karhutla meluas di Riau, jarak pandang bandara turun",
+                "a.test", 10, kategori="politik"),
+    ])
+    _, bagian, _ = edisi.bangun(con, date(2026, 9, 9))
+    assert len(bagian["politik"]) == 1
 
 
 # --------------------------------------------------------------------------- #
