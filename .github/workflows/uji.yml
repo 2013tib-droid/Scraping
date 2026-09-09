@@ -1,0 +1,21 @@
+name: Uji
+
+# Uji tidak menyentuh jaringan sama sekali (ARSITEKTUR.md §13), jadi workflow ini
+# cepat dan hasilnya tidak pernah merah karena alasan yang salah.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[uji]"
+      - run: pytest

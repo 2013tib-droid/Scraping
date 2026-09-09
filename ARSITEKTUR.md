@@ -110,6 +110,24 @@ Simpan bersama tiap objek bronze: URL, waktu fetch (UTC), status HTTP, ETag,
 `Last-Modified`, dan **SHA-256 isi**. Hash itu jadi kunci dedup sekaligus deteksi
 perubahan: isi sama = tidak usah diproses ulang.
 
+### Pengecualian sadar: bronze RSS di GitHub Actions
+
+Job harian jalan di runner sekali pakai; `data/` hilang setiap job selesai.
+Statenya disimpan di cache Actions — cukup untuk dedup dan ETag, tapi **bukan
+penyimpanan permanen**: cache bisa tergusur, dan 0,65 GB bronze per tahun tidak
+layak di-commit ke repo (tiap commit menyimpan salinan utuh).
+
+Jadi untuk RSS — dan **hanya** untuk RSS — bronze diperlakukan sebagai singgahan,
+bukan arsip. Yang membuat ini bisa diterima: respons RSS sudah hampir seluruhnya
+terurai ke tabel `artikel` (judul, tautan, ringkasan, waktu terbit). Re-parse dari
+XML mentah nyaris tidak menambah apa pun, tidak seperti halaman HTML atau XLSX
+rilis yang parsernya rapuh dan isinya jauh lebih kaya dari yang diekstrak.
+
+Yang benar-benar tidak boleh hilang tetap dijaga: tabel `artikel` (di cache, dan
+tumbuh terus) dan **halaman edisi yang di-commit ke repo** — arsip permanen yang
+sesungguhnya. Kalau kelak ada sumber HTML atau file rilis, §5 berlaku penuh untuk
+sumber itu dan penyimpanannya harus dipikirkan ulang, bukan ikut aturan ini.
+
 ### Point-in-time (vintage) — bagian yang paling sering dilewatkan
 
 Data makro **direvisi**. Angka PDB kuartal I yang dirilis Mei berbeda dengan

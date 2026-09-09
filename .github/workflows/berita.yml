@@ -1,0 +1,75 @@
+name: Ambil berita
+
+# 22:00 UTC = 05:00 WIB hari berikutnya (ARSITEKTUR.md §16).
+# Bukan tengah malam WIB: sesi pasar Amerika tutup 03:00-04:00 WIB, jadi job yang
+# jalan jam 23:00 membuat kategori global selalu tertinggal sehari.
+#
+# §8 mencatat cron GitHub Actions bisa telat belasan menit saat runner sibuk.
+# Untuk halaman baca pagi itu tidak masalah — yang penting jendela waktunya tetap,
+# bukan jam terbitnya.
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch: # supaya bisa dipicu manual tanpa menunggu besok
+
+concurrency:
+  group: berita
+  cancel-in-progress: false # jangan potong run yang sedang menulis state
+
+jobs:
+  ambil:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pasang dependensi
+        run: pip install -e .
+
+      # State (DuckDB + bronze) tidak bisa hidup di repo — 0,65 GB bronze/tahun,
+      # dan tiap commit menyimpan salinan utuh. Cache Actions cukup: dipakai untuk
+      # dedup lintas hari dan ETag, dan tetap hangat selama job jalan tiap hari.
+      # Lihat ARSITEKTUR.md §5 "Pengecualian sadar".
+      - name: Pulihkan state
+        uses: actions/cache@v4
+        with:
+          path: data
+          key: data-${{ github.run_id }}
+          restore-keys: |
+            data-
+
+      - name: Ambil semua feed
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # Keluar dengan status gagal hanya kalau SEMUA feed gagal — itu berarti
+        # masalahnya jaringan atau kredensial, bukan satu media yang sedang down.
+        # Kegagalan sebagian sudah dilaporkan ke Telegram oleh alur/berita.py.
+        run: python -m alur.berita
+
+      - name: Ringkasan run
+        if: always()
+        run: |
+          echo "### Ambil berita" >> "$GITHUB_STEP_SUMMARY"
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          from inti.penyimpanan import buka
+          con = buka()
+          run_id, = con.execute("SELECT max(run_id) FROM metrik_run").fetchone()
+          print(f"run: `{run_id}`\n")
+          print("| status | feed | item | baru |")
+          print("|---|---:|---:|---:|")
+          for s, n, i, b in con.execute(
+              """SELECT status, count(*), sum(jumlah_item), sum(jumlah_baru)
+                 FROM metrik_run WHERE run_id = ? GROUP BY 1 ORDER BY 1""",
+              [run_id],
+          ).fetchall():
+              print(f"| {s} | {n} | {i or 0} | {b or 0} |")
+          total, = con.execute("SELECT count(*) FROM artikel").fetchone()
+          print(f"\nTotal artikel tersimpan: **{total}**")
+          con.close()
+          PY
