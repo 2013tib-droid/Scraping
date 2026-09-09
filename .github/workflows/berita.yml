@@ -20,6 +20,8 @@ jobs:
   ambil:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write # halaman edisi di-commit ke repo sebagai arsip permanen
 
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +53,28 @@ jobs:
         # masalahnya jaringan atau kredensial, bukan satu media yang sedang down.
         # Kegagalan sebagian sudah dilaporkan ke Telegram oleh alur/berita.py.
         run: python -m alur.berita
+
+      - name: Susun edisi pagi
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # Tanpa argumen = edisi hari ini menurut WIB. Karena job jalan 22:00 UTC,
+        # tanggal WIB-nya sudah hari berikutnya — persis edisi yang mau dibaca.
+        run: python -m alur.edisi
+
+      # Halaman edisi adalah arsip permanen yang sesungguhnya (ARSITEKTUR.md §5):
+      # state di cache boleh tergusur, tapi yang sudah terbit tidak boleh hilang.
+      - name: Commit halaman
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs
+          if git diff --cached --quiet; then
+            echo "tidak ada perubahan halaman"
+          else
+            git commit -m "Edisi $(TZ=Asia/Jakarta date +%Y-%m-%d)"
+            git push
+          fi
 
       - name: Ringkasan run
         if: always()

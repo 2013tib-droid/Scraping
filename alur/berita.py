@@ -95,6 +95,19 @@ def bersihkan(teks: str | None) -> str | None:
     return polos[:MAKS_RINGKASAN]
 
 
+def _ringkasan_berguna(ringkasan: str | None, judul: str) -> str | None:
+    """Buang ringkasan yang cuma mengulang judulnya.
+
+    Google News mengisi `summary` dengan judul + nama penerbit, jadi tanpa ini
+    setiap itemnya tampil dua kali: sekali sebagai judul, sekali sebagai
+    "ringkasan" yang tidak menambah apa pun.
+    """
+    if not ringkasan:
+        return None
+    sederhana = lambda s: "".join(c for c in s.lower() if c.isalnum())  # noqa: E731
+    return None if sederhana(ringkasan).startswith(sederhana(judul)[:60]) else ringkasan
+
+
 def waktu_terbit(entri) -> datetime | None:
     t = entri.get("published_parsed") or entri.get("updated_parsed")
     # feedparser sudah menormalkan ke UTC; offset feed (mis. +0700) sudah
@@ -113,13 +126,28 @@ def ke_artikel(entri, feed: dict, saat_fetch: datetime) -> Artikel | None:
     # isinya sebagian besar memang tautan (§11).
     url = tautan.split("#", 1)[0]
     isi = entri.get("content")
+
+    # Item Google News menunjuk ke news.google.com, padahal yang penting adalah
+    # penerbit aslinya: kalau tidak diurai, tiga berita dari tiga media terhitung
+    # satu domain dan pemeringkatan lintas-media (§16) jadi salah. `source.href`
+    # menormalkan ke domain yang sama dengan feed langsung penerbit itu.
+    sumber = entri.get("source") or {}
+    asal = sumber.get("href")
+    domain = urlsplit(asal or url).netloc.removeprefix("www.")
+
+    # Google News menempelkan " - Penerbit" di ujung judul. Itu mengotori
+    # tampilan sekaligus menggeser token yang dipakai dedup.
+    if nama_sumber := sumber.get("title"):
+        judul = judul.removesuffix(f" - {nama_sumber}").strip()
+
     return Artikel(
         artikel_id=sha256(kanonik(tautan).encode("utf-8")).hexdigest(),
         url=url,
-        domain=urlsplit(url).netloc.removeprefix("www."),
+        domain=domain,
         judul=html.unescape(judul),
-        ringkasan=bersihkan(
-            (isi[0].get("value") if isi else None) or entri.get("summary")
+        ringkasan=_ringkasan_berguna(
+            bersihkan((isi[0].get("value") if isi else None) or entri.get("summary")),
+            judul,
         ),
         waktu_terbit=waktu_terbit(entri),
         waktu_fetch=saat_fetch,

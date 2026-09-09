@@ -162,14 +162,14 @@ catatan = "judul saja, tanpa ringkasan"
 nama = "Federal Reserve"
 url = "https://www.federalreserve.gov/feeds/press_all.xml"
 kategori = "global"
-bobot = 3.0
+bobot = 2.0
 catatan = "0 item dalam 24 jam itu normal; kalau terbit, hampir pasti layak dibaca"
 
 [[feed]]
 nama = "ECB press"
 url = "https://www.ecb.europa.eu/rss/press.html"
 kategori = "global"
-bobot = 3.0
+bobot = 2.0
 catatan = "judul saja; jarang terbit, sama seperti Fed"
 
 # --------------------------------------------------------------------------- #
