@@ -84,7 +84,15 @@ class Klien:
         self._klien = httpx.Client(
             timeout=TIMEOUT,
             follow_redirects=True,
-            headers={"User-Agent": ua, "Accept-Encoding": "gzip, deflate"},
+            headers={
+                "User-Agent": ua,
+                "Accept-Encoding": "gzip, deflate",
+                # Negosiasi konten yang jujur — menyatakan kita memang meminta
+                # feed, bukan menyamar jadi browser. Sebagian WAF menolak klien
+                # yang tidak mengirim Accept sama sekali.
+                "Accept": "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.9, */*;q=0.8",
+                "Accept-Language": "id-ID,id;q=0.9,en;q=0.8",
+            },
         )
 
     def __enter__(self) -> "Klien":
