@@ -211,11 +211,20 @@ def bangun(con, tanggal: date) -> tuple[str, dict[str, list[Peristiwa]], int]:
     mulai, akhir = jendela(tanggal)
     artikel = ambil(con, mulai, akhir)
     bagian = per_bagian(jadikan_peristiwa(artikel))
+    # Tautan ke edisi kemarin hanya kalau berkasnya memang ada di arsip —
+    # tautan mati lebih buruk daripada tidak ada tautan.
+    kemarin = tanggal - timedelta(days=1)
+    sebelumnya = (
+        f"arsip/{kemarin:%Y-%m-%d}.html"
+        if (KELUARAN / "arsip" / f"{kemarin:%Y-%m-%d}.html").exists()
+        else None
+    )
     html = render.halaman(
         datetime.combine(tanggal, JAM_EDISI),
         bagian,
         jumlah_sumber=len({a["domain"] for a in artikel}),
         total_dipertimbangkan=len(artikel),
+        sebelumnya=sebelumnya,
     )
     return html, bagian, len(artikel)
 
@@ -224,7 +233,9 @@ def tulis(html: str, tanggal: date, keluaran: Path | None = None) -> Path:
     akar = keluaran or KELUARAN
     (akar / "arsip").mkdir(parents=True, exist_ok=True)
     arsip = akar / "arsip" / f"{tanggal:%Y-%m-%d}.html"
-    arsip.write_text(html, encoding="utf-8")
+    # Salinan di arsip/ berada satu folder lebih dalam, jadi tautan
+    # "arsip/..." yang benar dari index.html harus jadi tautan sesama folder.
+    arsip.write_text(html.replace('href="arsip/', 'href="'), encoding="utf-8")
     # index.html selalu edisi terbaru — satu URL yang bisa di-bookmark.
     (akar / "index.html").write_text(html, encoding="utf-8")
     return arsip
