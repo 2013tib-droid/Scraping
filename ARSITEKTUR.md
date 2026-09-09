@@ -30,7 +30,7 @@ data realtime tick-level), bagian 4, 7, dan 8 harus ditinjau ulang.
 | Validasi | `pydantic` (bentuk) + `pandera` (nilai) | Gagal keras di batas, bukan di hilir |
 | NLP berita | Lexicon → IndoBERT → LLM bertingkat | Biaya terkontrol, akurasi di tempat yang perlu |
 | Notifikasi | Telegram bot (pola `IDX Screener`) | Sudah ada, tidak menambah stack |
-| Keluaran harian | Telegram (push) + HTML statis (arsip) | Bukan PDF — alasannya di §16 |
+| Keluaran harian | Halaman HTML statis; Telegram kirim link | Dibaca pagi hari — bukan PDF, alasannya di §16 |
 
 ## 2. Prinsip utama: scraping adalah pilihan terakhir
 
@@ -321,7 +321,12 @@ Scraping/
     kualitas.py          <- assert jumlah / nilai / kesinambungan
     notifikasi.py        <- telegram
   alur/
-    harian.py  berita.py  backfill.py
+    berita.py              <- ambil & simpan feed, beberapa kali sehari
+    edisi.py               <- susun halaman untuk satu tanggal
+    harian.py  backfill.py  doctor.py
+  situs/
+    templat/               <- templat halaman
+    _site/                 <- keluaran, dilayani GitHub Pages
   nlp/
     saring.py  sentimen.py  ekstraksi_llm.py
   data/
@@ -341,24 +346,35 @@ diabaikan — dan tes yang diabaikan sama saja dengan tidak ada.
 
 Jangan bangun semuanya sekaligus. Urutan ini memberi nilai paling awal:
 
-**Fase 1 — tulang punggung (1 sumber, end-to-end).**
-Ambil BPS via WebAPI → bronze → silver → DuckDB → satu grafik. Satu sumber saja,
-tapi lengkap: retry, validasi, uji, cron, notifikasi. Ini jadi cetakan untuk semua
-sumber berikutnya. Menambah sumber ke-2 sampai ke-10 setelah ini jadi pekerjaan
-satu jam, bukan satu hari.
+> **Direvisi 2026-09-09.** Urutan lama menaruh berita di fase 3 sebagai bahan
+> baku NLP, dan menaruh seri makro untuk backtest di depan. Itu menunda
+> satu-satunya bagian yang dipakai setiap hari. Pemakaian sebenarnya adalah
+> **halaman baca pagi** (§16), jadi berita naik ke fase 1 dan NLP keluar dari
+> jalur kritis. Prinsip di §2–§13 tidak berubah sedikit pun — hanya urutannya.
 
-**Fase 2 — perluas makro.** BI (kurs, BI-Rate), World Bank, FRED. Di sini skema
-`seri_makro` diuji beneran: apakah cukup umum menampung semuanya?
+**Fase 1 — halaman pagi, end-to-end.** RSS media Indonesia → bronze → dedup →
+halaman HTML statis → Telegram kirim link, cron harian. Sempit tapi lengkap:
+retry, uji tanpa jaringan, notifikasi kegagalan. Ini cetakan untuk semua sumber
+berikutnya, sekaligus satu-satunya fase yang wajib ada supaya sistem ini berguna.
 
-**Fase 3 — berita.** RSS media ekonomi Indonesia + GDELT. Simpan teks, belum ada
-NLP. Kumpulkan dulu — teks yang tidak dikumpulkan hari ini tidak bisa dikumpulkan
-retroaktif.
+**Fase 2 — kualitas bacaan.** Tambah sumber, perbaiki dedup, saring noise, atur
+pembatasan per bagian. Ukurannya sederhana dan jujur: apakah halamannya masih
+dibuka di minggu ketiga. Kalau tidak, masalahnya di sini, bukan di fase 3.
 
-**Fase 4 — NLP.** Saring, dedup, sentimen, indeks harian. Baru masuk akal setelah
-ada beberapa bulan teks untuk dikalibrasi.
+**Fase 3 — makro.** BPS via WebAPI, lalu BI (kurs, BI-Rate), FRED, World Bank —
+dengan vintage (§5) sejak baris pertama. Angka rilis terbaru muncul di halaman
+pagi; riwayatnya mengendap di `seri_makro` untuk dipakai belakangan.
 
-**Fase 5 — integrasi.** Sambungkan ke `Screening-Saham` sebagai fitur tambahan.
-Ini yang membuat seluruh sistem berbayar.
+**Fase 4 — NLP, kalau terbukti perlu.** Sentimen dan indeks harian. Hanya masuk
+akal setelah beberapa bulan teks terkumpul, dan hanya kalau membaca halaman pagi
+ternyata tidak cukup. Fase ini boleh tidak pernah dikerjakan.
+
+**Fase 5 — integrasi.** Sambungkan `seri_makro` ke `Screening-Saham` sebagai
+fitur tambahan.
+
+Catatan yang tidak berubah karena pengurutan ulang ini: teks yang tidak
+dikumpulkan hari ini tidak bisa dikumpulkan retroaktif, dan vintage tidak bisa
+dipasang belakangan. Keduanya kini justru lebih awal, bukan lebih akhir.
 
 ## 15. Anti-pattern
 
@@ -386,13 +402,28 @@ Ada dua hal berbeda yang mudah tertukar:
 | | Menjawab | Diatur di |
 |---|---|---|
 | **Notifikasi operasional** | Cron jalan? Parser rusak? BPS cuma keluar 2 baris? | §9, §12 |
-| **Rangkuman isi** | Apa yang terjadi di makro/politik hari ini? | Bab ini |
+| **Edisi harian** | Apa yang perlu kubaca pagi ini? | Bab ini |
 
 Yang pertama soal kesehatan pipeline, yang kedua soal isi datanya. Keduanya lewat
 Telegram, tapi jangan digabung dalam satu pesan — kegagalan teknis harus tetap
-terbaca saat rangkuman harian kosong karena memang tidak ada rilis.
+terbaca pada hari ketika halaman paginya kosong karena memang tidak ada berita.
+Dan pesan kegagalan tidak boleh menumpang di pemberitahuan edisi: kalau edisinya
+gagal terbit, justru pesan itu yang tidak akan terkirim.
 
-### Format: Telegram untuk push, HTML statis untuk arsip
+### Format: halaman HTML untuk dibaca, Telegram untuk memanggil
+
+Pemakaian yang dituju konkret: **dibaca pagi hari sambil minum kopi**, berisi
+berita sejak pagi kemarin sampai dini hari, cukup untuk tidak ketinggalan
+peristiwa mikro/makro. Itu mengubah peran kedua kanal dibanding rancangan awal
+bab ini:
+
+- **Halaman HTML statis = kanal utama.** Pesan Telegram tidak bisa dibuat enak
+  dibaca — tidak ada tipografi, hierarki, atau pengelompokan, dan pesan panjang
+  terpotong tiap 4096 karakter. Halaman bisa. Di-generate ke GitHub Pages, pola
+  `_site/` yang sudah dipakai di `Screening-Saham`. Nol server, dan riwayat
+  tiap edisi otomatis tersimpan di git.
+- **Telegram = pemberitahuan.** Satu baris ringkas + link, supaya tidak perlu
+  ingat membuka apa pun. Pakai `inti/notifikasi.py` yang sudah ada.
 
 **Bukan PDF.** Empat alasan, semuanya konkret:
 
@@ -406,70 +437,80 @@ terbaca saat rangkuman harian kosong karena memang tidak ada rilis.
 4. Butuh dependensi baru (weasyprint/reportlab) untuk keuntungan nol. §1 sudah
    memutuskan: jangan tambah stack.
 
-**Telegram — kanal harian.** Push, bukan pull; tidak perlu ingat membuka apa pun.
-Pakai ulang pola `signal_bot/notifier.py` di `IDX Screener`, termasuk sifatnya
-yang turun otomatis ke terminal saat token kosong — supaya bisa dikembangkan
-tanpa mengirim pesan sungguhan.
+### Jendela waktu dan jadwal
 
-**HTML statis — arsip.** Untuk menelusuri ke belakang dan melihat detail yang
-tidak muat di Telegram. Di-generate dari DuckDB, di-commit, dilayani GitHub
-Pages — pola `_site/` yang sudah dipakai di `Screening-Saham`. Nol server, dan
-riwayatnya otomatis ada di git.
+Edisi hari ini memuat berita **05:30 WIB kemarin sampai 05:30 WIB hari ini**.
 
-### Aturan yang mengikat: rangkuman di-generate dari gold
+Cron GitHub Actions memakai UTC, jadi 05:30 WIB adalah **22:30 UTC hari
+sebelumnya**. Ini gampang salah sehari, dan §15 #9 sudah memperingatkan soal
+timezone campur: simpan UTC di semua lapisan, konversi ke WIB hanya saat tampil.
+Jendela dihitung dari parameter waktu edisi, bukan dari `now()` — supaya edisi
+kemarin bisa dibuat ulang persis.
 
-`alur/rangkuman.py` membaca lapisan gold dan menghasilkan teks. Rangkuman untuk
-tanggal berapa pun harus bisa dibuat ulang kapan saja; pesan Telegram adalah
-**tampilan, bukan catatan**.
+§8 mencatat cron GH Actions bisa telat belasan menit saat runner sibuk. Untuk
+halaman baca pagi itu tidak masalah; yang penting jendela waktunya tetap, bukan
+jam terbitnya.
 
-Kalau rangkuman disusun langsung di dalam job harian sambil jalan, kemampuan itu
-hilang permanen — kesalahan yang sejenis dengan tidak menyimpan raw (§5).
-Konsekuensi praktisnya: `rangkuman.py` menerima parameter tanggal, dan job harian
+### Bagian dan pembatasan
+
+Empat bagian, sesuai yang mau dibaca:
+
+1. **Makro & kebijakan Indonesia** — rilis BPS/BI, APBN, pajak, suku bunga, kurs, regulasi
+2. **Pasar & emiten IDX** — aksi korporasi, laporan keuangan, IPO, berita emiten
+3. **Politik & sosial** — yang berpotensi menggerakkan pasar
+4. **Global** — The Fed, komoditas, geopolitik
+
+**Tiap bagian dibatasi jumlah itemnya.** Empat kategori dari belasan media
+gampang menghasilkan seratus item, dan halaman yang tidak muat dibaca dalam lima
+menit tidak akan dibaca sama sekali. Batas ini fitur, bukan keterbatasan.
+
+### Dedup menentukan halaman ini berhasil atau tidak
+
+Bagian tersulit bukan tampilannya, tapi **near-duplicate detection**. Selusin
+media menulis peristiwa yang sama dari rilis yang sama. Tanpa dedup, halamannya
+berisi 80 item yang sebenarnya 15 peristiwa, dan berhenti dibuka di hari ketiga.
+
+Hasil sampingnya langsung memberi urutan: **berapa banyak media meliput satu
+peristiwa = seberapa penting peristiwa itu**. Proxy yang murah, tidak butuh NLP,
+dan biasanya lebih jujur daripada skor sentimen. Ini yang membuat §10 tidak ada
+di jalur kritis.
+
+Tiap item ditampilkan sebagai judul + satu-dua kalimat + sumber + jam, dengan
+media lain yang meliput hal sama dilipat jadi satu baris. Batasnya §11: link,
+kutipan pendek, dan metadata — bukan teks artikel utuh, sekalipun halaman ini
+hanya dibaca sendiri.
+
+### Aturan yang mengikat: edisi di-generate dari data tersimpan
+
+`alur/edisi.py` menerima **parameter tanggal**, membaca artikel yang sudah
+tersimpan dalam jendela waktu edisi itu, dan menghasilkan halaman. Job harian
 hanyalah pemanggilan dengan tanggal hari ini.
 
-### Isi
+Konsekuensinya: edisi tanggal berapa pun bisa dibuat ulang. Kalau tampilannya
+diperbaiki bulan depan, seluruh arsip bisa di-render ulang; kalau logika
+dedup diperbaiki, edisi lama bisa dinilai ulang dengan aturan baru. Kalau halaman
+disusun langsung di dalam job harian sambil mengambil feed, kemampuan itu hilang
+permanen — kesalahan yang sejenis dengan tidak menyimpan raw (§5).
 
-Mengikuti keluaran yang sudah dirancang di §10 — bukan sekadar daftar judul
-berita:
+Karena itu urutannya dua langkah terpisah, bukan satu: **ambil dan simpan** (jalan
+beberapa kali sehari, murah), lalu **susun edisi** (jalan sekali pagi). Mengambil
+feed hanya sekali sehari berarti kehilangan berita yang sudah digeser dari feed
+oleh berita yang lebih baru — sebagian media hanya menyimpan 20 item terakhir.
 
-- **Rilis hari ini** — angka baru dari `seri_makro`, berikut nilai sebelumnya dan
-  arahnya. Kalau sebuah angka adalah revisi, katakan itu revisi.
-- **Indeks sentimen per tema** (fiskal, moneter, stabilitas politik) — nilai dan
-  pergeserannya dari 7 hari lalu.
-- **Anomali volume liputan** — §10 mencatat lonjakan jumlah artikel per topik
-  sering jadi sinyal lebih awal daripada nada beritanya. Ini yang paling layak
-  masuk push harian.
-- **Peristiwa baru** dari tabel peristiwa, dengan link ke arsip.
+### Menambahkan angka makro, nanti
 
-Contoh bentuknya:
-
-```
-📊 Makro — 9 Sep 2026
-
-Rilis hari ini
-• BPS: IHK Agustus 2,1% yoy (Jul: 2,3%) ↓
-• BI: JISDOR 16.240 (+0,3% w/w)
-
-Indeks sentimen (7h)
-• Fiskal          -0,12  ↓ dari -0,04
-• Moneter         +0,31  ↑
-• Stab. politik   +0,05  →
-
-⚠️ Volume liputan "subsidi energi" naik 3,2x vs baseline 30h
-   → 14 artikel, puncak sejak Mar 2026
-
-3 peristiwa baru → [arsip]
-```
-
-Batas isinya diatur §11: link, kutipan pendek, dan metadata — bukan teks artikel
-utuh, sekalipun rangkuman ini hanya dibaca sendiri.
+Mulai fase 3, bagian pertama halaman diawali angka rilis terbaru dari
+`seri_makro` — IHK, BI-Rate, kurs — dengan nilai sebelumnya dan arahnya, dan
+ditandai kalau angka itu revisi (§5). Ini alasan `seri_makro` tetap dibangun
+meski produk utamanya halaman baca: satu baris angka di puncak halaman jauh lebih
+berguna daripada sepuluh judul berita tentang angka yang sama.
 
 ### Kapan
 
-**Fase 3–4**, bukan sekarang. Di fase 1 hanya ada BPS yang rilis bulanan; tidak
-ada yang bisa dirangkum tiap hari, dan indeks sentimen belum terkalibrasi.
-Sampai fase itu, Telegram dipakai untuk kegagalan dan anomali saja, seperti §9.
+**Fase 1 — sekarang.** Ini produk utamanya, bukan pelengkap yang menyusul.
 
-Yang tetap berlaku sejak sekarang: lapisan gold dirancang agar rangkuman bisa
-dibaca darinya. Kalau gold hanya menyimpan time series tanpa tabel peristiwa dan
-indeks harian, bab ini tidak bisa dikerjakan tanpa membongkar ulang §6.
+Yang belum ada di fase 1 dan memang tidak perlu: indeks sentimen, tabel
+peristiwa, dan seluruh §10. Halaman pagi yang berisi berita ter-dedup dan
+terurut sudah menjawab kebutuhannya. §10 baru relevan kalau ternyata membaca
+halaman itu tidak cukup — dan itu pertanyaan yang hanya bisa dijawab setelah
+beberapa bulan membacanya.

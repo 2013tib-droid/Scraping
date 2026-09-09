@@ -1,7 +1,9 @@
 # Sistem Intelijen Data Makro–Mikro Indonesia
 
-Pipeline pengumpulan data makro, politik, dan sosial Indonesia — untuk memberi
-konteks pada keputusan pasar. Dipakai satu orang, bukan produk multi-user.
+Halaman baca pagi: berita mikro dan makro Indonesia dari 24 jam terakhir,
+ter-dedup dan terurut, cukup dibaca lima menit sambil ngopi. Di belakangnya,
+pipeline yang lama-lama juga menyimpan seri data makro untuk dipakai
+`Screening-Saham`. Dipakai satu orang, bukan produk multi-user.
 
 **Status: fase 1 baru dimulai.** Dokumen keputusan lengkap; dari kode, baru
 `inti/notifikasi.py` yang ada.
@@ -60,12 +62,15 @@ Konsekuensi yang dipegang sejak awal:
 
 ## Roadmap
 
-1. **Tulang punggung** — satu sumber (BPS) end-to-end: bronze → silver → DuckDB,
-   lengkap dengan retry, validasi, uji, cron, notifikasi. Ini jadi cetakan.
-2. **Perluas makro** — BI, World Bank, FRED. Di sini skema diuji beneran.
-3. **Berita** — RSS media ekonomi Indonesia + GDELT. Kumpulkan dulu, NLP nanti.
-4. **NLP** — saring, dedup, sentimen, indeks harian.
-5. **Integrasi** — sambungkan ke `Screening-Saham` sebagai fitur tambahan.
+1. **Halaman pagi** — RSS → bronze → dedup → HTML statis → Telegram kirim link,
+   cron harian. Sempit tapi lengkap; ini cetakan untuk sumber berikutnya.
+2. **Kualitas bacaan** — tambah sumber, perbaiki dedup, saring noise. Ukurannya
+   jujur: apakah halamannya masih dibuka di minggu ketiga.
+3. **Makro** — BPS, BI, FRED, World Bank, dengan vintage sejak baris pertama.
+   Angka rilis terbaru naik ke puncak halaman pagi.
+4. **NLP — kalau terbukti perlu.** Sentimen dan indeks harian. Boleh tidak
+   pernah dikerjakan.
+5. **Integrasi** — sambungkan `seri_makro` ke `Screening-Saham`.
 
 ## Catatan
 
