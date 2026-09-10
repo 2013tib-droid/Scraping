@@ -21,9 +21,12 @@ tiga lapis:
 2. **Frasa bertanda tetap.** Yang tandanya tidak bergantung arah apa pun:
    "gagal bayar", "pailit", "resesi" selalu negatif; "insentif", "rekor
    tertinggi", "kesepakatan dagang" selalu positif.
-3. **Negasi.** Dua kata sebelum pemicu diperiksa ("tidak", "belum", "batal",
-   "urung", "tanpa"); kalau kena, tandanya dibalik. Ini yang menyelamatkan
-   "Rupiah tidak melemah" dan "BI batal menaikkan suku bunga".
+3. **Negasi**, dua tingkat. `NEGASI` ("tidak", "belum", "batal", "urung",
+   "tanpa") membalik pemicu apa pun dalam dua kata sesudahnya — itu yang
+   menyelamatkan "Rupiah tidak melemah" dan "BI batal menaikkan suku bunga".
+   `PEMBALIK_ARAH` ("penghambat", "kendala", "gagal") hanya membalik kata arah,
+   karena kata-kata itu sudah punya tanda negatifnya sendiri dan akan saling
+   meniadakan kalau dayanya penuh.
 
 Judul berbobot dua kali ringkasan. Judul adalah pernyataan redaksi tentang
 peristiwanya; ringkasan sering memuat latar dan kutipan yang arahnya lain.
@@ -56,12 +59,33 @@ BOBOT_RINGKASAN = 1
 # menyeberang ke klausa berikutnya pada judul berita yang biasanya pendek.
 JANGKAUAN = 4
 
+# Sisi kanan sengaja jauh lebih sempit. Ia cuma cadangan untuk pola "BI
+# menaikkan suku bunga", di mana pokoknya menempel persis setelah kata arah —
+# dan jangkauan yang lebar di sisi ini memungut kata dari klausa lain. Yang
+# menyadarkan: "Jika Bunga The Fed Naik, Ini Efeknya ke IHSG" jadi positif,
+# karena "ihsg" empat kata di kanan "naik" sementara "bunga" lima kata di kiri.
+JANGKAUAN_KANAN = 2
+
 # Dua kata sebelum pemicu. Cukup untuk "tidak jadi naik" dan "belum juga turun".
 JANGKAUAN_NEGASI = 2
 
+# Negasi penuh: membalik pemicu apa pun yang menyusul, arah maupun frasa tetap.
 NEGASI: frozenset[str] = frozenset({
     "tidak", "tak", "bukan", "belum", "batal", "urung", "tanpa",
     "menolak", "tolak", "mencegah", "cegah", "not",
+})
+
+# Pembalik yang **hanya** berlaku atas kata arah: "faktor penghambat pertumbuhan
+# ekonomi" adalah kabar buruk, bukan kabar pertumbuhan.
+#
+# Dayanya sengaja dibatasi ke kata arah saja. Kata-kata ini juga ada di
+# FRASA_NEGATIF karena membawa tanda negatifnya sendiri, dan kalau ikut
+# menegasikan frasa tetap, mereka akan saling meniadakan: pada "kendala
+# perizinan hambat investasi", "kendala" membalik "hambat" dan judul yang jelas
+# buruk itu keluar netral.
+PEMBALIK_ARAH: frozenset[str] = frozenset({
+    "hambat", "hambatan", "menghambat", "terhambat", "penghambat",
+    "penghalang", "kendala", "gagal", "anjlokkan",
 })
 
 # Bentuk transitif ikut ("menaikkan", "memangkas"): judul kebijakan hampir
@@ -71,6 +95,10 @@ ARAH_NAIK: frozenset[str] = frozenset({
     "peningkatan", "melonjak", "lonjakan", "meroket", "menguat", "penguatan",
     "tumbuh", "pertumbuhan", "melesat", "bertambah", "menambah", "menambahkan",
     "melambung", "rebound", "reli", "rally",
+    # Superlatif diperlakukan sebagai arah, bukan frasa bertanda tetap: yang
+    # menentukan tetap pokoknya. "keyakinan konsumen tertinggi" positif,
+    # "inflasi tertinggi sejak 2015" negatif — satu aturan, dua hasil benar.
+    "tertinggi", "puncak", "memuncak",
 })
 
 ARAH_TURUN: frozenset[str] = frozenset({
@@ -78,7 +106,7 @@ ARAH_TURUN: frozenset[str] = frozenset({
     "melemah", "melemahkan", "pelemahan", "ambles", "ambruk", "jeblok",
     "terkoreksi", "koreksi", "menyusut", "susut", "tergerus", "berkurang",
     "mengurangi", "memangkas", "pangkas", "pemangkasan", "memotong",
-    "longsor", "lesu", "loyo",
+    "longsor", "lesu", "loyo", "terendah", "melambat", "perlambatan",
 })
 
 # Pokok yang **naiknya kabar baik**: arah naik jadi positif, arah turun negatif.
@@ -91,6 +119,10 @@ POKOK_BAIK_NAIK: frozenset[str] = frozenset({
     "lapangan", "wisatawan", "kunjungan", "panen", "pasokan",
     "produktivitas", "manufaktur", "pmi", "emas", "bara", "nikel", "cpo",
     "sawit", "minyak", "komoditas", "harga",
+    # Indikator survei: "Keyakinan Konsumen Meningkat" adalah judul rilis BI
+    # yang rutin dan jelas arahnya, tapi tanpa ini tidak punya pokok sama sekali.
+    "keyakinan", "kepercayaan", "konsumen", "permintaan", "optimisme",
+    "realisasi", "laju",
 })
 
 # Pokok yang **naiknya kabar buruk**. Menang atas daftar di atas di mana pun ia
@@ -143,6 +175,13 @@ FRASA_NEGATIF: tuple[str, ...] = (
     # "Investor Khawatir...", "Bursa Asia Tertekan...", "Memanas, Kanada...".
     "khawatir", "mengkhawatirkan", "tertekan", "memanas", "eskalasi",
     "terancam", "ancaman", "waswas",
+    # Keluarga "hambat" sengaja ada di dua daftar sekaligus, dan itu bukan
+    # kelalaian. Di NEGASI ia membalik arah yang menyusul ("penghambat
+    # pertumbuhan"); di sini ia membawa tandanya sendiri, karena "kendala
+    # perizinan hambat investasi" tidak punya kata arah untuk dibalik. Pada
+    # judul yang kena keduanya, tandanya cuma saling menguatkan.
+    "hambat", "hambatan", "menghambat", "terhambat", "penghambat",
+    "penghalang", "kendala",
     "korupsi", "penyelewengan", "penggelapan", "tersangka", "gugatan",
     "denda", "kelangkaan", "gagal panen", "pemadaman", "mogok kerja",
     "unjuk rasa", "kerusuhan", "penipuan",
@@ -208,9 +247,12 @@ def _kata(teks: str) -> list[str]:
     return "".join(c if c.isalnum() else " " for c in teks.lower()).split()
 
 
-def _dinegasikan(kata: list[str], posisi: int) -> bool:
+def _dinegasikan(kata: list[str], posisi: int, arah: bool = False) -> bool:
+    """Apakah pemicu di `posisi` dibalik oleh kata sebelumnya. `arah=True` ikut
+    memperhitungkan PEMBALIK_ARAH, yang hanya berlaku atas kata arah."""
     awal = max(0, posisi - JANGKAUAN_NEGASI)
-    return any(k in NEGASI for k in kata[awal:posisi])
+    pembalik = NEGASI | PEMBALIK_ARAH if arah else NEGASI
+    return any(k in pembalik for k in kata[awal:posisi])
 
 
 def _pemicu(kata: list[str]) -> list[tuple[int, str]]:
@@ -261,7 +303,7 @@ def _arah_pokok(kata: list[str]) -> list[tuple[int, str]]:
         nama, baik_naik = pokok
 
         tanda = 1 if naik == baik_naik else -1
-        if _dinegasikan(kata, i):
+        if _dinegasikan(kata, i, arah=True):
             tanda = -tanda
         hasil.append((tanda, f"{nama} {k}"))
     return hasil
@@ -284,7 +326,7 @@ def _pokok_terdekat(kata: list[str], posisi: int) -> tuple[str, bool] | None:
     lebih rapat ke "naik".
     """
     kiri = range(posisi - 1, max(-1, posisi - JANGKAUAN - 1), -1)
-    kanan = range(posisi + 1, min(len(kata), posisi + JANGKAUAN + 1))
+    kanan = range(posisi + 1, min(len(kata), posisi + JANGKAUAN_KANAN + 1))
     for sisi in (kiri, kanan):
         for daftar, baik_naik in ((POKOK_BURUK_NAIK, False), (POKOK_BAIK_NAIK, True)):
             for j in sisi:

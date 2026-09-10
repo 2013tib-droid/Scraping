@@ -57,6 +57,27 @@ def uji_pokok_buruk_menang_pada_jarak_sama():
     assert label("Inflasi harga pangan naik") == sentimen.NEGATIF
 
 
+def uji_superlatif_ikut_pokoknya():
+    """"tertinggi" bukan frasa positif: yang menentukan tetap pokoknya."""
+    assert label("Keyakinan konsumen tertinggi dalam tiga tahun") == sentimen.POSITIF
+    assert label("Inflasi tertinggi sejak 2015") == sentimen.NEGATIF
+
+
+def uji_kata_penghambat_membalik_arah():
+    """"Faktor penghambat pertumbuhan ekonomi" adalah kabar buruk, bukan kabar
+    pertumbuhan — persis seperti negasi, dan ditangani lewat jalan yang sama."""
+    assert label("Bappenas ungkap faktor penghambat pertumbuhan ekonomi") == sentimen.NEGATIF
+    assert label("Kendala perizinan hambat investasi asing") == sentimen.NEGATIF
+
+
+def uji_sisi_kanan_tidak_menyeberang_klausa():
+    """Pokok di kanan hanya dipungut kalau menempel. Tanpa batas ini, "Jika
+    Bunga The Fed Naik, Ini Efeknya ke IHSG" jadi positif gara-gara "ihsg"."""
+    assert label("Jika bunga The Fed akhir tahun naik, ini efeknya ke IHSG") == sentimen.NETRAL
+    # Yang dekat tetap kena — ini pola yang membuat sisi kanan ada.
+    assert label("BI menaikkan suku bunga acuan") == sentimen.NEGATIF
+
+
 def uji_arah_tanpa_pokok_diabaikan():
     """Tanpa pokok yang dikenal, tidak ada arah yang bisa disimpulkan — dan
     menebaknya berarti setiap "meningkat" jadi kabar baik."""
