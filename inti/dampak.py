@@ -42,14 +42,20 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 # Ambang liputan dikalibrasi ke sebaran yang **sebenarnya**, bukan ke intuisi.
-# Pada data 9 Sep 2026 (552 peristiwa): 524 diliput 1 media, 24 diliput 2, dan
-# hanya 4 peristiwa diliput >=3. Maksimumnya 5.
 #
-# Sebabnya dedup mencocokkan kemiripan judul, sementara redaksi Indonesia
-# menuliskan peristiwa yang sama dengan judul yang sangat berbeda — jadi
-# `jumlah_media` **kurang menghitung**, sering jauh. Itu membuat liputan tidak
-# bisa jadi gerbang; ia hanya bisa jadi bukti kalau angkanya sudah ekstrem.
-# Kalau dedup diperbaiki, angka-angka di bawah harus dihitung ulang.
+# **Dihitung ulang 10 Sep 2026**, setelah dedup diberi jalan kedua (kata langka
+# bersama) dan pemenggalan imbuhan. Baris ini memang menyuruh begitu, dan
+# angkanya memang bergeser: pada 10 Sep, 1.121 artikel yang dulu jadi 962
+# peristiwa kini jadi 818, dan liputan tertinggi naik dari 5 ke 11 media.
+#
+#   sebaran jumlah_media (818 peristiwa): 732 diliput 1, 52 diliput 2,
+#   17 diliput 3, lalu ekor tipis sampai 11.
+#   persentil: 2 media = p95,8 · 5 media = p99,1
+#
+# `jumlah_media` masih **kurang menghitung** — dedup mencocokkan kata judul,
+# sementara dua redaksi bisa menulis peristiwa yang sama tanpa satu pun kata
+# pembeda yang sama. Jadi liputan tetap bukan gerbang; ia bukti hanya kalau
+# angkanya sudah ekstrem. Yang berubah cuma di mana "ekstrem" itu berada.
 BATAS_RAMAI = 5    # ~99,8 persentil: seramai ini sudah bukti sendiri
 BATAS_SEDANG = 2   # ~95 persentil: cukup untuk "penting"
 

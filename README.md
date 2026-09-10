@@ -45,11 +45,23 @@ yang 0 dibuang. Aturannya deterministik dan seluruhnya lokal — frasa penanda d
 judul, luas liputan, bobot sumber, dan saringan noise — jadi tidak ada kunci API,
 tidak ada biaya, tidak ada kuota, dan tidak ada jalur gagal karena jaringan.
 
-Ambangnya dikalibrasi ke sebaran nyata, bukan ke intuisi: 95% peristiwa hanya
-diliput satu media dan maksimumnya lima, karena dedup mencocokkan kemiripan judul
-sementara redaksi menuliskan hal yang sama dengan judul yang jauh berbeda. Itu
-sebabnya liputan dipakai sebagai bukti hanya ketika angkanya ekstrem, dan frasa
-yang memikul sebagian besar beban. Daftar frasanya ada di berkas itu juga dan
+Ambangnya dikalibrasi ke sebaran nyata, bukan ke intuisi: ~90% peristiwa hanya
+diliput satu media dan liputan tertingginya 11. Liputan dipakai sebagai bukti
+hanya ketika angkanya ekstrem, dan frasa yang memikul sebagian besar beban.
+
+**Dedup punya dua jalan.** Yang pertama Jaccard atas kata judul. Yang kedua ada
+karena dua redaksi bisa menulis peristiwa yang sama nyaris tanpa kata yang sama:
+
+    "Purbaya Buka Peluang APBN Biayai Saldo Rekening Masyarakat Rp50 Ribu"
+    "Menteri Keuangan Jelaskan Penggunaan APBN untuk Pembukaan Rekening Masyarakat"
+
+Kemiripannya 0,29 — di bawah ambang. Menurunkan ambang bukan jawabannya:
+diukur ke data 10 Sep, ambang 0,20 menghasilkan satu kelompok berisi 280
+artikel. Yang membedakan pasangan ini dari kebetulan bukan besar irisannya,
+melainkan **kelangkaannya** — "apbn" muncul di 6 judul dari 1.121, "masyarakat"
+di 8, "rekening" di 20. Jadi jalan kedua menuntut tiga kata langka yang sama
+plus separuh judul terpendek tertutup. Ditambah pemenggalan imbuhan, 1.121
+artikel yang tadinya jadi 962 peristiwa kini jadi 818. Daftar frasanya ada di berkas itu juga dan
 memang dimaksudkan untuk diubah — kalau blok utama terasa longgar atau ketat
 setelah beberapa hari, di situ tempatnya.
 
