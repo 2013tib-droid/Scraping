@@ -224,6 +224,7 @@ h3 a:hover { color: var(--tautan); text-decoration: underline; text-underline-of
 }
 .juga a:hover { opacity: 1; }
 .lagi { color: var(--redup); }
+.terjemah { font-style: italic; cursor: help; }
 
 /* --- layar lebar ----------------------------------------------------------- */
 /* Wadahnya melebar ke 80% viewport, tapi isinya pecah jadi dua kolom di titik
@@ -319,7 +320,18 @@ def _meta(p) -> str:
         bagian.append(f'<span class="media">{p.jumlah_media} media</span>')
     bagian.append(f'<span class="sumber">{escape(p.domain)}</span>')
     bagian.append(f"<span>{_jam(p.waktu_terbit)} WIB</span>")
+    if asli := getattr(p, "judul_asli", None):
+        # Terjemahan mesin bisa meleset; penandanya memberi tahu kenapa isi
+        # tautannya berbahasa Inggris, dan judul aslinya ada di `title`.
+        bagian.append(f'<span class="terjemah" title="{escape(asli)}">diterjemahkan</span>')
     return '<p class="meta">' + " ".join(bagian) + "</p>"
+
+
+def _tautan(p) -> str:
+    """Judul bertaut. Yang diterjemahkan tetap menuju artikel aslinya, jadi
+    `hreflang` memberi tahu bahwa halaman tujuannya berbahasa Inggris."""
+    bahasa = ' hreflang="en"' if getattr(p, "judul_asli", None) else ""
+    return f'<a href="{escape(p.url)}"{bahasa}>{escape(p.judul)}</a>'
 
 
 def _juga(p) -> str:
@@ -358,7 +370,7 @@ def _sorotan(p) -> str:
     kelas = "sorotan bergambar" if thumb else "sorotan"
     return f"""      <article class="{kelas}">
         <div class="isi">
-          <h3><a href="{escape(p.url)}">{escape(p.judul)}</a></h3>
+          <h3>{_tautan(p)}</h3>
           {_meta(p)}
           {_alasan(p)}
           {_ringkasan(p.ringkasan)}
@@ -372,7 +384,7 @@ def _item(nomor: int, p) -> str:
     return f"""        <li>
           <span class="nomor">{nomor:02d}</span>
           <div>
-            <h3><a href="{escape(p.url)}">{escape(p.judul)}</a></h3>
+            <h3>{_tautan(p)}</h3>
             {_meta(p)}
             {_alasan(p)}
             {_ringkasan(p.ringkasan)}

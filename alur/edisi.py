@@ -1,10 +1,14 @@
 """
 edisi.py — susun halaman pagi untuk satu tanggal.
 
-Langkah kedua dari dua (ARSITEKTUR.md §16). Modul ini **tidak** mengambil apa pun
+Langkah kedua dari dua (ARSITEKTUR.md §16). Modul ini **tidak** mengambil berita
 dari jaringan; ia membaca artikel yang sudah tersimpan. Karena tanggalnya
 parameter, edisi tanggal berapa pun bisa dibangun ulang kapan saja — kalau logika
 dedup atau tampilannya diperbaiki bulan depan, seluruh arsip bisa di-render ulang.
+
+Satu-satunya pengecualian: terjemahan bagian Global (inti/terjemah.py), yang
+hanya jalan kalau `bangun()` diberi penerjemah — `main()` memberinya, uji tidak.
+Hasilnya disimpan, dan kalau gagal halaman tetap terbit dalam bahasa Inggris.
 
 Alurnya:
 
@@ -20,11 +24,12 @@ from __future__ import annotations
 
 import sys
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
-from inti import dampak, notifikasi, pajak, render, sentimen
+from inti import dampak, notifikasi, pajak, render, sentimen, terjemah
 from inti.dedup import kelompokkan
 from inti.penyimpanan import buka
 
@@ -105,6 +110,10 @@ class Peristiwa:
     # Diisi di `bangun()` hanya untuk peristiwa yang berakhir di bagian
     # Perpajakan: daerah/pusat, buang, dan subtopiknya (inti/pajak.py).
     klasifikasi_pajak: pajak.Klasifikasi | None = None
+    # Judul bahasa Inggris sebelum diterjemahkan (`terjemahkan_global`); None
+    # kalau judulnya memang tidak diterjemahkan. `url` tidak pernah disentuh —
+    # tautannya tetap ke artikel penerbit aslinya.
+    judul_asli: str | None = None
 
     @property
     def skor(self) -> float:
@@ -308,7 +317,34 @@ def per_bagian(peristiwa: list[Peristiwa]) -> dict[str, list[Peristiwa]]:
     return bagian
 
 
-def bangun(con, tanggal: date) -> tuple[str, dict[str, list[Peristiwa]], int]:
+Penerjemah = Callable[[list[str]], dict[str, str]]
+
+
+def terjemahkan_global(bagian: dict[str, list[Peristiwa]], penerjemah: Penerjemah) -> None:
+    """Ganti judul dan ringkasan peristiwa Global dengan terjemahannya.
+
+    Jalan **setelah** `per_bagian`: yang diterjemahkan hanya yang tampil, dan
+    penilai dampak, status arah, serta pengurutan sudah selesai membaca teks
+    aslinya — aturan mereka ditulis untuk teks yang mereka baca waktu itu, dan
+    terjemahan mesin tidak boleh diam-diam menggeser apa yang naik ke halaman.
+
+    Ikut juga peristiwa Global yang naik ke blok utama, karena yang dilihat
+    adalah kategorinya, bukan bagian tempatnya mendarat.
+    """
+    asing = [p for v in bagian.values() for p in v if p.kategori == "global"]
+    if not asing:
+        return
+    hasil = penerjemah([t for p in asing for t in (p.judul, p.ringkasan) if t])
+    for p in asing:
+        if judul := hasil.get(p.judul):
+            p.judul_asli, p.judul = p.judul, judul
+        if p.ringkasan and (ringkasan := hasil.get(p.ringkasan)):
+            p.ringkasan = ringkasan
+
+
+def bangun(
+    con, tanggal: date, penerjemah: Penerjemah | None = None
+) -> tuple[str, dict[str, list[Peristiwa]], int]:
     mulai, akhir = jendela(tanggal)
     artikel = ambil(con, mulai, akhir)
     peristiwa = jadikan_peristiwa(artikel)
@@ -331,6 +367,8 @@ def bangun(con, tanggal: date) -> tuple[str, dict[str, list[Peristiwa]], int]:
 
     tandai_pajak(peristiwa)
     bagian = per_bagian(peristiwa)
+    if penerjemah:
+        terjemahkan_global(bagian, penerjemah)
     # Tautan ke edisi kemarin hanya kalau berkasnya memang ada di arsip —
     # tautan mati lebih buruk daripada tidak ada tautan.
     kemarin = tanggal - timedelta(days=1)
@@ -372,13 +410,21 @@ def main(argv: list[str] | None = None) -> int:
 
     con = buka()
     try:
-        html, bagian, total = bangun(con, tanggal)
+        html, bagian, total = bangun(
+            con, tanggal, penerjemah=lambda teks: terjemah.terjemahkan(con, teks)
+        )
     finally:
         con.close()
 
     berkas = tulis(html, tanggal)
     dipilih = sum(len(v) for v in bagian.values())
     print(f"edisi {tanggal}: {dipilih} peristiwa dari {total} artikel -> {berkas}")
+    asing = [p for v in bagian.values() for p in v if p.kategori == "global"]
+    if asing:
+        # Kalau angka pertama jauh di bawah yang kedua, endpoint terjemahan
+        # sedang menolak — halamannya tetap terbit, sebagian dalam bahasa Inggris.
+        diterjemahkan = sum(1 for p in asing if p.judul_asli)
+        print(f"terjemahan: {diterjemahkan}/{len(asing)} judul Global")
 
     if not dipilih:
         # Halaman kosong hampir selalu berarti pengambilnya tidak jalan, bukan

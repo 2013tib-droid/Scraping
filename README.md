@@ -105,6 +105,19 @@ meninggalkan kotak sunyi, dan teksnya memang sudah lengkap tanpa gambar itu.
 Sekitar sepertiga sumber (Google News, Kontan, feed bank sentral) tidak membawa
 gambar sama sekali, jadi kartu tanpa gambar adalah keadaan normal, bukan galat.
 
+**Bagian Global tampil dalam bahasa Indonesia** (`inti/terjemah.py`) — judul
+dan ringkasannya, sementara tautannya tetap ke artikel penerbit dalam bahasa
+Inggris. Yang diterjemahkan hanya yang tampil (sekitar sepuluh kalimat pendek
+per edisi), dan hanya **setelah** penilai dampak, status arah, dan pengurutan
+selesai membaca teks aslinya, jadi terjemahan tidak menggeser apa yang naik ke
+halaman. Penyedianya endpoint publik Google Translate: gratis dan tanpa kunci,
+tapi tidak resmi — kalau suatu hari menolak, halaman tetap terbit dengan judul
+berbahasa Inggris seperti sebelumnya, dan log run mencatat
+`terjemahan: x/y judul Global`. Hasilnya disimpan di tabel `terjemahan`, jadi
+membangun ulang edisi tidak meminta ulang. Item terjemahan diberi tanda
+*diterjemahkan*; di laptop, judul aslinya muncul saat kursor diarahkan ke
+penanda itu (di HP tidak — di sana judul asli ada di halaman tujuannya).
+
 `alur/reparse.py` mengisi kolom yang baru ditambahkan dari bronze yang sudah
 tersimpan — inilah §5 yang ditagih: memperbaiki parser berarti *re-parse*, murah
 dan retroaktif. Ada workflow manualnya (`reparse.yml`) karena data yang dipakai

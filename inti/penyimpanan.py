@@ -13,6 +13,7 @@ Tabel di DuckDB (§7 — tanpa server, satu berkas yang bisa di-backup dengan co
     artikel     satu baris per URL kanonik, isinya tidak pernah di-UPDATE
     feed_state  ETag/Last-Modified terakhir per feed, untuk conditional request
     metrik_run  satu baris per feed per run (§12)
+    terjemahan  judul/ringkasan Global yang sudah diterjemahkan (inti/terjemah.py)
 """
 
 from __future__ import annotations
@@ -58,6 +59,13 @@ CREATE TABLE IF NOT EXISTS metrik_run (
     jumlah_baru  INTEGER NOT NULL DEFAULT 0,
     durasi       DOUBLE  NOT NULL DEFAULT 0,
     catatan      VARCHAR
+);
+
+-- Tabel baru, jadi CREATE IF NOT EXISTS cukup; tidak perlu masuk MIGRASI.
+CREATE TABLE IF NOT EXISTS terjemahan (
+    asli   VARCHAR PRIMARY KEY,         -- teks bahasa Inggris persis dari feed
+    hasil  VARCHAR NOT NULL,
+    waktu  TIMESTAMP NOT NULL           -- UTC polos
 );
 """
 
