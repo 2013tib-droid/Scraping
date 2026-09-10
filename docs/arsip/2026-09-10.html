@@ -31,7 +31,11 @@ body {
   -webkit-text-size-adjust: 100%; overflow-wrap: anywhere;
 }
 a { color: inherit; }
-.bungkus { max-width: 42rem; margin: 0 auto; padding: 0 1.1rem; }
+/* Lebar dipegang satu variabel supaya wadah dan navigasi lengket tidak pernah
+   berbeda — kalau keduanya bergeser sendiri-sendiri, tombol navigasi berhenti
+   sejajar dengan teks di bawahnya. */
+:root { --lebar: 42rem; }
+.bungkus { max-width: var(--lebar); margin: 0 auto; padding: 0 1.1rem; }
 
 /* --- masthead ------------------------------------------------------------ */
 .kepala { padding: 2.4rem 0 1.4rem; }
@@ -56,7 +60,7 @@ a { color: inherit; }
   border-bottom: 1px solid var(--garis);
 }
 .nav ul {
-  list-style: none; margin: 0 auto; padding: .5rem 1.1rem; max-width: 42rem;
+  list-style: none; margin: 0 auto; padding: .5rem 1.1rem; max-width: var(--lebar);
   display: flex; gap: .35rem; overflow-x: auto; scrollbar-width: none;
 }
 .nav ul::-webkit-scrollbar { display: none; }
@@ -90,14 +94,14 @@ section.global { --warna: var(--global); }
    sesudah teks, jadi judul tetap yang pertama dibaca pembaca layar. Lebar
    kolomnya tetap, sehingga tidak ada pergeseran tata letak saat gambar masuk —
    dan tidak ada bedanya kalau gambar itu tidak pernah datang. */
-.sorotan.bergambar { display: grid; grid-template-columns: 1fr 6.5rem; column-gap: 1rem; align-items: start; }
+.sorotan.bergambar { display: grid; grid-template-columns: 1fr auto; column-gap: 1rem; align-items: start; }
 .sorotan .isi { min-width: 0; }
 .thumb {
   width: 6.5rem; height: 6.5rem; border-radius: 10px; object-fit: cover;
   display: block; background: var(--sorot); border: 1px solid var(--garis);
 }
 @media (max-width: 24rem) {
-  .sorotan.bergambar { grid-template-columns: 1fr 4.5rem; column-gap: .7rem; }
+  .sorotan.bergambar { column-gap: .7rem; }
   .thumb { width: 4.5rem; height: 4.5rem; }
 }
 .sorotan h3 {
@@ -161,6 +165,40 @@ h3 a:hover { color: var(--tautan); text-decoration: underline; text-underline-of
 .juga a:hover { opacity: 1; }
 .lagi { color: var(--redup); }
 
+/* --- layar lebar ----------------------------------------------------------- */
+/* Wadahnya melebar ke 80% viewport, tapi isinya pecah jadi dua kolom di titik
+   yang sama. Keduanya satu paket, bukan dua keputusan: satu kolom selebar
+   1.500 px berarti baris ~200 karakter, dan mata kehilangan jejak saat kembali
+   ke awal baris berikutnya. Dipecah dua, tiap kolom ~700 px — senyaman versi
+   sempit, tapi layarnya terpakai.
+
+   Ambangnya 70rem (~1.120 px), bukan 1.024: pada laptop 1.024 px dua kolom
+   dari 80vw tinggal ~390 px masing-masing, dan kartu sorotan hanya menyisakan
+   ~260 px untuk teks setelah gambarnya. Di bawah ambang ini semuanya tetap
+   satu kolom 42rem seperti sebelumnya — ponsel dan tablet tidak tersentuh. */
+@media (min-width: 70rem) {
+  :root { --lebar: min(80vw, 96rem); }
+
+  /* Blok utama: enam kartu berdampingan dua-dua, bukan menumpuk sendirian. */
+  section.utama .kartu {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem;
+  }
+  section.utama .sorotan { margin-bottom: 0; }
+
+  /* Bagian lain: sorotan di kiri, daftar bernomor di kanan — judul bagiannya
+     membentang di atas keduanya. */
+  section:not(.utama) {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem; align-items: start;
+  }
+  section:not(.utama) .judul-bagian { grid-column: 1 / -1; }
+  section:not(.utama) .sorotan { margin-bottom: 0; }
+  .daftar li:first-child { padding-top: 0; }
+
+  /* Ruang yang bertambah dipakai gambar, bukan dibiarkan jadi margin. */
+  .thumb { width: 8rem; height: 8rem; }
+}
+
 /* --- kaki ------------------------------------------------------------------ */
 footer {
   margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--garis);
@@ -178,7 +216,7 @@ footer a { color: var(--tautan); }
         <small>Berita 24 jam terakhir, sampai 05:00 WIB</small></h1>
       <div class="angka">
         <span><b>42</b> peristiwa</span>
-        <span>dari <b>1554</b> artikel</span>
+        <span>dari <b>1556</b> artikel</span>
         <span><b>201</b> sumber</span>
       </div>
     </header>
@@ -187,6 +225,7 @@ footer a { color: var(--tautan); }
   <div class="bungkus">
     <section class="utama" id="utama">
       <div class="judul-bagian"><h2>Penting Pagi Ini</h2><small>dampak tinggi, lintas bagian</small></div>
+      <div class="kartu">
       <article class="sorotan bergambar">
         <div class="isi">
           <h3><a href="https://finance.detik.com/berita-ekonomi-bisnis/d-8656126/prabowo-ungkap-kata-pakar-2050-ri-negara-keempat-ekonomi-terbesar-dunia">Prabowo Ungkap Kata Pakar: 2050 RI Negara Keempat Ekonomi Terbesar Dunia</a></h3>
@@ -247,6 +286,7 @@ footer a { color: var(--tautan); }
         </div>
         <img class="thumb" src="https://static.republika.co.id/uploads/images/detailnews/_260909161950-537.png" alt="" loading="lazy" decoding="async" width="208" height="208">
       </article>
+      </div>
     </section>
     <section class="makro" id="makro">
       <div class="judul-bagian"><h2>Makro &amp; Kebijakan</h2><small>BPS, BI, APBN, pajak, kurs, regulasi</small></div>
@@ -439,7 +479,7 @@ footer a { color: var(--tautan); }
         <li>
           <span class="nomor">07</span>
           <div>
-            <h3><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxPTVh2WFh3OVhPS0lKU3dUbXBUSEg0clBKZHFTTWFfQ1kwOUNadVRTTVZULWl5QmR6djE2bE9tRmtPSDRWaWpIQzVQODFaZ0pPUnFQY2k1bEwzLTh1M1FMc1RjbWl2bDBpTGJWb0dkREU2N2tMVjd5TkNRdU1tZnZYcVFxczM1aEJZbVJYQ2ZjdG5qRF9ZVHVFa194czY5VncyUmhma2tTQlA2SWlJUFhzdDRlQdIBuAFBVV95cUxNdkgzX1BYdnIzOFZ6cUdyRlU4WjMxUmh1NGFWbXJvd3EyYm5OeEt1OFdQV2JUWXo1QXdianBBQVdweS1KNHFvVVpad09qUHpGNmlORDFQcWp2dGdpbFVpOHJ3RUFlRU5XampqbnNvSW9TWGtsNE90NHA4eGNrUzdtSnJqRW0ya1FnQm9MZmp1TURZM3YxWjZhdndad2NQS1FQcTc4aXpLVUNrQWJuSU83N2k1TEJDSUlX?oc=5">IHSG Menguat ke 6.700,84, Investor Cermati Geopolitik dan The Fed</a></h3>
+            <h3><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxPTVh2WFh3OVhPS0lKU3dUbXBUSEg0clBKZHFTTWFfQ1kwOUNadVRTTVZULWl5QmR6djE2bE9tRmtPSDRWaWpIQzVQODFaZ0pPUnFQY2k1bEwzLTh1M1FMc1RjbWl2bDBpTGJWb0dkREU2N2tMVjd5TkNRdU1tZnZYcVFxczM1aEJZbVJYQ2ZjdG5qRF9ZVHVFa194czY5VncyUmhma2tTQlA2SWlJUFhzdDRlQQ?oc=5">IHSG Menguat ke 6.700,84, Investor Cermati Geopolitik dan The Fed</a></h3>
             <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="ihsg menguat">↑ positif</span> <span class="sumber">suarasurabaya.net</span> <span>10:06 WIB</span></p>
             <p class="alasan">Kebijakan moneter</p>
             
@@ -629,7 +669,7 @@ footer a { color: var(--tautan); }
       </ol>
     </section>
     <footer>
-      Disusun 11:05 WIB · <a href="2026-09-09.html">Edisi sebelumnya</a>.
+      Disusun 11:29 WIB · <a href="2026-09-09.html">Edisi sebelumnya</a>.
       <br>Tautan menuju penerbit aslinya. Kutipan pendek untuk keperluan baca pribadi.
     </footer>
   </div>
