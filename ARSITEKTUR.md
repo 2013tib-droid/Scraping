@@ -387,6 +387,14 @@ pagi; riwayatnya mengendap di `seri_makro` untuk dipakai belakangan.
 akal setelah beberapa bulan teks terkumpul, dan hanya kalau membaca halaman pagi
 ternyata tidak cukup. Fase ini boleh tidak pernah dikerjakan.
 
+> **Catatan 2026-09-10.** Tingkat 2 dari §10 — lexicon/aturan — sudah jalan di
+> `inti/sentimen.py`: tiap peristiwa dapat status positif/negatif/netral yang
+> tampil di halaman. Itu **bukan** fase 4 yang selesai, melainkan alasan fase 4
+> belum perlu dimulai. Yang belum ada justru bagian yang membuat §10 berharga:
+> tabel peristiwa terstruktur (aktor, kebijakan, sektor) dan indeks agregat
+> harian. Ambang naik ke tingkat 3 (IndoBERT) tetap sama: kalau labelnya sering
+> meleset dan menambah frasa sudah tidak menolong lagi.
+
 **Fase 5 — integrasi.** Sambungkan `seri_makro` ke `Screening-Saham` sebagai
 fitur tambahan.
 

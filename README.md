@@ -57,6 +57,27 @@ Yang tidak dilakukan: kalimat "kenapa penting bagi investor". Itu tidak bisa
 dihitung dari aturan, jadi `alasan` diisi label aturan yang menyala
 ("Kebijakan moneter", "Liputan luas") — bukan analisis yang dikarang.
 
+**Status arah** (`inti/sentimen.py`) menandai tiap peristiwa positif, negatif,
+atau netral, dan tampil sebagai lencana ↑/↓ di halaman. Aturannya lokal dan
+deterministik seperti penilai dampak — tidak ada model, tidak ada kunci API,
+tidak ada biaya.
+
+Yang membedakannya dari kamus kata positif/negatif biasa: arah kata tidak
+menentukan arah berita. "Naik" kabar baik untuk laba dan ekspor, kabar buruk
+untuk inflasi, utang, dan pengangguran — kamus rata akan salah pada "Inflasi
+naik jadi 4,2%", dan salahnya sistematis. Jadi kata arah dipasangkan dengan
+pokok di dekatnya, lalu pokok itu yang menentukan tandanya; ditambah frasa
+bertanda tetap ("gagal bayar", "insentif") dan pembalik negasi ("BI batal
+menaikkan suku bunga").
+
+Pada data 9–10 Sep 2026, sekitar tiga perempat peristiwa keluar **netral**, dan
+itu jawaban yang benar: pengumuman jadwal, agenda rapat, dan pernyataan pejabat
+memang tidak berarah. Netral tidak diberi lencana sama sekali — menandai semua
+berarti tidak menandai apa pun. Status ini **tidak** ikut memilih atau
+mengurutkan apa pun; berita buruk bukan berita yang kurang penting. Lencananya
+menyimpan frasa pemicu di `title`, jadi label yang terasa meleset bisa
+ditelusuri ke barisnya di berkas itu.
+
 ## Prinsip yang mengikat semuanya
 
 Scraping adalah **pilihan terakhir**, bukan titik awal:

@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
-from inti import dampak, notifikasi, render
+from inti import dampak, notifikasi, render, sentimen
 from inti.dedup import kelompokkan
 from inti.penyimpanan import buka
 
@@ -90,6 +90,11 @@ class Peristiwa:
     # Diisi oleh inti/dampak.py di `bangun()`; None hanya sebelum itu.
     dampak: int | None = None
     alasan: str | None = None
+    # Diisi oleh inti/sentimen.py di `bangun()`: "positif", "negatif", atau
+    # "netral". `pemicu` adalah frasa yang menentukannya, untuk ditelusuri
+    # kalau labelnya meleset.
+    sentimen: str | None = None
+    pemicu: str | None = None
 
     @property
     def skor(self) -> float:
@@ -259,6 +264,15 @@ def bangun(con, tanggal: date) -> tuple[str, dict[str, list[Peristiwa]], int]:
         if n := penilaian.get(p.url):
             p.dampak, p.alasan = n.dampak, n.alasan
 
+    # Status arah — positif/negatif/netral. Dipisah dari dampak karena
+    # menjawab pertanyaan lain: dampak menyaring dan mengurutkan, sentimen
+    # hanya menerangkan. Tidak ikut `_urutan` dan tidak membuang apa pun;
+    # berita buruk bukan berita yang kurang penting.
+    status = sentimen.nilai(peristiwa)
+    for p in peristiwa:
+        if s := status.get(p.url):
+            p.sentimen, p.pemicu = s.label, s.pemicu
+
     bagian = per_bagian(peristiwa)
     # Tautan ke edisi kemarin hanya kalau berkasnya memang ada di arsip —
     # tautan mati lebih buruk daripada tidak ada tautan.
@@ -320,7 +334,12 @@ def main(argv: list[str] | None = None) -> int:
     rincian = ", ".join(f"{k} {len(v)}" for k, v in bagian.items() if v)
     # Yang berdampak tinggi ikut di pesan: itu yang mau dibaca dari notifikasi
     # tanpa harus membuka halaman dulu.
-    utama = "".join(f"\n• {p.judul}" for p in bagian.get("utama", []))
+    # Arahnya ikut sebagai penanda: ▲ positif, ▼ negatif, • netral.
+    tanda = {sentimen.POSITIF: "▲", sentimen.NEGATIF: "▼"}
+    utama = "".join(
+        f"\n{tanda.get(p.sentimen, '•')} {p.judul}"
+        for p in bagian.get("utama", [])
+    )
     notifikasi.kirim_rangkuman(
         f"Ringkas Pagi {tanggal:%d/%m}\n{dipilih} peristiwa ({rincian})\n"
         f"dari {total} artikel semalam.{utama}"

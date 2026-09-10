@@ -54,6 +54,7 @@ GAYA = """
   --bg: #f7f5f0; --kertas: #fffdf9; --teks: #1c1b18; --redup: #6f6c65;
   --garis: #e4e0d7; --sorot: #efebe2; --tautan: #8a3324;
   --utama: #a5700a; --makro: #b5462f; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0;
+  --naik: #1f7a4d; --turun: #b3261e;
   --bayang: 0 1px 2px rgba(30,25,15,.06), 0 6px 20px -8px rgba(30,25,15,.12);
 }
 @media (prefers-color-scheme: dark) {
@@ -61,6 +62,7 @@ GAYA = """
     --bg: #131417; --kertas: #1b1c20; --teks: #e9e6e0; --redup: #9a978f;
     --garis: #2b2d33; --sorot: #22242a; --tautan: #e8a88f;
     --utama: #e9c060; --makro: #e58a72; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0;
+    --naik: #6ecf9c; --turun: #f08a80;
     --bayang: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.6);
   }
 }
@@ -166,6 +168,16 @@ h3 a:hover { color: var(--tautan); text-decoration: underline; text-underline-of
   font-weight: 700; color: var(--utama); background: color-mix(in srgb, var(--utama) 14%, transparent);
   padding: .05rem .5rem; border-radius: 999px;
 }
+/* Status arah. Bentuknya ikut membedakan, bukan hanya warna: panah naik/turun
+   tetap terbaca oleh mata yang tidak membedakan merah-hijau. Netral tidak
+   diberi lencana sama sekali — sebagian besar berita netral, dan menandai
+   semuanya berarti tidak menandai apa pun. */
+.arah {
+  font-weight: 700; padding: .05rem .5rem; border-radius: 999px;
+  color: var(--nada); background: color-mix(in srgb, var(--nada) 14%, transparent);
+}
+.arah.positif { --nada: var(--naik); }
+.arah.negatif { --nada: var(--turun); }
 .alasan {
   margin: 0 0 .4rem; font-size: .88rem; font-weight: 600; color: var(--warna);
   padding-left: .6rem; border-left: 2px solid var(--warna);
@@ -212,10 +224,29 @@ def _alasan(p) -> str:
     return f'<p class="alasan">{escape(alasan)}</p>' if alasan else ""
 
 
+# Lencana status arah (inti/sentimen.py). Netral sengaja tidak punya lencana.
+ARAH = {"positif": ("positif", "↑"), "negatif": ("negatif", "↓")}
+
+
+def _arah(p) -> str:
+    """Lencana positif/negatif, dengan frasa pemicunya sebagai `title` — supaya
+    label yang terasa keliru bisa langsung ditelusuri ke barisnya di
+    inti/sentimen.py, bukan cuma dicurigai."""
+    label = ARAH.get(getattr(p, "sentimen", None) or "")
+    if not label:
+        return ""
+    nama, panah = label
+    pemicu = getattr(p, "pemicu", None)
+    judul = f' title="{escape(pemicu)}"' if pemicu else ""
+    return f'<span class="arah {nama}"{judul}>{panah} {nama}</span>'
+
+
 def _meta(p) -> str:
     bagian = []
     if getattr(p, "dampak", None) == 3:
         bagian.append('<span class="tinggi">dampak tinggi</span>')
+    if arah := _arah(p):
+        bagian.append(arah)
     if p.jumlah_media > 1:
         bagian.append(f'<span class="media">{p.jumlah_media} media</span>')
     bagian.append(f'<span class="sumber">{escape(p.domain)}</span>')
