@@ -17,8 +17,18 @@ fungsinya, bukan hiasan. Keputusan tampilannya:
   dibaca sambil berdiri di dapur; serif membedakan "isi" dari "keterangan".
 - **Terang/gelap ikut setelan perangkat.** Dibaca jam 5 pagi; memaksa latar putih
   menyilaukan.
-- **Tanpa JavaScript, tanpa aset eksternal.** Satu berkas yang bisa dibuka dari
-  mana saja dan tetap terbaca sepuluh tahun lagi.
+- **Tanpa JavaScript.** Satu berkas yang bisa dibuka dari mana saja.
+- **Gambar hanya di kartu sorotan, dan hanya itu satu-satunya aset eksternal.**
+  Item bernomor tetap teks murni — di sana kerapatannya yang berguna. Batas ini
+  bukan selera: 35 thumbnail hotlink berarti ~1,5 MB dan 35 permintaan ke belasan
+  domain untuk halaman yang sekarang 62 KB; sepuluh kartu sorotan menahannya di
+  ~300 KB. Menyimpan gambarnya sendiri ke repo lebih buruk lagi — ~440 MB
+  setahun yang tidak bisa dihapus dari riwayat git, persis yang dihindari §5.
+  Harganya dibayar di arsip: URL gambar penerbit berumur bulanan sementara
+  `docs/arsip/` permanen, jadi edisi lama akan kehilangan fotonya. Karena itu
+  `alt` sengaja kosong dan tiap gambar duduk di atas bidang berwarna — yang mati
+  meninggalkan kotak sunyi, bukan ikon rusak, dan teksnya tetap lengkap tanpa
+  gambar itu sejak awal.
 - **Waktu selalu WIB** — satu-satunya tempat konversi dari UTC terjadi (§15 #9).
 """
 
@@ -129,6 +139,20 @@ section.global { --warna: var(--global); }
 .sorotan {
   background: var(--kertas); border-radius: 14px; padding: 1.1rem 1.2rem 1rem;
   border-left: 4px solid var(--warna); box-shadow: var(--bayang); margin-bottom: .6rem;
+}
+/* Teks dan gambar berdampingan; gambar di kolom kanan tapi urutan DOM-nya
+   sesudah teks, jadi judul tetap yang pertama dibaca pembaca layar. Lebar
+   kolomnya tetap, sehingga tidak ada pergeseran tata letak saat gambar masuk —
+   dan tidak ada bedanya kalau gambar itu tidak pernah datang. */
+.sorotan.bergambar { display: grid; grid-template-columns: 1fr 6.5rem; column-gap: 1rem; align-items: start; }
+.sorotan .isi { min-width: 0; }
+.thumb {
+  width: 6.5rem; height: 6.5rem; border-radius: 10px; object-fit: cover;
+  display: block; background: var(--sorot); border: 1px solid var(--garis);
+}
+@media (max-width: 24rem) {
+  .sorotan.bergambar { grid-template-columns: 1fr 4.5rem; column-gap: .7rem; }
+  .thumb { width: 4.5rem; height: 4.5rem; }
 }
 .sorotan h3 {
   font: 700 clamp(1.25rem, 4.6vw, 1.5rem)/1.25 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
@@ -265,13 +289,38 @@ def _juga(p) -> str:
     return f'<p class="juga"><span>juga di</span>{tautan}{lagi}</p>'
 
 
+def _thumb(p) -> str:
+    """Thumbnail kartu sorotan, kalau feed penerbitnya memberi satu.
+
+    `alt` kosong disengaja: judulnya sudah mengatakan segalanya, jadi gambar ini
+    dekoratif. Itu sekaligus membuat gambar yang mati — dan suatu saat semuanya
+    akan mati — tidak meninggalkan teks alternatif yang menggantung.
+
+    `loading="lazy"` membuat kartu di bawah lipatan tidak diambil sampai
+    digulir; pada halaman yang dibuka jam 5 pagi di jaringan seluler, itu
+    selisih antara mengunduh sepuluh gambar dan mengunduh dua.
+    """
+    url = getattr(p, "gambar", None)
+    if not url:
+        return ""
+    return (
+        f'<img class="thumb" src="{escape(url)}" alt="" loading="lazy" '
+        f'decoding="async" width="208" height="208">'
+    )
+
+
 def _sorotan(p) -> str:
-    return f"""      <article class="sorotan">
-        <h3><a href="{escape(p.url)}">{escape(p.judul)}</a></h3>
-        {_meta(p)}
-        {_alasan(p)}
-        {_ringkasan(p.ringkasan)}
-        {_juga(p)}
+    thumb = _thumb(p)
+    kelas = "sorotan bergambar" if thumb else "sorotan"
+    return f"""      <article class="{kelas}">
+        <div class="isi">
+          <h3><a href="{escape(p.url)}">{escape(p.judul)}</a></h3>
+          {_meta(p)}
+          {_alasan(p)}
+          {_ringkasan(p.ringkasan)}
+          {_juga(p)}
+        </div>
+        {thumb}
       </article>"""
 
 

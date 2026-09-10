@@ -78,6 +78,26 @@ mengurutkan apa pun; berita buruk bukan berita yang kurang penting. Lencananya
 menyimpan frasa pemicu di `title`, jadi label yang terasa meleset bisa
 ditelusuri ke barisnya di berkas itu.
 
+**Gambar hanya di kartu sorotan** — enam kartu blok utama dan satu per bagian,
+sekitar sepuluh gambar. Item bernomor tetap teks murni. Batasnya berdasar
+ukuran, bukan selera: 35 thumbnail berarti ~1,5 MB dan 35 permintaan ke belasan
+domain untuk halaman yang badannya 62 KB, sedangkan sepuluh kartu menahannya di
+~200-400 KB dengan `loading="lazy"`. Menyimpan gambarnya sendiri ke repo justru
+paling mahal — sekitar 440 MB setahun yang tidak bisa dihapus dari riwayat git,
+persis yang dihindari `ARSITEKTUR.md` §5.
+
+Harganya dibayar di arsip: URL gambar penerbit berumur bulanan sementara
+`docs/arsip/` permanen, jadi edisi lama pelan-pelan kehilangan fotonya. Karena
+itu `alt` dikosongkan dan tiap gambar duduk di atas bidang berwarna — yang mati
+meninggalkan kotak sunyi, dan teksnya memang sudah lengkap tanpa gambar itu.
+Sekitar sepertiga sumber (Google News, Kontan, feed bank sentral) tidak membawa
+gambar sama sekali, jadi kartu tanpa gambar adalah keadaan normal, bukan galat.
+
+`alur/reparse.py` mengisi kolom yang baru ditambahkan dari bronze yang sudah
+tersimpan — inilah §5 yang ditagih: memperbaiki parser berarti *re-parse*, murah
+dan retroaktif. Ada workflow manualnya (`reparse.yml`) karena data yang dipakai
+halaman hidup di cache Actions, bukan di mesin lokal.
+
 ## Prinsip yang mengikat semuanya
 
 Scraping adalah **pilihan terakhir**, bukan titik awal:

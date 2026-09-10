@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS artikel (
     waktu_fetch   TIMESTAMP NOT NULL,    -- UTC polos
     feed          VARCHAR NOT NULL,
     kategori      VARCHAR NOT NULL,
-    bobot         DOUBLE  NOT NULL DEFAULT 1.0
+    bobot         DOUBLE  NOT NULL DEFAULT 1.0,
+    gambar        VARCHAR                -- URL thumbnail dari feed; NULL kalau tidak ada
 );
 
 CREATE TABLE IF NOT EXISTS feed_state (
@@ -61,6 +62,18 @@ CREATE TABLE IF NOT EXISTS metrik_run (
 """
 
 
+# CREATE TABLE IF NOT EXISTS tidak menyentuh tabel yang sudah ada, jadi kolom
+# baru harus ditambahkan terpisah. Basis data di cache Actions sudah berisi
+# ribuan baris dari sebelum kolom `gambar` ada, dan menghapusnya untuk memulai
+# dari nol berarti membuang artikel yang tidak bisa diambil ulang.
+#
+# Aman dijalankan tiap kali `buka()` dipanggil: IF NOT EXISTS membuatnya
+# idempoten, dan biayanya nol pada basis data yang sudah punya kolomnya.
+MIGRASI = """
+ALTER TABLE artikel ADD COLUMN IF NOT EXISTS gambar VARCHAR;
+"""
+
+
 @dataclass(slots=True)
 class Artikel:
     artikel_id: str
@@ -73,6 +86,7 @@ class Artikel:
     feed: str
     kategori: str
     bobot: float = 1.0
+    gambar: str | None = None
 
 
 def buka(berkas: Path | str | None = None) -> duckdb.DuckDBPyConnection:
@@ -83,6 +97,7 @@ def buka(berkas: Path | str | None = None) -> duckdb.DuckDBPyConnection:
     berkas.parent.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect(str(berkas))
     con.execute(SKEMA)
+    con.execute(MIGRASI)
     return con
 
 
@@ -135,8 +150,8 @@ def simpan_artikel(con: duckdb.DuckDBPyConnection, artikel: list[Artikel]) -> in
     con.executemany(
         """INSERT INTO artikel
            (artikel_id, url, domain, judul, ringkasan, waktu_terbit,
-            waktu_fetch, feed, kategori, bobot)
-           VALUES (?,?,?,?,?,?,?,?,?,?)
+            waktu_fetch, feed, kategori, bobot, gambar)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?)
            ON CONFLICT (artikel_id) DO NOTHING""",
         # Kolomnya ditulis satu per satu, bukan asdict().values(), supaya
         # menambah field di dataclass tidak diam-diam menggeser urutan kolom.
@@ -144,7 +159,7 @@ def simpan_artikel(con: duckdb.DuckDBPyConnection, artikel: list[Artikel]) -> in
             (
                 a.artikel_id, a.url, a.domain, a.judul, a.ringkasan,
                 _utc_polos(a.waktu_terbit), _utc_polos(a.waktu_fetch),
-                a.feed, a.kategori, a.bobot,
+                a.feed, a.kategori, a.bobot, a.gambar,
             )
             for a in artikel
         ],

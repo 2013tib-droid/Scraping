@@ -1,0 +1,52 @@
+name: Urai ulang bronze
+
+# Manual saja — ini bukan pekerjaan harian. ARSITEKTUR.md §5 menjanjikan bahwa
+# parser yang diperbaiki bisa dijalankan ulang ke data lama, tapi bronze dan
+# DuckDB hidup di cache Actions, bukan di repo. Tanpa workflow ini janji itu
+# hanya berlaku di mesin lokal, sementara data yang dipakai halaman ada di sini.
+#
+# Dipakai setelah menambah kolom baru (mis. `gambar`) supaya artikel yang sudah
+# tersimpan ikut terisi, bukan hanya yang masuk mulai besok.
+on:
+  workflow_dispatch:
+    inputs:
+      pola:
+        description: 'Batasi ke sebagian bronze, mis. "2026/09". Kosong = semua.'
+        required: false
+        default: ""
+
+# Grup yang sama dengan "Ambil berita": keduanya menulis cache dan basis data
+# yang sama, jadi tidak boleh jalan berbarengan.
+concurrency:
+  group: berita
+  cancel-in-progress: false
+
+jobs:
+  reparse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pasang dependensi
+        run: pip install -e .
+
+      # Kunci yang sama polanya dengan berita.yml, sehingga hasil tulisannya
+      # dipulihkan oleh run harian berikutnya lewat restore-keys "data-".
+      - name: Pulihkan state
+        uses: actions/cache@v4
+        with:
+          path: data
+          key: data-${{ github.run_id }}
+          restore-keys: |
+            data-
+
+      # Tidak menulis halaman dan tidak commit apa pun: yang berubah cuma isi
+      # basis data. Edisi berikutnya yang akan memakainya.
+      - name: Urai ulang
+        run: python -m alur.reparse ${{ inputs.pola }}

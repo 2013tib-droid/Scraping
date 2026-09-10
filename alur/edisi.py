@@ -86,6 +86,9 @@ class Peristiwa:
     kategori: str
     jumlah_media: int
     bobot: float
+    # URL thumbnail dari feed penerbit; None untuk sekitar sepertiga sumber.
+    # Hanya dipakai di kartu sorotan — lihat inti/render.py.
+    gambar: str | None = None
     juga: list[tuple[str, str]] = field(default_factory=list)
     # Diisi oleh inti/dampak.py di `bangun()`; None hanya sebelum itu.
     dampak: int | None = None
@@ -122,13 +125,14 @@ def jendela(tanggal: date) -> tuple[datetime, datetime]:
 
 def ambil(con, mulai: datetime, akhir: datetime) -> list[dict]:
     baris = con.execute(
-        """SELECT judul, url, domain, ringkasan, waktu_terbit, kategori, bobot
+        """SELECT judul, url, domain, ringkasan, waktu_terbit, kategori, bobot, gambar
            FROM artikel
            WHERE waktu_terbit >= ? AND waktu_terbit < ?
            ORDER BY waktu_terbit DESC""",
         [mulai, akhir],
     ).fetchall()
-    kolom = ("judul", "url", "domain", "ringkasan", "waktu_terbit", "kategori", "bobot")
+    kolom = ("judul", "url", "domain", "ringkasan", "waktu_terbit", "kategori",
+             "bobot", "gambar")
     return [dict(zip(kolom, b)) for b in baris]
 
 
@@ -181,6 +185,12 @@ def jadikan_peristiwa(artikel: list[dict]) -> list[Peristiwa]:
                 domain=utama["domain"],
                 ringkasan=utama["ringkasan"],
                 waktu_terbit=utama["waktu_terbit"],
+                # Gambar diambil dari wakil yang sama dengan judul dan
+                # tautannya, bukan dari anggota mana pun yang kebetulan punya.
+                # Meminjam foto redaksi lain untuk berita yang tautannya ke
+                # redaksi ini akan salah atribusi — dan kadang salah peristiwa,
+                # karena dedup mencocokkan kemiripan judul, bukan isi.
+                gambar=utama["gambar"],
                 # Kategori kelompok = yang terbanyak di antara anggotanya.
                 kategori=Counter(a["kategori"] for a in anggota).most_common(1)[0][0],
                 jumlah_media=len({a["domain"] for a in anggota}),

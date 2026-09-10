@@ -47,6 +47,18 @@ MAKS_RINGKASAN = 400
 TAG = re.compile(r"<[^>]+>")
 SPASI = re.compile(r"\s+")
 
+# Gambar di dalam HTML ringkasan — jalan terakhir, dipakai kalau feed tidak
+# memberi media_thumbnail/media_content/enclosure.
+IMG_SRC = re.compile(r"""<img[^>]+src=["']([^"']+)["']""", re.I)
+
+# Ekstensi yang benar-benar gambar. Tanpa ini, `enclosure` audio dan video ikut
+# terpungut: beberapa feed memakai elemen yang sama untuk podcast.
+EKSTENSI_GAMBAR = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif")
+
+# Pelacak 1x1 yang menyamar sebagai gambar artikel. Dipasang di HTML ringkasan
+# oleh sebagian feed, dan kalau lolos akan tampil sebagai kotak kosong.
+POLA_PELACAK = ("doubleclick", "/pixel", "1x1", "spacer", "blank.gif", "feedburner")
+
 
 @dataclass(slots=True)
 class Ringkasan:
@@ -108,6 +120,55 @@ def _ringkasan_berguna(ringkasan: str | None, judul: str) -> str | None:
     return None if sederhana(ringkasan).startswith(sederhana(judul)[:60]) else ringkasan
 
 
+def _url_gambar(calon: str | None) -> str | None:
+    """Terima hanya URL http(s) yang meyakinkan sebagai gambar.
+
+    Query string dibuang sebelum memeriksa ekstensi — CDN media hampir selalu
+    menempelkan `?w=1200&q=90`, dan tanpa ini tidak ada satu pun yang lolos.
+    """
+    if not calon:
+        return None
+    calon = calon.strip()
+    if not calon.startswith(("http://", "https://")):
+        return None  # data: URI dan path relatif tidak bisa dipakai dari halaman
+    kecil = calon.lower()
+    if any(t in kecil for t in POLA_PELACAK):
+        return None
+    return calon if kecil.split("?", 1)[0].endswith(EKSTENSI_GAMBAR) else None
+
+
+def gambar(entri) -> str | None:
+    """URL gambar pertama yang masuk akal dari satu entri feed.
+
+    Urutannya dari yang paling sengaja ke yang paling kebetulan: elemen yang
+    memang berarti "ini thumbnail-nya" lebih dulu, HTML ringkasan paling
+    belakang — di sana `<img>` pertama sering logo penerbit, bukan foto berita.
+
+    Mengembalikan None jauh lebih sering daripada tidak, dan itu wajar: sekitar
+    sepertiga feed (Kontan, Katadata, Google News) tidak membawa gambar sama
+    sekali. Halaman harus tetap benar tanpa gambar — lihat inti/render.py.
+    """
+    for kunci in ("media_thumbnail", "media_content"):
+        for m in entri.get(kunci) or []:
+            # media_content juga dipakai untuk video; ambil yang gambar saja.
+            if kunci == "media_content" and m.get("medium") not in (None, "image"):
+                continue
+            if url := _url_gambar(m.get("url")):
+                return url
+
+    for e in entri.get("enclosures") or []:
+        if (e.get("type") or "").startswith("image/") or not e.get("type"):
+            if url := _url_gambar(e.get("href")):
+                return url
+
+    isi = entri.get("content")
+    teks = (isi[0].get("value") if isi else None) or entri.get("summary") or ""
+    for cocok in IMG_SRC.findall(teks):
+        if url := _url_gambar(html.unescape(cocok)):
+            return url
+    return None
+
+
 def waktu_terbit(entri) -> datetime | None:
     t = entri.get("published_parsed") or entri.get("updated_parsed")
     # feedparser sudah menormalkan ke UTC; offset feed (mis. +0700) sudah
@@ -154,6 +215,7 @@ def ke_artikel(entri, feed: dict, saat_fetch: datetime) -> Artikel | None:
         feed=feed["nama"],
         kategori=feed["kategori"],
         bobot=float(feed.get("bobot", 1.0)),
+        gambar=gambar(entri),
     )
 
 
