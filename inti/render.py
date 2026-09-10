@@ -8,11 +8,11 @@ fungsinya, bukan hiasan. Keputusan tampilannya:
   banyak diliput (`alur/edisi.py`), jadi ia ditampilkan sebagai sorotan: judul
   lebih besar, ringkasan penuh, bidang aksen. Sisanya bernomor dan rapat, supaya
   mata tahu mana yang wajib dan mana yang boleh dilewati.
-- **Navigasi lengket di atas.** Empat bagian dengan jumlah itemnya; satu ketuk
+- **Navigasi lengket di atas.** Tiap bagian dengan jumlah itemnya; satu ketuk
   langsung ke Pasar tanpa menggulir Makro. Murni CSS, tanpa JavaScript.
-- **Warna aksen per bagian.** Makro, Pasar, Politik, Global masing-masing punya
-  warna; nomor, garis, dan tautan bagian mengikutinya. Membedakan bagian saat
-  digulir cepat tanpa harus membaca judul bagiannya.
+- **Warna aksen per bagian.** Makro, Perpajakan, Pasar, Politik, Global
+  masing-masing punya warna; nomor, garis, dan tautan bagian mengikutinya.
+  Membedakan bagian saat digulir cepat tanpa harus membaca judul bagiannya.
 - **Panjang baris dijaga tetap, lebarnya yang berubah.** Sampai ~1.120 px:
   satu kolom 42rem, panjang baris yang nyaman dibaca sambil berdiri di dapur.
   Di atas itu wadahnya melebar ke 80% layar **dan** isinya pecah jadi dua kolom
@@ -52,7 +52,8 @@ HARI = ("Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu")
 # (inti/dampak.py) aktif; di dalamnya semua item tampil sebagai kartu.
 BAGIAN = {
     "utama": ("Penting Pagi Ini", "dampak tinggi, lintas bagian"),
-    "makro": ("Makro &amp; Kebijakan", "BPS, BI, APBN, pajak, kurs, regulasi"),
+    "makro": ("Makro &amp; Kebijakan", "BPS, BI, APBN, kurs, regulasi"),
+    "pajak": ("Perpajakan", "DJP, Coretax, PPN/PPh, bea cukai, aturan baru"),
     "pasar": ("Pasar &amp; Emiten", "IHSG, aksi korporasi, laporan keuangan"),
     "politik": ("Politik &amp; Sosial", "yang berpotensi menggerakkan pasar"),
     "global": ("Global", "The Fed, komoditas, geopolitik"),
@@ -67,7 +68,7 @@ GAYA = """
 :root {
   --bg: #f7f5f0; --kertas: #fffdf9; --teks: #1c1b18; --redup: #6f6c65;
   --garis: #e4e0d7; --sorot: #efebe2; --tautan: #8a3324;
-  --utama: #a5700a; --makro: #b5462f; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0;
+  --utama: #a5700a; --makro: #b5462f; --pajak: #0f7482; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0;
   --naik: #1f7a4d; --turun: #b3261e;
   --bayang: 0 1px 2px rgba(30,25,15,.06), 0 6px 20px -8px rgba(30,25,15,.12);
 }
@@ -75,7 +76,7 @@ GAYA = """
   :root {
     --bg: #131417; --kertas: #1b1c20; --teks: #e9e6e0; --redup: #9a978f;
     --garis: #2b2d33; --sorot: #22242a; --tautan: #e8a88f;
-    --utama: #e9c060; --makro: #e58a72; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0;
+    --utama: #e9c060; --makro: #e58a72; --pajak: #5ec3d0; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0;
     --naik: #6ecf9c; --turun: #f08a80;
     --bayang: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.6);
   }
@@ -135,6 +136,7 @@ a { color: inherit; }
 section { --warna: var(--makro); margin-top: 2.6rem; }
 section.utama { --warna: var(--utama); }
 section.utama .sorotan { margin-bottom: .8rem; }
+section.pajak { --warna: var(--pajak); }
 section.pasar { --warna: var(--pasar); }
 section.politik { --warna: var(--politik); }
 section.global { --warna: var(--global); }

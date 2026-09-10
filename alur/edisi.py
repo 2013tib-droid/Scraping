@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
-from inti import dampak, notifikasi, render, sentimen
+from inti import dampak, notifikasi, pajak, render, sentimen
 from inti.dedup import kelompokkan
 from inti.penyimpanan import buka
 
@@ -33,7 +33,11 @@ JAM_EDISI = time(5, 0)  # 05:00 WIB — §16
 
 # Batas per bagian. Ini fitur, bukan keterbatasan: halaman yang tidak habis dalam
 # lima menit tidak akan dibaca sama sekali.
-BATAS = {"makro": 12, "pasar": 10, "politik": 6, "global": 8}
+#
+# Perpajakan diisi dari isi berita, bukan dari feed (inti/pajak.py): berita
+# pajak yang dulu menumpang di Makro pindah ke sini, jadi Makro tidak kehilangan
+# tempat untuk berita lain.
+BATAS = {"makro": 12, "pajak": 10, "pasar": 10, "politik": 6, "global": 8}
 
 # Blok "Penting Pagi Ini": peristiwa berdampak 3 menurut penilai (inti/dampak.py),
 # lintas kategori. Kosong pada hari yang memang sepi, dan itu jawaban yang benar.
@@ -98,6 +102,9 @@ class Peristiwa:
     # kalau labelnya meleset.
     sentimen: str | None = None
     pemicu: str | None = None
+    # Diisi di `bangun()` hanya untuk peristiwa yang berakhir di bagian
+    # Perpajakan: daerah/pusat, buang, dan subtopiknya (inti/pajak.py).
+    klasifikasi_pajak: pajak.Klasifikasi | None = None
 
     @property
     def skor(self) -> float:
@@ -215,6 +222,31 @@ def relevan(p: Peristiwa) -> bool:
     return True
 
 
+def tandai_pajak(peristiwa: list[Peristiwa]) -> None:
+    """Pindahkan berita pajak ke bagian Perpajakan dan beri subtopiknya.
+
+    Dua jalan masuk: feed yang seluruh isinya pajak (kategori `pajak` di
+    feed.toml), atau berita Makro/Politik yang isinya pajak. Harus jalan
+    setelah penilai dampak — yang ditimpa di sini adalah `alasan`-nya.
+    """
+    for p in peristiwa:
+        k = pajak.periksa(p)
+        if p.kategori != "pajak" and not (k.pajak and p.kategori in pajak.DAPAT_PINDAH):
+            continue
+        p.kategori, p.klasifikasi_pajak = "pajak", k
+        # Penilai dampak memberi 2 pada apa pun yang menyebut "pajak" atau
+        # "cukai", tapi tidak kenal "PPN", "SPP-TDLN", atau "Coretax". Tanpa
+        # ini, "SPP-TDLN Berlaku 10 September" — berita pajak kunci 9 Sep —
+        # jatuh di bawah siaran pers pemda yang kebetulan menyebut "pajak".
+        if p.dampak == 1 and not k.daerah:
+            p.dampak = 2
+        # Di bagian yang semua isinya pajak, "Regulasi" tidak menerangkan apa
+        # pun; "Restitusi" atau "Penegakan hukum" menerangkan. Dampak 3
+        # dibiarkan: labelnya menjelaskan kenapa ia naik ke blok utama.
+        if k.topik and p.dampak != 3:
+            p.alasan = k.topik
+
+
 def _lolos(p: Peristiwa) -> bool:
     """Dua saringan yang menumpuk, bukan saling menggantikan.
 
@@ -222,15 +254,29 @@ def _lolos(p: Peristiwa) -> bool:
     feed bank sentral harus menyentuh kata kebijakan. `dampak == 0` adalah
     daftar-tolak: seremonial, olahraga, kriminal. Keduanya menangkap hal yang
     berbeda, jadi keduanya dipakai — daftar-tolak tidak bisa menebak apa yang
-    *tidak* ekonomi, dan daftar-izin tidak menyaring peresmian pabrik."""
-    return relevan(p) and p.dampak != 0
+    *tidak* ekonomi, dan daftar-izin tidak menyaring peresmian pabrik.
+
+    Bagian Perpajakan punya daftar-tolak ketiga (brevet, seminar, halaman tag)
+    yang sengaja tidak berlaku di bagian lain — lihat inti/pajak.py."""
+    k = p.klasifikasi_pajak
+    return relevan(p) and p.dampak != 0 and not (k and k.buang)
 
 
 def _urutan(p: Peristiwa) -> tuple:
     # Dampak dulu (kalau ada), lalu jumlah media, lalu yang terbaru.
+    #
+    # Di bagian Perpajakan, pajak daerah selalu di bawah pajak pusat, apa pun
+    # dampaknya. Tanpa ini, siaran pers pemda soal pemutihan PKB — yang lolos
+    # sebagai dampak 2 karena menyebut "pajak" — mengisi separuh bagiannya.
+    # Dan di antara yang sama-sama diliput satu media, yang punya subtopik
+    # (Restitusi, Coretax, ...) di atas yang cuma menyebut "pajak": yang kedua
+    # itu sebagian besar opini, panduan, dan berita investasi luar negeri.
+    k = p.klasifikasi_pajak
     return (
+        bool(k and k.daerah),
         -(p.dampak or 0),
         -p.skor,
+        bool(k and not k.topik),
         -(p.waktu_terbit or datetime.min).timestamp(),
     )
 
@@ -283,6 +329,7 @@ def bangun(con, tanggal: date) -> tuple[str, dict[str, list[Peristiwa]], int]:
         if s := status.get(p.url):
             p.sentimen, p.pemicu = s.label, s.pemicu
 
+    tandai_pajak(peristiwa)
     bagian = per_bagian(peristiwa)
     # Tautan ke edisi kemarin hanya kalau berkasnya memang ada di arsip —
     # tautan mati lebih buruk daripada tidak ada tautan.

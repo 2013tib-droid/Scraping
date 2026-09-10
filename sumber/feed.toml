@@ -3,7 +3,9 @@
 #
 # Dibaca dengan `tomllib` (stdlib sejak Python 3.11), tanpa dependensi tambahan.
 #
-# kategori: makro | pasar | politik | global
+# kategori: makro | pajak | pasar | politik | global
+#           `pajak` hanya untuk feed yang SELURUH isinya pajak. Berita pajak dari
+#           feed lain masuk bagian Perpajakan lewat isinya (inti/pajak.py).
 # bobot   : pengali prioritas saat pengurutan. Feed bank sentral jarang terbit,
 #           tapi kalau terbit hampir pasti layak dibaca — jumlah item bukan
 #           ukuran nilai.
@@ -189,3 +191,27 @@ nama = "Google News fiskal"
 url = "https://news.google.com/rss/search?q=(APBN+OR+pajak+OR+Kemenkeu+OR+%22utang+pemerintah%22)+when:1d&hl=id&gl=ID&ceid=ID:id"
 kategori = "makro"
 catatan = "DDTCNews dan Kontan; topik fiskal jarang tertangkap feed umum"
+
+# --------------------------------------------------------------------------- #
+# Perpajakan. Diverifikasi 2026-09-10 — SUMBER-DATA.md §C4. Media pajak khusus
+# (DDTCNews, Pajak.com, Ortax, IKPI) dan Bea Cukai tidak menyediakan RSS, jadi
+# satu-satunya feed langsung adalah DJP; sisanya lewat Google News.
+
+[[feed]]
+nama = "DJP pengumuman"
+url = "https://www.pajak.go.id/id/rss.xml"
+kategori = "pajak"
+bobot = 2.0
+catatan = "judul saja; 0-1 item sehari itu normal. Pengumuman resmi: downtime, penghentian aplikasi"
+
+[[feed]]
+nama = "Google News DDTCNews"
+url = "https://news.google.com/rss/search?q=site:news.ddtc.co.id+when:1d&hl=id&gl=ID&ceid=ID:id"
+kategori = "makro"
+catatan = "media pajak paling produktif, ~30 item sehari; tanpa RSS sendiri. Ikut memuat halaman tag — dibuang inti/pajak.py"
+
+[[feed]]
+nama = "Google News pajak"
+url = "https://news.google.com/rss/search?q=(%22Ditjen+Pajak%22+OR+DJP+OR+Coretax+OR+PPN+OR+PPh+OR+%22wajib+pajak%22+OR+restitusi+OR+%22Bea+Cukai%22)+-kendaraan+-samsat+-PBB+-reklame+when:1d&hl=id&gl=ID&ceid=ID:id"
+kategori = "makro"
+catatan = "mentok 100 item dalam ~23 jam; pajak daerah dikurangi di query, sisanya diturunkan inti/pajak.py"

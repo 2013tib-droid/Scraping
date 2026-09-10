@@ -118,7 +118,9 @@ def uji_diurutkan_menurut_jumlah_media(con):
     # Keduanya bernilai dampak 2, supaya yang diuji memang jumlah media —
     # bukan tingkat dampak, yang diurutkan lebih dulu.
     penyimpanan.simpan_artikel(con, [
-        artikel("Sendirian tapi terbaru soal pajak", "solo.test", 20),
+        # Bukan "pajak": berita pajak kini pindah ke bagiannya sendiri, dan uji
+        # ini jadi membandingkan satu peristiwa saja.
+        artikel("Sendirian tapi terbaru soal regulasi", "solo.test", 20),
         artikel("Bank Mandiri bagikan dividen interim", "a.test", 10),
         artikel("Bank Mandiri membagikan dividen interim", "b.test", 10),
         artikel("Bank Mandiri bagikan dividen interim tahun ini", "c.test", 10),

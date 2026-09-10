@@ -213,6 +213,41 @@ Kalau nanti dijalankan dari IP Indonesia (PC sendiri atau VPS Indonesia),
 kedelapan feed itu hidup lagi tanpa perubahan kode — daftarnya tetap di
 `sumber/feed.toml`, hanya statusnya yang berubah.
 
+## C4. Perpajakan — hasil verifikasi 2026-09-10
+
+Ditembak langsung dari jaringan Indonesia. **Belum** diuji dari runner GitHub —
+lihat catatan di bawah tabel.
+
+| Feed | URL | Item | dlm 24j | Teks | Catatan |
+|---|---|---:|---:|---|---|
+| DJP pengumuman | `pajak.go.id/id/rss.xml` | 10 | 0–1 | judul | Resmi. Retensi ~3 minggu. Downtime, penghentian aplikasi, email resmi ke WP. Bobot 2.0 seperti Fed/ECB |
+| Google News DDTCNews | `news.google.com/rss/search?q=site:news.ddtc.co.id…` | 32 | 30 | judul | Ikut memuat halaman tag ("Artikel dan berita dengan kata kunci…") — dibuang `inti/pajak.py` |
+| Google News pajak | `news.google.com/rss/search?q=("Ditjen Pajak" OR DJP OR Coretax…) -kendaraan -samsat…` | 100 | 100 | judul | **Mentok 100 item dalam ~23 jam** — ada lebih banyak yang tidak tertangkap |
+
+Pada data 10 Sep, ketiganya plus feed yang sudah ada menghasilkan **~80 peristiwa
+pajak** dalam satu jendela edisi: ~50 pajak pusat, ~20 pajak daerah, ~10
+promosi/seremonial. Bagian Perpajakan menampilkan 10.
+
+**Tanpa RSS, jadi tidak bisa dipakai langsung:** DDTCNews (`/rss`, `/feed` 404,
+tanpa autodiscovery), Pajak.com (404, beranda timeout), Ortax (`/rss` bukan
+feed), IKPI (`/feed/` dialihkan ke HTML), Bea Cukai, Kemenkeu (bukan XML).
+DDTCNews tertangkap lewat Google News; Ortax dan IKPI ikut terjaring query
+Google News pajak.
+
+**Jebakan kata yang ditemukan di data asli** — alasan keputusan "ini berita
+pajak" diambil dari judul saja, bukan ringkasan:
+
+- *PPN* juga Kementerian PPN/Bappenas, Pertamina Patra Niaga, dan Pelabuhan
+  Perikanan Nusantara.
+- *Restitusi* juga ganti rugi korban pidana.
+- *PKB* juga Partai Kebangkitan Bangsa; *PBB* juga Perserikatan Bangsa-Bangsa.
+
+**Belum diketahui: blokir IP dari runner GitHub (§C3).** `pajak.go.id` situs
+pemerintah Indonesia dan bisa saja menolak IP datacenter AS seperti CNBC dan
+Kontan. Kalau terjadi, gejalanya "DJP pengumuman: HTTP 403" di laporan
+kegagalan Telegram — feed-nya dihapus atau dibiarkan, bagian Perpajakan tetap
+terisi dari Google News.
+
 ## C2. Feed yang ditolak, dan alasannya
 
 Dicatat supaya tidak dicoba ulang tiap beberapa bulan.
@@ -227,6 +262,7 @@ Dicatat supaya tidak dicoba ulang tiap beberapa bulan.
 | **Emitennews** | HTTP 500 di `/feed` dan `/rss` |
 | **Investor.id, Bareksa, Stockwatch, IQPlus, Tirto, Kumparan** | 404 / 403 / bukan XML |
 | **Kemenkeu, BI** | Tidak menyediakan RSS. Rilisnya lewat halaman dan file — jalur berbeda (§A) |
+| **DDTCNews, Pajak.com, Ortax, IKPI, Bea Cukai** | Tidak ada RSS (§C4). DDTCNews diambil lewat Google News `site:` |
 
 ## D. Yang sebaiknya tidak dikejar
 

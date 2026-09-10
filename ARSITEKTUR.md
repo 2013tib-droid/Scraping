@@ -479,14 +479,22 @@ jam terbitnya.
 
 ### Bagian dan pembatasan
 
-Empat bagian, sesuai yang mau dibaca:
+Lima bagian, sesuai yang mau dibaca:
 
-1. **Makro & kebijakan Indonesia** — rilis BPS/BI, APBN, pajak, suku bunga, kurs, regulasi
-2. **Pasar & emiten IDX** — aksi korporasi, laporan keuangan, IPO, berita emiten
-3. **Politik & sosial** — yang berpotensi menggerakkan pasar
-4. **Global** — The Fed, komoditas, geopolitik
+1. **Makro & kebijakan Indonesia** — rilis BPS/BI, APBN, suku bunga, kurs, regulasi
+2. **Perpajakan** — DJP, Coretax, PPN/PPh, restitusi, bea cukai, aturan dan sengketa pajak
+3. **Pasar & emiten IDX** — aksi korporasi, laporan keuangan, IPO, berita emiten
+4. **Politik & sosial** — yang berpotensi menggerakkan pasar
+5. **Global** — The Fed, komoditas, geopolitik
 
-**Tiap bagian dibatasi jumlah itemnya.** Empat kategori dari belasan media
+> **Ditambahkan 2026-09-10: Perpajakan.** Satu-satunya bagian yang ditentukan
+> **isi**, bukan asal feed. Berita pajak tersebar di feed ekonomi umum dan
+> sebelumnya menumpang di Makro; `inti/pajak.py` memindahkannya dari Makro dan
+> Politik berdasarkan judulnya, menurunkan pajak daerah ke bawah, dan membuang
+> promosi brevet/seminar. Pasar dan Global sengaja tidak ikut dipindah —
+> analisis saham tetap milik Pasar, dan bagian ini perpajakan Indonesia.
+
+**Tiap bagian dibatasi jumlah itemnya.** Lima kategori dari belasan media
 gampang menghasilkan seratus item, dan halaman yang tidak muat dibaca dalam lima
 menit tidak akan dibaca sama sekali. Batas ini fitur, bukan keterbatasan.
 
