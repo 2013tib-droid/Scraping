@@ -13,8 +13,12 @@ fungsinya, bukan hiasan. Keputusan tampilannya:
 - **Warna aksen per bagian.** Makro, Pasar, Politik, Global masing-masing punya
   warna; nomor, garis, dan tautan bagian mengikutinya. Membedakan bagian saat
   digulir cepat tanpa harus membaca judul bagiannya.
-- **Satu kolom, lebar ~42rem, serif untuk judul.** Panjang baris yang nyaman
-  dibaca sambil berdiri di dapur; serif membedakan "isi" dari "keterangan".
+- **Panjang baris dijaga tetap, lebarnya yang berubah.** Sampai ~1.120 px:
+  satu kolom 42rem, panjang baris yang nyaman dibaca sambil berdiri di dapur.
+  Di atas itu wadahnya melebar ke 80% layar **dan** isinya pecah jadi dua kolom
+  — melebar tanpa memecah cuma menghasilkan baris ~200 karakter, yang membuat
+  mata kehilangan jejak saat kembali ke awal baris berikutnya. Serif untuk
+  judul, membedakan "isi" dari "keterangan".
 - **Terang/gelap ikut setelan perangkat.** Dibaca jam 5 pagi; memaksa latar putih
   menyilaukan.
 - **Tanpa JavaScript.** Satu berkas yang bisa dibuka dari mana saja.
@@ -85,7 +89,11 @@ body {
   -webkit-text-size-adjust: 100%; overflow-wrap: anywhere;
 }
 a { color: inherit; }
-.bungkus { max-width: 42rem; margin: 0 auto; padding: 0 1.1rem; }
+/* Lebar dipegang satu variabel supaya wadah dan navigasi lengket tidak pernah
+   berbeda — kalau keduanya bergeser sendiri-sendiri, tombol navigasi berhenti
+   sejajar dengan teks di bawahnya. */
+:root { --lebar: 42rem; }
+.bungkus { max-width: var(--lebar); margin: 0 auto; padding: 0 1.1rem; }
 
 /* --- masthead ------------------------------------------------------------ */
 .kepala { padding: 2.4rem 0 1.4rem; }
@@ -110,7 +118,7 @@ a { color: inherit; }
   border-bottom: 1px solid var(--garis);
 }
 .nav ul {
-  list-style: none; margin: 0 auto; padding: .5rem 1.1rem; max-width: 42rem;
+  list-style: none; margin: 0 auto; padding: .5rem 1.1rem; max-width: var(--lebar);
   display: flex; gap: .35rem; overflow-x: auto; scrollbar-width: none;
 }
 .nav ul::-webkit-scrollbar { display: none; }
@@ -144,14 +152,14 @@ section.global { --warna: var(--global); }
    sesudah teks, jadi judul tetap yang pertama dibaca pembaca layar. Lebar
    kolomnya tetap, sehingga tidak ada pergeseran tata letak saat gambar masuk —
    dan tidak ada bedanya kalau gambar itu tidak pernah datang. */
-.sorotan.bergambar { display: grid; grid-template-columns: 1fr 6.5rem; column-gap: 1rem; align-items: start; }
+.sorotan.bergambar { display: grid; grid-template-columns: 1fr auto; column-gap: 1rem; align-items: start; }
 .sorotan .isi { min-width: 0; }
 .thumb {
   width: 6.5rem; height: 6.5rem; border-radius: 10px; object-fit: cover;
   display: block; background: var(--sorot); border: 1px solid var(--garis);
 }
 @media (max-width: 24rem) {
-  .sorotan.bergambar { grid-template-columns: 1fr 4.5rem; column-gap: .7rem; }
+  .sorotan.bergambar { column-gap: .7rem; }
   .thumb { width: 4.5rem; height: 4.5rem; }
 }
 .sorotan h3 {
@@ -214,6 +222,40 @@ h3 a:hover { color: var(--tautan); text-decoration: underline; text-underline-of
 }
 .juga a:hover { opacity: 1; }
 .lagi { color: var(--redup); }
+
+/* --- layar lebar ----------------------------------------------------------- */
+/* Wadahnya melebar ke 80% viewport, tapi isinya pecah jadi dua kolom di titik
+   yang sama. Keduanya satu paket, bukan dua keputusan: satu kolom selebar
+   1.500 px berarti baris ~200 karakter, dan mata kehilangan jejak saat kembali
+   ke awal baris berikutnya. Dipecah dua, tiap kolom ~700 px — senyaman versi
+   sempit, tapi layarnya terpakai.
+
+   Ambangnya 70rem (~1.120 px), bukan 1.024: pada laptop 1.024 px dua kolom
+   dari 80vw tinggal ~390 px masing-masing, dan kartu sorotan hanya menyisakan
+   ~260 px untuk teks setelah gambarnya. Di bawah ambang ini semuanya tetap
+   satu kolom 42rem seperti sebelumnya — ponsel dan tablet tidak tersentuh. */
+@media (min-width: 70rem) {
+  :root { --lebar: min(80vw, 96rem); }
+
+  /* Blok utama: enam kartu berdampingan dua-dua, bukan menumpuk sendirian. */
+  section.utama .kartu {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem;
+  }
+  section.utama .sorotan { margin-bottom: 0; }
+
+  /* Bagian lain: sorotan di kiri, daftar bernomor di kanan — judul bagiannya
+     membentang di atas keduanya. */
+  section:not(.utama) {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem; align-items: start;
+  }
+  section:not(.utama) .judul-bagian { grid-column: 1 / -1; }
+  section:not(.utama) .sorotan { margin-bottom: 0; }
+  .daftar li:first-child { padding-top: 0; }
+
+  /* Ruang yang bertambah dipakai gambar, bukan dibiarkan jadi margin. */
+  .thumb { width: 8rem; height: 8rem; }
+}
 
 /* --- kaki ------------------------------------------------------------------ */
 footer {
@@ -340,11 +382,15 @@ def _item(nomor: int, p) -> str:
 def _bagian(kunci: str, peristiwa: list) -> str:
     judul, keterangan = BAGIAN[kunci]
     if kunci == "utama":
-        # Semuanya berdampak tinggi; tidak ada yang "sisa".
+        # Semuanya berdampak tinggi; tidak ada yang "sisa". Kartunya dibungkus
+        # satu elemen supaya di layar lebar bisa dijajarkan dua-dua tanpa ikut
+        # menyeret judul bagiannya ke dalam grid.
         sorotan = "\n".join(_sorotan(p) for p in peristiwa)
         return f"""    <section class="{kunci}" id="{kunci}">
       <div class="judul-bagian"><h2>{judul}</h2><small>{keterangan}</small></div>
+      <div class="kartu">
 {sorotan}
+      </div>
     </section>"""
     sorotan = _sorotan(peristiwa[0])
     sisa = ""
