@@ -59,9 +59,38 @@ def uji_urai_menolak_bentuk_asing(isi):
         terjemah.urai(isi)
 
 
+@pytest.mark.parametrize("isi", [b'["Harga naik"]', b'[["Harga naik", "en"]]'])
+def uji_urai_c5_dua_bentuk(isi):
+    assert terjemah.urai_c5(isi) == "Harga naik"
+
+
+def uji_urai_mymemory_membuka_entitas():
+    isi = json.dumps({
+        "responseData": {"translatedText": "Minyak &#39;Brent&#39; naik"},
+        "responseStatus": 200,
+    }).encode()
+    assert terjemah.urai_mymemory(isi) == "Minyak 'Brent' naik"
+
+
+def uji_kuota_mymemory_habis_bukan_judul():
+    """Kuota habis datang sebagai HTTP 200 berisi peringatan di tempat
+    terjemahannya. Kalau lolos, peringatan itu jadi judul berita — dan
+    tersimpan permanen di cache."""
+    isi = json.dumps({
+        "responseData": {"translatedText": "MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR TODAY."},
+        "responseStatus": 429,
+    }).encode()
+    with pytest.raises(httpx.HTTPError):
+        terjemah.urai_mymemory(isi)
+
+
 # --------------------------------------------------------------------------- #
-# cache dan kegagalan
+# cache, rantai penyedia, dan kegagalan
 # --------------------------------------------------------------------------- #
+
+
+def satu(minta):
+    return [("palsu", minta)]
 
 
 def uji_hasil_disimpan_dan_tidak_diminta_ulang(con):
@@ -71,24 +100,40 @@ def uji_hasil_disimpan_dan_tidak_diminta_ulang(con):
         diminta.append(t)
         return f"ID {t}"
 
-    assert terjemah.terjemahkan(con, ["Oil falls", "Oil falls", ""], minta) == {
+    assert terjemah.terjemahkan(con, ["Oil falls", "Oil falls", ""], satu(minta)) == {
         "Oil falls": "ID Oil falls"
     }
     # Edisi yang dibangun ulang tidak boleh meminta lagi.
-    assert terjemah.terjemahkan(con, ["Oil falls"], minta) == {"Oil falls": "ID Oil falls"}
+    assert terjemah.terjemahkan(con, ["Oil falls"], satu(minta)) == {"Oil falls": "ID Oil falls"}
     assert diminta == ["Oil falls"]
 
 
-def uji_jaringan_gagal_berhenti_tanpa_meledak(con):
+def uji_penyedia_menolak_pindah_ke_berikutnya(con):
+    """Kasus nyata 10 Sep: Google membalas 429 ke runner GitHub Actions."""
+    ditolak = []
+
+    def google(t):
+        ditolak.append(t)
+        raise httpx.HTTPError("HTTP 429")
+
+    hasil = terjemah.terjemahkan(
+        con, ["a", "b", "c"], [("google", google), ("cadangan", lambda t: f"ID {t}")]
+    )
+    assert hasil == {"a": "ID a", "b": "ID b", "c": "ID c"}
+    # Yang menolak tidak ditanya lagi untuk kalimat berikutnya — tiap
+    # pertanyaan berarti menunggu backoff yang sama.
+    assert ditolak == ["a"]
+
+
+def uji_semua_penyedia_menolak_tanpa_meledak(con):
     diminta = []
 
-    def minta(t):
+    def mati(t):
         diminta.append(t)
         raise httpx.ConnectError("mati")
 
-    assert terjemah.terjemahkan(con, ["a", "b", "c"], minta) == {}
-    # Sisanya tidak dicoba: masing-masing akan menunggu backoff yang sama.
-    assert diminta == ["a"]
+    assert terjemah.terjemahkan(con, ["a", "b", "c"], [("x", mati), ("y", mati)]) == {}
+    assert diminta == ["a", "a"]
     assert con.execute("SELECT count(*) FROM terjemahan").fetchone()[0] == 0
 
 
@@ -98,7 +143,7 @@ def uji_balasan_aneh_hanya_melewati_satu(con):
             raise ValueError("balasan terjemahan tidak dikenal")
         return f"ID {t}"
 
-    assert terjemah.terjemahkan(con, ["rusak", "baik"], minta) == {"baik": "ID baik"}
+    assert terjemah.terjemahkan(con, ["rusak", "baik"], satu(minta)) == {"baik": "ID baik"}
 
 
 # --------------------------------------------------------------------------- #
