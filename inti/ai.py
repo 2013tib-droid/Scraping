@@ -85,7 +85,8 @@ PENANDA_BUANG: tuple[str, ...] = (
 # Fund" dari einnews.com sempat memimpin bagian ini pada 11 Sep.
 DOMAIN_BUANG = {
     "kompasiana.com", "vietnam.vn", "britannica.com",
-    "einnews.com", "prnewswire.com", "globenewswire.com", "businesswire.com",
+    "einnews.com", "einpresswire.com", "prnewswire.com", "globenewswire.com",
+    "businesswire.com",
     # Halaman acara, bukan berita ("GTC - NVIDIA"). Blog-nya, blogs.nvidia.com,
     # domain lain dan tetap masuk.
     "nvidia.com",

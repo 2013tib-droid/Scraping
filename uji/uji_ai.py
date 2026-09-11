@@ -106,6 +106,8 @@ def uji_nama_rancu_butuh_pendamping():
     ("Guru Besar UMS Soroti Etika Penggunaan AI dalam Penalaran Hukum", "news.ums.ac.id"),
     ("Kebocoran Data Perusahaan Bisa Berasal dari Tools AI yang Digunakan?", "kompasiana.com"),
     ("Averondale Capital Hadirkan Nusantara AI Capital Fund", "einnews.com"),
+    # Siaran pers yang sama, lolos ke edisi 11 Sep lewat domain saudaranya.
+    ("Averondale Capital Hadirkan Nusantara AI Capital Fund", "einpresswire.com"),
     # Judul yang dipotong penerbitnya.
     ("Startup AI China JoyIn tuduh OpenAI tiru teknol...", "pluang.com"),
 ])
