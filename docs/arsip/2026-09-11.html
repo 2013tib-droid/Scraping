@@ -9,7 +9,7 @@
 :root {
   --bg: #f7f5f0; --kertas: #fffdf9; --teks: #1c1b18; --redup: #6f6c65;
   --garis: #e4e0d7; --sorot: #efebe2; --tautan: #8a3324;
-  --utama: #a5700a; --makro: #b5462f; --pajak: #0f7482; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0;
+  --utama: #a5700a; --makro: #b5462f; --pajak: #0f7482; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0; --ai: #b0336f;
   --naik: #1f7a4d; --turun: #b3261e;
   --bayang: 0 1px 2px rgba(30,25,15,.06), 0 6px 20px -8px rgba(30,25,15,.12);
 }
@@ -17,7 +17,7 @@
   :root {
     --bg: #131417; --kertas: #1b1c20; --teks: #e9e6e0; --redup: #9a978f;
     --garis: #2b2d33; --sorot: #22242a; --tautan: #e8a88f;
-    --utama: #e9c060; --makro: #e58a72; --pajak: #5ec3d0; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0;
+    --utama: #e9c060; --makro: #e58a72; --pajak: #5ec3d0; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0; --ai: #ee8fbd;
     --naik: #6ecf9c; --turun: #f08a80;
     --bayang: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.6);
   }
@@ -81,6 +81,7 @@ section.pajak { --warna: var(--pajak); }
 section.pasar { --warna: var(--pasar); }
 section.politik { --warna: var(--politik); }
 section.global { --warna: var(--global); }
+section.ai { --warna: var(--ai); }
 .judul-bagian { display: flex; align-items: baseline; gap: .7rem; margin-bottom: 1rem; }
 .judul-bagian::before { content: ""; width: .35rem; height: 1.3rem; background: var(--warna); border-radius: 2px; align-self: center; }
 .judul-bagian h2 { font: 700 1.15rem/1.2 system-ui, sans-serif; margin: 0; letter-spacing: -.01em; }
@@ -217,13 +218,13 @@ footer a { color: var(--tautan); }
       <h1>Jumat, 11 September 2026
         <small>Berita 24 jam terakhir, sampai 05:00 WIB</small></h1>
       <div class="angka">
-        <span><b>52</b> peristiwa</span>
-        <span>dari <b>2129</b> artikel</span>
-        <span><b>277</b> sumber</span>
+        <span><b>60</b> peristiwa</span>
+        <span>dari <b>2219</b> artikel</span>
+        <span><b>309</b> sumber</span>
       </div>
     </header>
   </div>
-  <nav class="nav"><ul><li><a href="#utama" style="--warna: var(--utama)"><i></i>Penting Pagi Ini<em>6</em></a></li><li><a href="#makro" style="--warna: var(--makro)"><i></i>Makro &amp; Kebijakan<em>12</em></a></li><li><a href="#pajak" style="--warna: var(--pajak)"><i></i>Perpajakan<em>10</em></a></li><li><a href="#pasar" style="--warna: var(--pasar)"><i></i>Pasar &amp; Emiten<em>10</em></a></li><li><a href="#politik" style="--warna: var(--politik)"><i></i>Politik &amp; Sosial<em>6</em></a></li><li><a href="#global" style="--warna: var(--global)"><i></i>Global<em>8</em></a></li></ul></nav>
+  <nav class="nav"><ul><li><a href="#utama" style="--warna: var(--utama)"><i></i>Penting Pagi Ini<em>6</em></a></li><li><a href="#makro" style="--warna: var(--makro)"><i></i>Makro &amp; Kebijakan<em>12</em></a></li><li><a href="#pajak" style="--warna: var(--pajak)"><i></i>Perpajakan<em>10</em></a></li><li><a href="#pasar" style="--warna: var(--pasar)"><i></i>Pasar &amp; Emiten<em>10</em></a></li><li><a href="#politik" style="--warna: var(--politik)"><i></i>Politik &amp; Sosial<em>6</em></a></li><li><a href="#global" style="--warna: var(--global)"><i></i>Global<em>8</em></a></li><li><a href="#ai" style="--warna: var(--ai)"><i></i>AI<em>8</em></a></li></ul></nav>
   <div class="bungkus">
     <section class="utama" id="utama">
       <div class="judul-bagian"><h2>Penting Pagi Ini</h2><small>dampak tinggi, lintas bagian</small></div>
@@ -234,7 +235,7 @@ footer a { color: var(--tautan); }
           <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">22 media</span> <span class="sumber">ekonomi.republika.co.id</span> <span>16:58 WIB</span></p>
           <p class="alasan">Liputan luas</p>
           <p class="ringkas">REPUBLIKA.CO.ID, JAKARTA -- Menteri Keuangan RI Purbaya Yudhi Sadewa menyampaikan, anggaran program pembukaan rekening bank secara massal bagi masyakarakat kemungkinan tidak sampai mencapai Rp 11 triliun. Ia menyebut, pemerintah masih...</p>
-          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxON2NTcHNRYmNxMTVmVVlhc1RLWldfTlotQ2ZsYUdEX1FHQm1PYXZvcWR4ZFZPWmJtYXB6VWVNbkU2bjh2d3d3WVE3TzlVbDlzLXJ5alUzRmthNDRmbnNHd2kzcTI1RTcwTUctUnh1YVZYcGp1S2ktQ1RWVlFrQkVxczFOOFQxX1M0UW16MF84WV9BNTZ5?oc=5">aktual.com</a><a href="https://www.antaranews.com/berita/5734360/terpopuler-rp11-triliun-untuk-rekening-massal-hingga-pegawai-ditembak">antaranews.com</a><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxNMmdoSDdYOHhqSXN0T184TDVKN0dkS0hMV0c4cU1aT284dkUzaFRqUXZ2Yms0R1dma29JOUc5M3ZJZ2xVS0JkY2o1djB4MU1fbXpMQkZ0ak5YR0J0UkNudVdsM1A0UzVHWnJZYlFLUTF6bGJFT1VjdUhlNFJLSm5DU0dSUjRkOVNYNGNjakFST0FTejJTazdqQWNqdHdxNjlDd1HSAacBQVVfeXFMTXZwMTFDSURyN0Q4eVpMd2RMa0RtVWQtdVZWdm1PclZ6YnhPaDhJSXJ2T0NfRGtJczZDQlM3eWhIRHFRRXBySjVVc1lzMmRFaThSc25mSnplYjUxWHdtbk5Sem9yMDl3dXRfR2lUUUxUMjZtUHhmTjluWGUxMkhxTTk1TzhsbnQ5aXlKZkIzU01SVVN1Yl9ZYzBINzRoYW1CUGNLTlhLaXc?oc=5">bali.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxOY2RqVHhjRWtMMzczOWdIMTJMNG12TGRmU0VkU2Vhc2R5SWNSb2pySVRBV01GVkdWR1FVSGxLZ0JXejVNWG9Uc2RkX2NUMGdyemNDUG44VjhRX3hGcExPT053M3BLamVUcnV5LWFzTk1wYW5SWWN2NERSaklJQ1Q2SUtzQUhlUVQ4VDlqbzlQNEl2OHA4UmIwc1FfelBUbHlybGtnWGlvazdQNUdMNTN3?oc=5">cakaplah.com</a><a href="https://news.google.com/rss/articles/CBMixwFBVV95cUxOUW5tbnhpQXlLcVZiOVRlYlFBZnUyX3BkNFZBeUpMQm5CdXV1NG1LOVZpb21qRnVfTk4yX0tJeDNRQjRkZjJzLUhPTzdkOHNfYVZTM0ZTUVFBOHlTLUJSUlFHWVRTLTZFdlV4NWhpeEJnUVpVUlpBWE1yOUhiNUNFMUFWdzlEeW1OX3VuTE1hY3ppdnNjRW5FcmtOMGJjbW1VdmlRTUlraUxhdV91d0F1RHdRZ2czZlZwVmpnbFc4RmE4T2RTSENz0gHMAUFVX3lxTE02cFdHQk1zN1VXaXJmaTAydHN3QkgxZHVuLU1nN090YU05bTJkczBfMkJrQmxPOEFTR1BheXRDZmRTdEdXU29RWHU5TkZvaE8tbVdlNFh0MFI4WjFSUTF1LU1XQl9kemdKVTBjT25vR0lEODhVaUpTRzV5RkIwWHBfejEwVzNoc1VfOVAtOWpVOVNxZWM3RExZOTVmaGo0d3JNZU94blZDbXpza2o4VHR1Z29kdGk2dlVuajRvRkZVSVlmSHNkZDAtTE9ZZg?oc=5">cnbcindonesia.com</a><span class="lagi">+16 lagi</span></p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxON2NTcHNRYmNxMTVmVVlhc1RLWldfTlotQ2ZsYUdEX1FHQm1PYXZvcWR4ZFZPWmJtYXB6VWVNbkU2bjh2d3d3WVE3TzlVbDlzLXJ5alUzRmthNDRmbnNHd2kzcTI1RTcwTUctUnh1YVZYcGp1S2ktQ1RWVlFrQkVxczFOOFQxX1M0UW16MF84WV9BNTZ5?oc=5">aktual.com</a><a href="https://www.antaranews.com/berita/5734360/terpopuler-rp11-triliun-untuk-rekening-massal-hingga-pegawai-ditembak">antaranews.com</a><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxNMmdoSDdYOHhqSXN0T184TDVKN0dkS0hMV0c4cU1aT284dkUzaFRqUXZ2Yms0R1dma29JOUc5M3ZJZ2xVS0JkY2o1djB4MU1fbXpMQkZ0ak5YR0J0UkNudVdsM1A0UzVHWnJZYlFLUTF6bGJFT1VjdUhlNFJLSm5DU0dSUjRkOVNYNGNjakFST0FTejJTazdqQWNqdHdxNjlDd1HSAacBQVVfeXFMTXZwMTFDSURyN0Q4eVpMd2RMa0RtVWQtdVZWdm1PclZ6YnhPaDhJSXJ2T0NfRGtJczZDQlM3eWhIRHFRRXBySjVVc1lzMmRFaThSc25mSnplYjUxWHdtbk5Sem9yMDl3dXRfR2lUUUxUMjZtUHhmTjluWGUxMkhxTTk1TzhsbnQ5aXlKZkIzU01SVVN1Yl9ZYzBINzRoYW1CUGNLTlhLaXc?oc=5">bali.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxOY2RqVHhjRWtMMzczOWdIMTJMNG12TGRmU0VkU2Vhc2R5SWNSb2pySVRBV01GVkdWR1FVSGxLZ0JXejVNWG9Uc2RkX2NUMGdyemNDUG44VjhRX3hGcExPT053M3BLamVUcnV5LWFzTk1wYW5SWWN2NERSaklJQ1Q2SUtzQUhlUVQ4VDlqbzlQNEl2OHA4UmIwc1FfelBUbHlybGtnWGlvazdQNUdMNTN3?oc=5">cakaplah.com</a><a href="https://news.google.com/rss/articles/CBMizAFBVV95cUxNNnBXR0JNczdVV2lyZmkwMnRzd0JIMWR1bi1NZzdPdGFNOW0yZHMwXzJCa0JsTzhBU0dQYXl0Q2ZkU3RHV1NvUVh1OU5Gb2hPLW1XZTRYdDBSOFoxUlExdS1NV0JfZHpnSlUwY09ub0dJRDg4VWlKU0c1eUZCMFhwX3oxMFczaHNVXzlQLTlqVTlTcWVjN0RMWTk1ZmhqNHdyTWVPeG5WQ216c2tqOFR0dWdvZHRpNnZVbmo0b0ZGVUlZZkhzZGQwLUxPWWbSAcwBQVVfeXFMTTZwV0dCTXM3VVdpcmZpMDJ0c3dCSDFkdW4tTWc3T3RhTTltMmRzMF8yQmtCbE84QVNHUGF5dENmZFN0R1dTb1FYdTlORm9oTy1tV2U0WHQwUjhaMVJRMXUtTVdCX2R6Z0pVMGNPbm9HSUQ4OFVpSlNHNXlGQjBYcF96MTBXM2hzVV85UC05alU5U3FlYzdETFk5NWZoajR3ck1lT3huVkNtenNrajhUdHVnb2R0aTZ2VW5qNG9GRlVJWWZIc2RkMC1MT1lm?oc=5">cnbcindonesia.com</a><span class="lagi">+16 lagi</span></p>
         </div>
         <img class="thumb" src="https://static.republika.co.id/uploads/images/detailnews/019870600-1779249846-830-556.jpg" alt="" loading="lazy" decoding="async" width="208" height="208">
       </article>
@@ -244,7 +245,7 @@ footer a { color: var(--tautan); }
           <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">22 media</span> <span class="sumber">republika.co.id</span> <span>11:52 WIB</span></p>
           <p class="alasan">Liputan luas</p>
           <p class="ringkas">Kantor Wilayah (Kanwil) Bea Cukai Sumatera Bagian Barat (Sumbagbar) dan Bea Cukai Bandar Lampung memusnahkan barang kena cukai (BKC) berupa 44,7 juta batang rokok ilegal dan...</p>
-          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxNZ252ODZUVWZOaDUwdVJxc1BBcUlhOHpsbXpMclRobm44ZmxORkRpOFctZzJKNUhvSzNrdE9ja1ZCUjdTUjBGZGNJSEIzMldlcjN1WXZyc3NkaVpYUzlRNlVsczJSVUg0Q013SFEwZnNVcjdBZUZCTG9oZlY0VkZiMm5vV0dPV2dPRkFnclY1aWFkVzhxODJyR0pLcC1qWWFZ?oc=5">beritaanda.net</a><a href="https://www.bloombergtechnoz.com/detail-news/121147/bea-cukai-musnahkan-rokok-miras-ilegal-nilai-rp68-8-m">bloombergtechnoz.com</a><a href="https://news.google.com/rss/articles/CBMixAFBVV95cUxNYmtTQk1mRWVEdHpERFBoOTZrdkd3MlhjbThaSlhnbkJMTzY2SkoyeldSOV9oVkdBc1cxc2NXOTllclZFR3dzV2hJNk5TaTZjeXViaVlwRlF6bzRLaEtBNXJBV090S3lHckx2TTJlWGo1MmFJMnM4QlVxeVVmbW5hR2g1dDlreDZ4Q0V1SEZ6RlR2cXZYR2dFeE9QZS1yTmVHY21jOVJFeFN3VkN1blhXNHAtQXdydDRoWEZDRWhWT0ozc1lo0gHKAUFVX3lxTE4zZkJJaDFIREtLZFI0d21YcF8wZVdScmtIUkVMLW9udVNqbmRfUm5HZy1pdlJqOEVfRTN5MEhoWlc1a0ZTc1VDQmlKZWhwUU01OWd2ejJGeDZZVndYcGlFQkEtSHRFY3RzcHZqMFM2V05wQmxrOFZoOTZJSWg3WUREbHN4N1JkZWhQU2x0bF95MUFzR1BnWDBFTFc4NUR5YzQtWXVFZHQ1M1dJR1hGSEF4aF9KUTkzWlpfdjJQMWktWmlPYTIzRjhvVnc?oc=5">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMizAFBVV95cUxPbHlEZWZVdjlnejlNRThZeUpoRHFvNDZNakJZWTFCMW9oLXpMelNQbEdfZkRtdEM2ZnpRR1RRWE4zRFpYR3hyY3RsNjJFTkdXWEhpQmlid09YMDNjSTBpMjhwY1Z3WGNKcGNJNlR3MzZnaUJzR2xWM2JQRm1FU19xaXRIS21pZ0xtZncwcDI5QWYwUWVIZ0FuY3IwcFFKb01DdjZ1cGhjZFhPRzBGbW1zZi13aFZPSGExWWVRb0RlUEtXeGxSRUhCc2lsOTfSAdIBQVVfeXFMT3lLWkNBRUswMjJ5RDlockZiMTRzbGs2dC05TE9GczV6Rk5yU09taUVXUHdQb3VKVTBKNGl4NFZ0V0RadWJoTGJnYjFiMWRsU3dCVW93ckVjNmpQRUhkT1FsVE9JRTBrTHpJR0pmcW1tcVN6di1menNYNGdoTFdYR3FqRUZxOVhiX2RWWHFfUFVLLS1ZVGdJU3AwTldFTDAzeVdNcHc5cjVmd3JzTV9tU0NrUFQwUF8ySDZubHBid2tGRko4aHdpSF8xWThiOGs1VzN3?oc=5">daerah.sindonews.com</a><a href="https://news.google.com/rss/articles/CBMixwFBVV95cUxNSnE3N2Y0bEo3M3h6QW9kYkl0MS1VTmNUMmpST0owWlprdjNCNUppVnptdm1veGZwbl9pOEZZUzczQnNVMTdCQlNIMmxQM2JxMG81czFyVk1lcjl2SUlMaHpDRmliMldyNEdoX19STWpOajYxM2dEMElaWk1wOFY2a0VIWGxBVnNCbVlFVHpRM0JqUUVxVmZiOC1kMXE4RkZ4Rks3MlozdWVtY180UU9pbFZRbHJMa0U5WTJaaVQ4ZnFaSXA4eDk40gHMAUFVX3lxTE9hN1RQVEk5VVZfYjJ5VXFZQTc5RnEya3NZbzBNVUYzX0phaGh1dXBnSnV6RV91cWhxX0xtdHJjTTNjZVFQeDU0ZWM3ZlFwbWxBbHNiQnRjWk5qc29QX2JIMDdEYy1CRzRWU3FJZUtmUFpLU0xGSVgwem5nWWNwRDhuVDhOLVZndi1BLTJVQ2lzUU5nS2JtcEppU1czT19GVjZoaUI2Zk5rZ295SFdMbWlEU0gyN1l2djBVRm12OFBRY0ZrUTF1V0NZeHp1MQ?oc=5">detik.com</a><span class="lagi">+16 lagi</span></p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxNZ252ODZUVWZOaDUwdVJxc1BBcUlhOHpsbXpMclRobm44ZmxORkRpOFctZzJKNUhvSzNrdE9ja1ZCUjdTUjBGZGNJSEIzMldlcjN1WXZyc3NkaVpYUzlRNlVsczJSVUg0Q013SFEwZnNVcjdBZUZCTG9oZlY0VkZiMm5vV0dPV2dPRkFnclY1aWFkVzhxODJyR0pLcC1qWWFZ?oc=5">beritaanda.net</a><a href="https://www.bloombergtechnoz.com/detail-news/121147/bea-cukai-musnahkan-rokok-miras-ilegal-nilai-rp68-8-m">bloombergtechnoz.com</a><a href="https://news.google.com/rss/articles/CBMiygFBVV95cUxOM2ZCSWgxSERLS2RSNHdtWHBfMGVXUnJrSFJFTC1vbnVTam5kX1JuR2ctaXZSajhFX0UzeTBIaFpXNWtGU3NVQ0JpSmVocFFNNTlndnoyRng2WVZ3WHBpRUJBLUh0RWN0c3B2ajBTNldOcEJsazhWaDk2SUloN1lERGxzeDdSZGVoUFNsdGxfeTFBc0dQZ1gwRUxXODVEeWM0LVl1RWR0NTNXSUdYRkhBeGhfSlE5M1paX3YyUDFpLVppT2EyM0Y4b1Z30gHKAUFVX3lxTE4zZkJJaDFIREtLZFI0d21YcF8wZVdScmtIUkVMLW9udVNqbmRfUm5HZy1pdlJqOEVfRTN5MEhoWlc1a0ZTc1VDQmlKZWhwUU01OWd2ejJGeDZZVndYcGlFQkEtSHRFY3RzcHZqMFM2V05wQmxrOFZoOTZJSWg3WUREbHN4N1JkZWhQU2x0bF95MUFzR1BnWDBFTFc4NUR5YzQtWXVFZHQ1M1dJR1hGSEF4aF9KUTkzWlpfdjJQMWktWmlPYTIzRjhvVnc?oc=5">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMizAFBVV95cUxPbHlEZWZVdjlnejlNRThZeUpoRHFvNDZNakJZWTFCMW9oLXpMelNQbEdfZkRtdEM2ZnpRR1RRWE4zRFpYR3hyY3RsNjJFTkdXWEhpQmlid09YMDNjSTBpMjhwY1Z3WGNKcGNJNlR3MzZnaUJzR2xWM2JQRm1FU19xaXRIS21pZ0xtZncwcDI5QWYwUWVIZ0FuY3IwcFFKb01DdjZ1cGhjZFhPRzBGbW1zZi13aFZPSGExWWVRb0RlUEtXeGxSRUhCc2lsOTfSAdIBQVVfeXFMT3lLWkNBRUswMjJ5RDlockZiMTRzbGs2dC05TE9GczV6Rk5yU09taUVXUHdQb3VKVTBKNGl4NFZ0V0RadWJoTGJnYjFiMWRsU3dCVW93ckVjNmpQRUhkT1FsVE9JRTBrTHpJR0pmcW1tcVN6di1menNYNGdoTFdYR3FqRUZxOVhiX2RWWHFfUFVLLS1ZVGdJU3AwTldFTDAzeVdNcHc5cjVmd3JzTV9tU0NrUFQwUF8ySDZubHBid2tGRko4aHdpSF8xWThiOGs1VzN3?oc=5">daerah.sindonews.com</a><a href="https://news.google.com/rss/articles/CBMixwFBVV95cUxNSnE3N2Y0bEo3M3h6QW9kYkl0MS1VTmNUMmpST0owWlprdjNCNUppVnptdm1veGZwbl9pOEZZUzczQnNVMTdCQlNIMmxQM2JxMG81czFyVk1lcjl2SUlMaHpDRmliMldyNEdoX19STWpOajYxM2dEMElaWk1wOFY2a0VIWGxBVnNCbVlFVHpRM0JqUUVxVmZiOC1kMXE4RkZ4Rks3MlozdWVtY180UU9pbFZRbHJMa0U5WTJaaVQ4ZnFaSXA4eDk40gHMAUFVX3lxTE9hN1RQVEk5VVZfYjJ5VXFZQTc5RnEya3NZbzBNVUYzX0phaGh1dXBnSnV6RV91cWhxX0xtdHJjTTNjZVFQeDU0ZWM3ZlFwbWxBbHNiQnRjWk5qc29QX2JIMDdEYy1CRzRWU3FJZUtmUFpLU0xGSVgwem5nWWNwRDhuVDhOLVZndi1BLTJVQ2lzUU5nS2JtcEppU1czT19GVjZoaUI2Zk5rZ295SFdMbWlEU0gyN1l2djBVRm12OFBRY0ZrUTF1V0NZeHp1MQ?oc=5">detik.com</a><span class="lagi">+16 lagi</span></p>
         </div>
         <img class="thumb" src="https://static.republika.co.id/uploads/images/detailnews/_260910115219-233.png" alt="" loading="lazy" decoding="async" width="208" height="208">
       </article>
@@ -295,10 +296,10 @@ footer a { color: var(--tautan); }
       <article class="sorotan bergambar">
         <div class="isi">
           <h3><a href="https://katadata.co.id/finansial/korporasi/6aa25c1a9686e/brimo-taiwan-raih-anugerah-inovasi-atas-layanan-finansial-diaspora-indonesia">BRImo Taiwan Raih Anugerah Inovasi atas Layanan Finansial Diaspora Indonesia</a></h3>
-          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">9 media</span> <span class="sumber">katadata.co.id</span> <span>14:28 WIB</span></p>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">10 media</span> <span class="sumber">katadata.co.id</span> <span>14:28 WIB</span></p>
           <p class="alasan">Liputan luas</p>
           <p class="ringkas">BRImo Taiwan dari BRI meraih penghargaan dalam IDX Channel Anugerah Inovasi Indonesia 2026 berkat layanan digital banking bagi diaspora dan pekerja migran Indonesia di Taiwan.</p>
-          <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5734415/perluas-akses-layanan-finansial-bagi-diaspora-indonesia-brimo-taiwan-raih-anugerah-inovasi-indonesia-2026">antaranews.com</a><a href="https://www.bloombergtechnoz.com/detail-news/121201/perkuat-akses-finansial-diaspora-brimo-taiwan-raih-anugerah">bloombergtechnoz.com</a><a href="https://news.google.com/rss/articles/CBMi0AFBVV95cUxQTkthTjZ6MnpqbWJYak00TUFsQnZVMEZhalQyaFhkbHNoanF4NlBZUkgxNjdWLXM0YmgwSms1WHRGek9hdWpUVWlXNkx5d1RKLUt4YVh3Y09FSlRaZWt2b2s2S25BUElYTEdYLW5SaUVHbkUzWTVMaVpHZkhpTTl3cjZhWTBfX3lhRjJLQnhveFR3dDJwXy1WUE10M0l2U25fSGE0S25tSXlrcE50dzh6emYzaHNiRmlnRWtBV1BoYXdCVHZpMl93b3VPam9ubklj0gHQAUFVX3lxTFBOS2FONnoyemptYlhqTTRNQWxCdlUwRmFqVDJoWGRsc2hqcXg2UFlSSDE2N1YtczRiaDBKazVYdEZ6T2F1alRVaVc2THl3VEotS3hhWHdjT0VKVFpla3ZvazZLbkFQSVhMR1gtblJpRUduRTNZNUxpWkdmSGlNOXdyNmFZMF9feWFGMktCeG94VHd0MnBfLVZQTXQzSXZTbl9IYTRLbm1JeWtwTnR3OHp6ZjNoc2JGaWdFa0FXUGhhd0JUdmkyX3dvdU9qb25uSWM?oc=5">kalbar.suara.com</a><a href="https://news.google.com/rss/articles/CBMi4AFBVV95cUxQNVVWQ05oWjBlWjVfQzl2Y2Q4dE1JRmhPWUFRWE5WUFdCMks4NC1CUHp4T1MwZUJGRzVCUE5XTjFWNEExalJFNDQta1h6Z0F2M0xyNWxHTzVORkt6OXE1X3FmdjNTVkhlTy0xZzV3WVNqYWJob1lwOGk1bE5wak1LNjNHdENlMk9ObFJrSlNLSVlHUHA4SVFFdVBrM1QwM3A4S3hjM0dhdERWYVN6eHlKV1U0N2dzblJ2Rll6WlQ0cnBubHhSVEpWRGFtV0Z4dmp6Yzd1RmQ2dkloOHU5QmVwWA?oc=5">metrotvnews.com</a><a href="https://news.google.com/rss/articles/CBMi8wFBVV95cUxQYW9IUW1xNGRhY2lzc2taeVp3eDlZTEF2YmNHOUhDZVlTcEdnSGJrMzg3R2FpRzFaVWNKSmVOZEZEZy1xWWFHcFctZ2xyUjVGUm05ZHNtNUFvOE9hRWtFUkZ6TmwzOC1leDZPREd4ejJtTEpxUFc1MGlWS0JzWWZaZ184NndBMW1DRnpaWEJ2UTBiWnM0aWlFNlFvb0l1OFRUN3RLTHJZR0l1THVobTI1YlR1Z092WGlyMUVZUkF3SlJQV0N5U296TkVORFhqNUpfcHdtTklmN2Q0ZE14RkM1c3N3UWc0d2hSUzdtcGlSd1h4Rnc?oc=5">radarjabar.disway.id</a><span class="lagi">+3 lagi</span></p>
+          <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5734415/perluas-akses-layanan-finansial-bagi-diaspora-indonesia-brimo-taiwan-raih-anugerah-inovasi-indonesia-2026">antaranews.com</a><a href="https://www.bloombergtechnoz.com/detail-news/121201/perkuat-akses-finansial-diaspora-brimo-taiwan-raih-anugerah">bloombergtechnoz.com</a><a href="https://news.google.com/rss/articles/CBMi0AFBVV95cUxQTkthTjZ6MnpqbWJYak00TUFsQnZVMEZhalQyaFhkbHNoanF4NlBZUkgxNjdWLXM0YmgwSms1WHRGek9hdWpUVWlXNkx5d1RKLUt4YVh3Y09FSlRaZWt2b2s2S25BUElYTEdYLW5SaUVHbkUzWTVMaVpHZkhpTTl3cjZhWTBfX3lhRjJLQnhveFR3dDJwXy1WUE10M0l2U25fSGE0S25tSXlrcE50dzh6emYzaHNiRmlnRWtBV1BoYXdCVHZpMl93b3VPam9ubklj0gHQAUFVX3lxTFBOS2FONnoyemptYlhqTTRNQWxCdlUwRmFqVDJoWGRsc2hqcXg2UFlSSDE2N1YtczRiaDBKazVYdEZ6T2F1alRVaVc2THl3VEotS3hhWHdjT0VKVFpla3ZvazZLbkFQSVhMR1gtblJpRUduRTNZNUxpWkdmSGlNOXdyNmFZMF9feWFGMktCeG94VHd0MnBfLVZQTXQzSXZTbl9IYTRLbm1JeWtwTnR3OHp6ZjNoc2JGaWdFa0FXUGhhd0JUdmkyX3dvdU9qb25uSWM?oc=5">kalbar.suara.com</a><a href="https://news.google.com/rss/articles/CBMi4AFBVV95cUxQNVVWQ05oWjBlWjVfQzl2Y2Q4dE1JRmhPWUFRWE5WUFdCMks4NC1CUHp4T1MwZUJGRzVCUE5XTjFWNEExalJFNDQta1h6Z0F2M0xyNWxHTzVORkt6OXE1X3FmdjNTVkhlTy0xZzV3WVNqYWJob1lwOGk1bE5wak1LNjNHdENlMk9ObFJrSlNLSVlHUHA4SVFFdVBrM1QwM3A4S3hjM0dhdERWYVN6eHlKV1U0N2dzblJ2Rll6WlQ0cnBubHhSVEpWRGFtV0Z4dmp6Yzd1RmQ2dkloOHU5QmVwWA?oc=5">metrotvnews.com</a><a href="https://news.google.com/rss/articles/CBMi8wFBVV95cUxQYW9IUW1xNGRhY2lzc2taeVp3eDlZTEF2YmNHOUhDZVlTcEdnSGJrMzg3R2FpRzFaVWNKSmVOZEZEZy1xWWFHcFctZ2xyUjVGUm05ZHNtNUFvOE9hRWtFUkZ6TmwzOC1leDZPREd4ejJtTEpxUFc1MGlWS0JzWWZaZ184NndBMW1DRnpaWEJ2UTBiWnM0aWlFNlFvb0l1OFRUN3RLTHJZR0l1THVobTI1YlR1Z092WGlyMUVZUkF3SlJQV0N5U296TkVORFhqNUpfcHdtTklmN2Q0ZE14RkM1c3N3UWc0d2hSUzdtcGlSd1h4RnfSAd4BQVVfeXFMUHo1NVI1Zlh0Y0xjTFJrR1YxNkludTZ5RUFfcHgwSkh3MU90NERaeVlnVmpUVjZCWHA1SE1mWlNlSWZlM09lS0g0eU5XTEVyMGpoaXBjRXRDQWstZWJKZlIxX1o3NVl2bEJxNmxxRmlvaXhuSEc4WXhqZ3VWanlmY0Ixd25JVVJWS3k2cTUtbFhnWnZZTnpETGJDcy1WMDBGNlFxZUFlc1lkWHNCQUNhNmRUU2dkQ0x1V0s3eUllN2ZSMW82dk0zVGhYUVNhUnZDNFRqdU02WFgxc0owREx3?oc=5">radarjabar.disway.id</a><span class="lagi">+4 lagi</span></p>
         </div>
         <img class="thumb" src="https://cdn1.katadata.co.id/media/images/thumb/2026/09/10/BRImo_Taiwan-2026_09_10-14_27_19_647b78b0b5e5db5549fb83466a5e8ccd_620x413_thumb.jpeg" alt="" loading="lazy" decoding="async" width="208" height="208">
       </article>
@@ -326,17 +327,17 @@ footer a { color: var(--tautan); }
         <li>
           <span class="nomor">04</span>
           <div>
-            <h3><a href="https://news.google.com/rss/articles/CBMivAFBVV95cUxNRlgwN1RKT0t4SHdfTGQ2aTBqT0wwUHBmRXkyNktUUVRVT2Rzem1ieXJDc0pQZktCdC1xX1BVY192Y0VzcUN3Z1dVYzJCM0R3NGZtaVVvMEtCbnlDaHJVTk5ucmt0WUJXU1pwb3lhYzVPdy0yODNFUDc2V3BZY0NLaWVFWnVna0V2M1JIVDlLZ1VVV2duMjY4VnYwVFlfYTJIWlFtQV85YlVYM1o5aDJaR1N5djJyd3p6X2h6dA?oc=5">Ibas Dorong Anak Muda Jadikan Kreativitas sebagai Kekuatan Ekonomi Indonesia</a></h3>
+            <h3><a href="https://news.google.com/rss/articles/CBMivwFBVV95cUxOSWhNTWVJR0hiMDRjZHdwSENqOTdfT2l0UktuNXBMbU03YjdJRTAyV3Jad3ZmU09vNFBhMWJrLUo3bURwalQ1LTRQekxUc3ZTMllyNXIyRXRGbVh6dVZ6T0tJNkRPXy0yUXB0aER3anRlR3czZXlMOTRyYVJpR0dqcXIwSXVfV1p1Zms4Tzhfek1JWFEtdno1dGxhVTFERU1hcG95VnZXRS1XVTBoM0lMV1hIeWlFVXRNdEpGQXJuaw?oc=5">Ibas Dorong Anak Muda Jadikan Kreativitas sebagai Kekuatan Ekonomi Indonesia</a></h3>
             <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">6 media</span> <span class="sumber">timesindonesia.co.id</span> <span>19:09 WIB</span></p>
             <p class="alasan">Liputan luas</p>
             
-            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMi_gFBVV95cUxPR2psS0VYWlNUcU1LZjVOaWpWV2pHMDh2SjhaSDBVbVdxdkhuaU04R2pSU1Jhb0dKaWRkVXFoakdxcjE2c0p3dGV0SU1yVHRaQ2phMUtOclY0b2pENlhSQTgtbHhXWXVJQnVMeG96V3BXTmhhQThCTUtjZm5RNGlDZEJSblRWOTNMNm9wREw0aVNocGJPdm1LM0U2Vm10eTJmM2hUajJVTlpQdkJFdTNZeU9aNW9nSHdYRWVoVzdUb1d4MU91d2lvV3hlMFd3T29XMDFkNFFSdlRZdGFTcEktUENmY2daZUNVbGV3Qmp0OHdVVWtiMU44QktWbWVud9IBlwFBVV95cUxPSXBpQ2s3ZGJ3czFTaXVSdmQ2RmNaSXlQeUQ5RUJ4X2VrQUxOZHh6aEYtVHJuMnYyWTNId1VJQkFXbGVnWk9GMVlOSWFJS21PcUlyU3ZDM1VXSy1pT0xxMktFSUp2Q05BNkpFd3B5MjNqRHpzdWs5OTBoNzU2Ulk4MTNqR3A2clFfZDN6czV6dDlZUktwVXhB?oc=5">jpnn.com</a><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxOYUIyel8taFFEaEFaRURMSHEzN3QzUjYzTzcyaGJva1BuajVURE5Jd2ZBU2M4Sm14dmxaVEM4THRZNXhiZmZicVFHSndHQjJFamE0eFBjbGJBSGk2M3g3bWZXaW95MHppN2hrVFh5cEJ5YVhCZVpUTzNqU0s0X29RR3lVUFlzaUQtVmREUmxoZV93SHQtZ3hZYkZWWUlWRl8zUnlmNEdsQlpOdFVNeGl0bTFEVE8?oc=5">katakini.com</a><a href="https://news.google.com/rss/articles/CBMiigFBVV95cUxOeFRlOGtrSzRXeUw5OXAwbEhRZWtoVUZ6NUdvdUVRNlJmRzV1Yjh1Sk1ucVh1WE51LVhFN09fSklfdExaTVVCYzEwa3h3WTVNSVVCZGpjbWtBaEtCOEFEdkxyTEJ2N3gwdThZcFYzODJxNk1CVTJoZ3puTk5ER3ZFanhCUlp5ekpBSmc?oc=5">mpr.go.id</a><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxNVHZhNzRwNXdvZ3FuZWFGQ0FYSGtrbTg4bVl1N3dQallxOWRZekdkY2JXaXNIdzhCTkstcEliN3I5Q1ZHS05kT01WZmZrSU5YVDJEN1UxTVRwd0NsWEhUc3ZuM3BPQ2kxcERvLW5QU1JvYmN2TXhRV3JadnprYlpJeXlpQnltTmhXSWgzV2w2TWJRMUVsVFZLN2pGbVB5VHBTTmgtTi1yQXhzbFdwanpmaDhLbFVHX0tSNkdv?oc=5">rm.id</a><a href="https://news.google.com/rss/articles/CBMixgFBVV95cUxOcDZfeXFXYVFaRTAwcExpUXY3VU52QTBWNUJ5ME0wM1pWMmh5WFVoU0I1Sm12TGtLRGZwRU1FOXY2c0E5ZE41Vm16TlFKUFhib0tfMkJETXRaUGJRbWY5VDFHX3Ntb001N3dka25XUTFVTHFOeFpEMTI2ajBfOFhSV0tiZlJ6aElSd1JZbDB2SHR3UzhMRUxBa1JqY2xBN3ZmYkZqMG5ZSzFXRWN4Sk1DWkZXeEw0djlDeGRYRHUxOENqRl9KM1E?oc=5">tribunnews.com</a></p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMi_gFBVV95cUxPR2psS0VYWlNUcU1LZjVOaWpWV2pHMDh2SjhaSDBVbVdxdkhuaU04R2pSU1Jhb0dKaWRkVXFoakdxcjE2c0p3dGV0SU1yVHRaQ2phMUtOclY0b2pENlhSQTgtbHhXWXVJQnVMeG96V3BXTmhhQThCTUtjZm5RNGlDZEJSblRWOTNMNm9wREw0aVNocGJPdm1LM0U2Vm10eTJmM2hUajJVTlpQdkJFdTNZeU9aNW9nSHdYRWVoVzdUb1d4MU91d2lvV3hlMFd3T29XMDFkNFFSdlRZdGFTcEktUENmY2daZUNVbGV3Qmp0OHdVVWtiMU44QktWbWVud9IBlwFBVV95cUxPSXBpQ2s3ZGJ3czFTaXVSdmQ2RmNaSXlQeUQ5RUJ4X2VrQUxOZHh6aEYtVHJuMnYyWTNId1VJQkFXbGVnWk9GMVlOSWFJS21PcUlyU3ZDM1VXSy1pT0xxMktFSUp2Q05BNkpFd3B5MjNqRHpzdWs5OTBoNzU2Ulk4MTNqR3A2clFfZDN6czV6dDlZUktwVXhB?oc=5">jpnn.com</a><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxOYUIyel8taFFEaEFaRURMSHEzN3QzUjYzTzcyaGJva1BuajVURE5Jd2ZBU2M4Sm14dmxaVEM4THRZNXhiZmZicVFHSndHQjJFamE0eFBjbGJBSGk2M3g3bWZXaW95MHppN2hrVFh5cEJ5YVhCZVpUTzNqU0s0X29RR3lVUFlzaUQtVmREUmxoZV93SHQtZ3hZYkZWWUlWRl8zUnlmNEdsQlpOdFVNeGl0bTFEVE8?oc=5">katakini.com</a><a href="https://news.google.com/rss/articles/CBMiigFBVV95cUxOeFRlOGtrSzRXeUw5OXAwbEhRZWtoVUZ6NUdvdUVRNlJmRzV1Yjh1Sk1ucVh1WE51LVhFN09fSklfdExaTVVCYzEwa3h3WTVNSVVCZGpjbWtBaEtCOEFEdkxyTEJ2N3gwdThZcFYzODJxNk1CVTJoZ3puTk5ER3ZFanhCUlp5ekpBSmc?oc=5">mpr.go.id</a><a href="https://news.google.com/rss/articles/CBMiuAFBVV95cUxPQUlISlprOTJmZkoyWUZDQ1NGUU1rQXRkRWt5QXFJV21rb3ViN2NKUnJDQXBUdUU5XzB4akZIS2ljS1RCY0thUHJ2NmZ3ZjdOekpsa0lkd1oxb2ZjZDlMVnJ4MXAwb0dhRGlwU08xUE5tNWo0SkY2SENpT2xQZzdUN1l1NU5BWnJVQ3BnX2ZndDNSYVhsVUdBWEY3V1BNTElkdW1hZ1d4cmZGbDVxWTlKdmx2cmFndVhT?oc=5">rm.id</a><a href="https://news.google.com/rss/articles/CBMixgFBVV95cUxOcDZfeXFXYVFaRTAwcExpUXY3VU52QTBWNUJ5ME0wM1pWMmh5WFVoU0I1Sm12TGtLRGZwRU1FOXY2c0E5ZE41Vm16TlFKUFhib0tfMkJETXRaUGJRbWY5VDFHX3Ntb001N3dka25XUTFVTHFOeFpEMTI2ajBfOFhSV0tiZlJ6aElSd1JZbDB2SHR3UzhMRUxBa1JqY2xBN3ZmYkZqMG5ZSzFXRWN4Sk1DWkZXeEw0djlDeGRYRHUxOENqRl9KM1E?oc=5">tribunnews.com</a></p>
           </div>
         </li>
         <li>
           <span class="nomor">05</span>
           <div>
-            <h3><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxQdk5sZUU5NjFVU3lsV3UxdGpXQTVoSHRuTlZaRnFCMGU5MFc3d2ZrV2VodTlMdV93SFhta2p4SGtlZi15ZUNNXy00S243TmtWQXlReUJsdDQzeGJmRUg3TWFFbnBwcEFPSF9ZNVBqNzRLeElMQUJBeEdQdURZOC1WeHBZRkttUzlhMFRIdW5GT3lqQ1pHSC1mR0FGeWVrMDlHRHfSAaIBQVVfeXFMUHZObGVFOTYxVVN5bFd1MXRqV0E1aEh0bk5WWkZxQjBlOTBXN3dma1dlaHU5THVfd0hYbWtqeEhrZWYteWVDTV8tNEtuN05rVkF5UXlCbHQ0M3hiZkVIN01hRW5wcHBBT0hfWTVQajc0S3hJTEFCQXhHUHVEWTgtVnhwWUZLbVM5YTBUSHVuRk95akNaR0gtZkdBRnllazA5R0R3?oc=5">Sinergi Mendorong Pertumbuhan Ekonomi Berdaya Tahan Tinggi - https://jambiekspres.disway.id/</a></h3>
+            <h3><a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxPdllqQXQ0YlpmX3pqbjhZY3JycE5YRWM5NFZHcFNRRlFSbGVCZTU1VG40UXVVOEN2UWNEWVowaGlmUkd4bnlLTGdLbHRUWmN2SmRZU2o2d2hCQzRQcXZTOFlOYjNCN04zM0NHNUVfYWtiS2o0M1ZYQWpGNGxvRm9GYXBFN2VYaC1FVi1DM1JrYl8xVWEzTzB4MFdRRktlSjlVRDJjSjJWcTd3U21lODFn?oc=5">Sinergi Mendorong Pertumbuhan Ekonomi Berdaya Tahan Tinggi</a></h3>
             <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="ekonomi pertumbuhan">↑ positif</span> <span class="media">5 media</span> <span class="sumber">jambiekspres.disway.id</span> <span>04:23 WIB</span></p>
             <p class="alasan">Liputan luas</p>
             
@@ -525,10 +526,10 @@ footer a { color: var(--tautan); }
       <article class="sorotan bergambar">
         <div class="isi">
           <h3><a href="https://www.bloombergtechnoz.com/detail-news/121121/ihsg-dibuka-menguat-kala-bursa-asia-tertekan-di-zona-merah">IHSG Dibuka Menguat Kala Bursa Asia Tertekan di Zona Merah</a></h3>
-          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="tertekan">↑ positif</span> <span class="media">9 media</span> <span class="sumber">bloombergtechnoz.com</span> <span>09:32 WIB</span></p>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="tertekan">↑ positif</span> <span class="media">10 media</span> <span class="sumber">bloombergtechnoz.com</span> <span>09:32 WIB</span></p>
           <p class="alasan">Liputan luas</p>
           <p class="ringkas">IHSG pada pagi hari ini, Kamis (10/9), dibuka menguat. Hingga 9.15 WIB, IHSG menguat 0,31% ke level 6.698, di tengah-tengah ‘lautan merah’ Bursa Asia.</p>
-          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMihwJBVV95cUxNSS1JTmdEdHVaLTFvZVJEMWVkelBiR2hIdGthRGVIWUVENXYxbjFKM18xV0ZRWmVzVFA2VVNRYXVmTVJqVk9lYVZPbU9nSnZvLXFkWl9wYXo1TmNadWRVSER3XzBPRWhvWkg5R3FlX1JVT3dEakJ4WWdjUkdtdUZTRHdkSG5LWkVqU1NyZXN6NGNEMnBRcmlHX3pFWlZraEJkOGpTeWxDdGt2U0ZkNDhDOGdtOWo2QVduTXJHOGdaSVF4WGswNDhmZkQzdG44V3RlOUJFUDcza2tjSHZ6QnBRNUV4Y0duckVTY3dxcGRJcFd1dG9VMlVpcncxZHk2b2ZNeDctRzYyY9IBrwFBVV95cUxOSjdjNnRIdHpaUHI3RlBLYy1ERDl0SHktdVNDZzhGN2kyOXMtQm1JalVWdkRwNUxCeGtkNnQ3dzJDUmFpVERSZWpFZVZ3WFVXQ3hEank1dElXLUdad2x6cDRFTzZLTmk5S2ptYUZmRURENWFndnZidlo5clNaYWh6d29ZUTc0ajRKV25Lc2RXRVRXYTRURER5VEdWY0w3VWlFOWpiLTQxU0ZaVjhGQWFj?oc=5">antaranews.com</a><a href="https://news.google.com/rss/articles/CBMihgFBVV95cUxOcTV5c1RNYXZlRHNZQU5DaTNEbDQwSThnbjktck5fZTRqXzhSVW5uZ09aX2RqVnpDZ1hvbEw4SUh1NjlVWFdCNm8tY3BJYjRfM0RoalBDSmFFR1Z0VWVCNWJMYkdOU05faTRkYUR2VGs0ZmFiTXFMRl9qUzhiSVpuT0hLUnRlUQ?oc=5">infobanknews.com</a><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxOQnFsOWQ1QndEM3lhX3ZGNUlRSHNEbGJEYzRPWVRPYjQ5dGN5azhVUXZOVEdRWkZENTg2S2xnWU9VejZKUjl5MzFQdGdXME5IX285elJzTTNMV0JSdjItZ2h6QTMxU2ZfTjFGTEljeFN6RVhsaHNsTE5MUVBjcC04VVRrR0ZjSFY5LUJqcC1VU3BJYzhJMHVvUDJRZkdtYloxTzlMNFBscEZJS2lPN0HSAbMBQVVfeXFMTjdCc2NWcDdxN3hfTFhLb054OUZ1TTQzY2NyVjV6QnhBTnZyZkVKU1d3ZXd5by12bjB1U2J4bFlLYnUwcnNlQzNRZTRRU1pvdFk5Szc4blpXc0VSYk5JcXVScHBscHEyY3V1NVNVdFJjVzlLMG9rMXp1M0JLZ19oemFRekJMaHR3a2hZaHp4NUpoc2NZLW50N19LWjZSV2dnTVR6c3E5ZnR5SnN4TWhFa1c0OTA?oc=5">jambi.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxObnM5RG5Hc3gyRkl4T1lteEZ4QWNXdExOMVpncDRiSmpfTmQ2Sm5sQTg0SEVfODE3OXczTmI3dlNrSDF6QkxMaHJwTzBodHE0U1VGMVJvSnJkdFZKaUlGOHdOWFZtam91anNmZkJvZGFaNGtlR042XzFKT3RwamNnUDR4dERZTlJtNHJsY1ZpWXdwUV9ZYWo1VkVNVVNuMGhnNFpwRXg5ZGtmdjZqUnhlSlFjQXPSAboBQVVfeXFMTlpjQlZPVTNtaXphYnF4Qy0zLTFQX051ZVdfdGJfTTJNWTUzRjVKZ2t1MUxWQTE0M3hvZVd4cUVUbWhIZFFDU21DbkNVaGEzLWVWc1d3Q250eDdKY0VVclBWZ1U2Y3RHVE5PSy00Z0tCUWlNaDBBMGE1bjhLUnZ0Z0E1WUV4ZDVIcGl0SGo1TV9EaDJBd0NGQXRZRmUyUGN5SkU0Z3NvOTJyRVMwc0xBWnUxU2ZTWmF2Nkx3?oc=5">jatim.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxPNU1kQzJnY3hUcEYzQmdubkctNVlMSFpXUjZwVWRsOU1BNlFlZHRxdUE5VGowX2IxN3RHYkdPRDlxb3hxTVhaWlJTQ1BQSGpjUnZVZWtJZW1RTjQxRnU0bXJyQnNwelhkX0FTbHcwNzdJYjNKVC1ZaHZ4QlJ2YVFpLUg4czNGRzJSVElhTmstX2VBUnhoSUlJczFjcXQ0VzBaRDFIb3ZGVHdsbjZEVlgxb3hGUHBMeVHSAbwBQVVfeXFMT2FEaWNKaEZDeDdwM0oxYmFOdGhiRWxYTlZ5UWZRRDMtRkI5VlAyZVRNVGJEUFFWeTBfbjBqY1o1aTdTeDQ3RWk1OU9oQkRUNTJsSEdhNmFKMGhGeEpkdGM0M1BpdE5qSzBMSE1laHFybmkzUzBIZGJRSzcwY1RlMlAwa3k4WUYyQ0N3akRrRWVXNWROd1oyUVRjLXBvZjJOUVBwNGdlbFBWckFpc1l2aG9QWWJmTFhUWnVrYTY?oc=5">koran-jakarta.com</a><span class="lagi">+3 lagi</span></p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMihwJBVV95cUxNSS1JTmdEdHVaLTFvZVJEMWVkelBiR2hIdGthRGVIWUVENXYxbjFKM18xV0ZRWmVzVFA2VVNRYXVmTVJqVk9lYVZPbU9nSnZvLXFkWl9wYXo1TmNadWRVSER3XzBPRWhvWkg5R3FlX1JVT3dEakJ4WWdjUkdtdUZTRHdkSG5LWkVqU1NyZXN6NGNEMnBRcmlHX3pFWlZraEJkOGpTeWxDdGt2U0ZkNDhDOGdtOWo2QVduTXJHOGdaSVF4WGswNDhmZkQzdG44V3RlOUJFUDcza2tjSHZ6QnBRNUV4Y0duckVTY3dxcGRJcFd1dG9VMlVpcncxZHk2b2ZNeDctRzYyY9IBrwFBVV95cUxOSjdjNnRIdHpaUHI3RlBLYy1ERDl0SHktdVNDZzhGN2kyOXMtQm1JalVWdkRwNUxCeGtkNnQ3dzJDUmFpVERSZWpFZVZ3WFVXQ3hEank1dElXLUdad2x6cDRFTzZLTmk5S2ptYUZmRURENWFndnZidlo5clNaYWh6d29ZUTc0ajRKV25Lc2RXRVRXYTRURER5VEdWY0w3VWlFOWpiLTQxU0ZaVjhGQWFj?oc=5">antaranews.com</a><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxNSTFlVmdWZkI0U1kyTjdsWmNlRmZ0UDNhTXhyWVkzZXN5UVUxclNZaW1vakxiOXhsQk9xX01fYXRpdUotWGtqbkV5VkNvREpGMVZiZnE4dGF5TEhET2x4bWpLcVJhWG9SRUVDMjZYTTh4dndSNGZxTEwyS0dvRlFya1U2aGpoQXkwcjNicXFqN09mLU91M29mUlhBc3hxTXhQM00wVmZhTHh0U25DMk94OHZ6MA?oc=5">elshinta.com</a><a href="https://news.google.com/rss/articles/CBMihgFBVV95cUxOcTV5c1RNYXZlRHNZQU5DaTNEbDQwSThnbjktck5fZTRqXzhSVW5uZ09aX2RqVnpDZ1hvbEw4SUh1NjlVWFdCNm8tY3BJYjRfM0RoalBDSmFFR1Z0VWVCNWJMYkdOU05faTRkYUR2VGs0ZmFiTXFMRl9qUzhiSVpuT0hLUnRlUQ?oc=5">infobanknews.com</a><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxOQnFsOWQ1QndEM3lhX3ZGNUlRSHNEbGJEYzRPWVRPYjQ5dGN5azhVUXZOVEdRWkZENTg2S2xnWU9VejZKUjl5MzFQdGdXME5IX285elJzTTNMV0JSdjItZ2h6QTMxU2ZfTjFGTEljeFN6RVhsaHNsTE5MUVBjcC04VVRrR0ZjSFY5LUJqcC1VU3BJYzhJMHVvUDJRZkdtYloxTzlMNFBscEZJS2lPN0HSAbMBQVVfeXFMTjdCc2NWcDdxN3hfTFhLb054OUZ1TTQzY2NyVjV6QnhBTnZyZkVKU1d3ZXd5by12bjB1U2J4bFlLYnUwcnNlQzNRZTRRU1pvdFk5Szc4blpXc0VSYk5JcXVScHBscHEyY3V1NVNVdFJjVzlLMG9rMXp1M0JLZ19oemFRekJMaHR3a2hZaHp4NUpoc2NZLW50N19LWjZSV2dnTVR6c3E5ZnR5SnN4TWhFa1c0OTA?oc=5">jambi.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxObnM5RG5Hc3gyRkl4T1lteEZ4QWNXdExOMVpncDRiSmpfTmQ2Sm5sQTg0SEVfODE3OXczTmI3dlNrSDF6QkxMaHJwTzBodHE0U1VGMVJvSnJkdFZKaUlGOHdOWFZtam91anNmZkJvZGFaNGtlR042XzFKT3RwamNnUDR4dERZTlJtNHJsY1ZpWXdwUV9ZYWo1VkVNVVNuMGhnNFpwRXg5ZGtmdjZqUnhlSlFjQXPSAboBQVVfeXFMTlpjQlZPVTNtaXphYnF4Qy0zLTFQX051ZVdfdGJfTTJNWTUzRjVKZ2t1MUxWQTE0M3hvZVd4cUVUbWhIZFFDU21DbkNVaGEzLWVWc1d3Q250eDdKY0VVclBWZ1U2Y3RHVE5PSy00Z0tCUWlNaDBBMGE1bjhLUnZ0Z0E1WUV4ZDVIcGl0SGo1TV9EaDJBd0NGQXRZRmUyUGN5SkU0Z3NvOTJyRVMwc0xBWnUxU2ZTWmF2Nkx3?oc=5">jatim.antaranews.com</a><span class="lagi">+4 lagi</span></p>
         </div>
         <img class="thumb" src="https://images.bloombergtechnoz.com/data/2026/01/image-20260115185254.jpeg" alt="" loading="lazy" decoding="async" width="208" height="208">
       </article>
@@ -633,7 +634,7 @@ footer a { color: var(--tautan); }
           <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">7 media</span> <span class="sumber">news.republika.co.id</span> <span>04:00 WIB</span></p>
           <p class="alasan">Liputan luas</p>
           <p class="ringkas">Menteri Perhubungan (Menhub) Dudy Purwagandhi menyampaikan keprihatinan mendalam atas hilangnya kontak lima jurnalis saat meliput aktivitas Gunung Anak Krakatau (GAK) di perairan Selat Sunda. Pihaknya telah...</p>
-          <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5735801/menhub-prihatin-lima-jurnalis-hilang-kontak-saat-liput-aktivitas-gak">antaranews.com</a><a href="https://www.bloombergtechnoz.com/detail-news/121167/basarnas-kerahkan-helikopter-cari-jurnalis-di-selat-sunda">bloombergtechnoz.com</a><a href="https://katadata.co.id/berita/nasional/6aa2852704924/prabowo-perintahkan-tni-al-cari-lima-jurnalis-yang-hilang-di-selat-sunda">katadata.co.id</a><a href="https://www.liputan6.com/bisnis/read/8288851/4-bandara-injourney-mulai-beroperasi-normal">liputan6.com</a><a href="https://news.detik.com/berita/d-8657749/hari-ke-3-pencarian-5-jurnalis-hilang-masih-nihil-drone-terkendala-abu-vulkanik">news.detik.com</a><span class="lagi">+1 lagi</span></p>
+          <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5735801/menhub-prihatin-lima-jurnalis-hilang-kontak-saat-liput-aktivitas-gak">antaranews.com</a><a href="https://www.bloombergtechnoz.com/detail-news/121167/basarnas-kerahkan-helikopter-cari-jurnalis-di-selat-sunda">bloombergtechnoz.com</a><a href="https://katadata.co.id/berita/nasional/6aa2852704924/prabowo-perintahkan-tni-al-cari-lima-jurnalis-yang-hilang-di-selat-sunda">katadata.co.id</a><a href="https://www.liputan6.com/bisnis/read/8288851/4-bandara-injourney-mulai-beroperasi-normal-setelah-kembali-buka">liputan6.com</a><a href="https://news.detik.com/berita/d-8657749/hari-ke-3-pencarian-5-jurnalis-hilang-masih-nihil-drone-terkendala-abu-vulkanik">news.detik.com</a><span class="lagi">+1 lagi</span></p>
         </div>
         <img class="thumb" src="https://static.republika.co.id/uploads/images/detailnews/093851600-1789074055-693B9074-27F9-4BBB-93AC-C97C41.jpeg" alt="" loading="lazy" decoding="async" width="208" height="208">
       </article>
@@ -736,16 +737,6 @@ footer a { color: var(--tautan); }
         <li>
           <span class="nomor">05</span>
           <div>
-            <h3><a href="https://www.cnbc.com/2026/09/10/ant-international-visa-mastercard-ai-agent-payment-standard.html" hreflang="en">Ant International bermitra dengan Visa, Mastercard dalam mengembangkan pembayaran AI</a></h3>
-            <p class="meta"><span class="media">3 media</span> <span class="sumber">cnbc.com</span> <span>08:53 WIB</span> <span class="terjemah" title="Ant International partners with Visa, Mastercard on developing AI payments">diterjemahkan</span></p>
-            <p class="alasan">Liputan meluas</p>
-            <p class="ringkas">Visa, Mastercard, dan Ant International sedang mengerjakan standar umum untuk pembayaran agen AI — termasuk cara memverifikasi dan memantau transaksi mereka.</p>
-            <p class="juga"><span>juga di</span><a href="https://www.investing.com/news/stock-market-news/payment-firms-visa-mastercard-and-ant-international-team-up-on-ai-agent-trust-framework-4894891">investing.com</a><a href="https://news.google.com/rss/articles/CBMixgFBVV95cUxONjFMLWdlN2p4R0h2Q0hDU2ktaWNJLW1HME5HbnBoWGxPcnJDMHYyQjluN2VhclJYNENmd3BuOGh4TElfTTJhdWYxWXBUTG1ua3VhNl9kYUx4ZGJkM2dLYUhxYVFzQjN0alY2SXNKM2lORHVqaDh4bmJHbm9ITmE3OUpNMDYwUFlSTlNSUFBCQzJPTXBfY1N4ejNzRzRxQVdMMGFheHhWQnF6OEc1RnlJdTEzVF80QXJoYW5uQWF4dkcyaG4wWWc?oc=5">reuters.com</a></p>
-          </div>
-        </li>
-        <li>
-          <span class="nomor">06</span>
-          <div>
             <h3><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxQSmcwdHp2WFJSUFc2VEs1RzlhckFsSUJEb25JOXl5U2YzTEtrazI3YlEzazZjZHA3blBmemx6dDUzb2VhM001cHBDN0R3NUhvWVJ3ejBzQXZvTTRLRXdUUXp2SmtKQWR2Nmw5dk1XYUNvbDEtM0VBMWlnMjZvV21LRFA4RmN2cUF2YkdOYjFaOTR5ZkdSM2NFNmUzZXN5Sk5CSnM5REtzM05ZeUdaRTl1c2NNVnJQcjJiSENYWVVQUzF3QQ?oc=5" hreflang="en">Texas Stock Exchange mencatat pencatatan pasar ekuitas primer pertama dari NYSE</a></h3>
             <p class="meta"><span class="media">2 media</span> <span class="sumber">reuters.com</span> <span>04:45 WIB</span> <span class="terjemah" title="Texas Stock Exchange captures first primary equity market listings from NYSE">diterjemahkan</span></p>
             <p class="alasan">Liputan meluas</p>
@@ -754,7 +745,7 @@ footer a { color: var(--tautan); }
           </div>
         </li>
         <li>
-          <span class="nomor">07</span>
+          <span class="nomor">06</span>
           <div>
             <h3><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxNY1ZUdV8ySE9LN2ZodTVWN21hcC0wOHZ1Ml9oMy1zVGFNY1R2RHo4UWVjV1RGMER4MGJDWllvbFFVbW5TS1VaZTk0WW5QV2RZbHZPMnpXSVhSUlVSUXAwbWdRS1dpVEo4Wk1SU3lUVk5sTkR4V0pHRkhyVU05VFMxTFI1VWYyZlE3dTBRWDVVNVNnZEg0TVByVWg5QlMzaU1wRGxoTW9uYmtKTUxJTm5HUQ?oc=5" hreflang="en">Grup Portugis D3 menggugat Meta, TikTok, dan YouTube atas desain yang membuat ketagihan</a></h3>
             <p class="meta"><span class="media">2 media</span> <span class="sumber">reuters.com</span> <span>04:31 WIB</span> <span class="terjemah" title="Portuguese group D3 sues Meta, TikTok and YouTube over addictive design">diterjemahkan</span></p>
@@ -764,7 +755,7 @@ footer a { color: var(--tautan); }
           </div>
         </li>
         <li>
-          <span class="nomor">08</span>
+          <span class="nomor">07</span>
           <div>
             <h3><a href="https://www.aljazeera.com/video/newsfeed/2026/9/10/10-09-clip-russia-strike-pavlohrad-ua?traffic_source=rss" hreflang="en">Serangan Rusia menghantam pusat perbelanjaan di Ukraina tengah</a></h3>
             <p class="meta"><span class="media">2 media</span> <span class="sumber">aljazeera.com</span> <span>04:03 WIB</span> <span class="terjemah" title="Russian strike hits shopping centre in central Ukraine">diterjemahkan</span></p>
@@ -773,10 +764,105 @@ footer a { color: var(--tautan); }
             <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMisgFBVV95cUxNcjZSQzBhYjI1ZjJENXhBVjE1dnRIcklQbHROMkFFNDdqMkJWc2dpMlN4Z1A2WUxSNHdzOFBiV3VIUEk0OXBMVlNjc0s5QWp1VjZlS1FXWmgtQ1BuMV81T3g1TFY1aGZiNzA0YU1VUDJUV3FPU0NEOEd2amtncUZiODY4RV8wTXE5NmdHTThDNnZWbUgtcWt3VVhySFpPZlNFVVhEMjdka1YtbnJUV2hZLVJn?oc=5">reuters.com</a></p>
           </div>
         </li>
+        <li>
+          <span class="nomor">08</span>
+          <div>
+            <h3><a href="https://www.cnbc.com/2026/09/10/elon-musk-boring-co-uae-valuation.html" hreflang="en">Boring Co. milik Elon Musk beralih ke Timur Tengah untuk ekspansi hingga mencapai valuasi $23 miliar</a></h3>
+            <p class="meta"><span class="media">2 media</span> <span class="sumber">cnbc.com</span> <span>01:15 WIB</span> <span class="terjemah" title="Elon Musk&#x27;s Boring Co. turns to Middle East for expansion in reaching $23 billion valuation">diterjemahkan</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Putaran pendanaan terbaru The Boring Co. senilai $3 miliar dipimpin oleh Uni Emirat Arab.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxPWFlJZWowcXpXek0tMlhhRGNnWVlEWV9Wc0RubTZLTnRuWm1rVXc2WG5Ua3RaRHp1RUhDZ1lwanBiUDNxVzlZS1p5MTB2NTVMOUt2b2c4NFl5Rm44SGN4b0lzam9PR2d5a2JKdzVyT2ZZczU1cVMtSnVaakZPVWoxQ3lFZVl4c19aaE9YVFdULS15UTFFSS1Hd1RkTkxhQzNqSjlsbS1lQ0VTSGdxbHRyT2I5X3lYRUFjd1E?oc=5">reuters.com</a></p>
+          </div>
+        </li>
+      </ol>
+    </section>
+    <section class="ai" id="ai">
+      <div class="judul-bagian"><h2>AI</h2><small>model baru, chip, pendanaan, regulasi, dampak ke pekerjaan</small></div>
+      <article class="sorotan">
+        <div class="isi">
+          <h3><a href="https://news.google.com/rss/articles/CBMiiwFBVV95cUxOb3RxODh4LWhOS0o0UFBGNUhHODA0Z2dqbTcyTlFmYVRwRzJVVnhKMFl4U2dqQUQwZXV6d0c1c0gwRHZXeF9wOFRTN2xCengtRnRuR0tJLUNDTlI3VjAyekRzRngwMWY4M01hSUVwWURFUFAxdkRjRC1HZUM3cG9YTnZ4UVFNcVlnT200?oc=5" hreflang="en">Anthropic mengatakan hal itu menghalangi upaya yang mungkin dilakukan untuk membuat senjata biologis</a></h3>
+          <p class="meta"><span class="media">5 media</span> <span class="sumber">nytimes.com</span> <span>04:50 WIB</span> <span class="terjemah" title="Anthropic Says It Blocked Possible Efforts to Build Biological Weapons">diterjemahkan</span></p>
+          <p class="alasan">Keamanan &amp; risiko</p>
+          
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNd1gxVjdSOXNuN1U4VUVvdzMyeG03NE1WZm5Ya3VBNnJTZVZrcXU5Vy16elVNMzlRbU9YN1JWYjBweS1RQjE1cEdBbFg5QlFVOGlWQkhNb1F0Um5JWDIyelZkbHFmMnhsS2EzZjFyeDJLSFA0Qlk2SDVJa1RMQ2htckk2aFpIYU0?oc=5">cbsnews.com</a><a href="https://news.google.com/rss/articles/CBMic0FVX3lxTE1ZS3pYOWpEaFZaa3Zkc3h6SnBMcjFpUDNjR1phc3k2OGF5RzhmTldEa0dJR3haUHVvQkhRSzZBNDFFNWwzb2wwdzQzM2x6UWNYNFQwNGYzT25nVjczOW9SOXZjdENiT3FmSU5ZTGlacnFmWFE?oc=5">cnn.com</a><a href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxPSVR6UmdLX25KeGs5VlkzUm91S05BaEw0TVJwa01XNGJGZFgzTlh4MS1EclZvTExnSTF5OEsyT3E1R1BmNmt2OWV4QzFocnU5QkZsRmFFYW1DUmNObkNSck0tWmdvb2pGY3ZLWldZM2NLcVJCU1dDZ2RuOHlLbHRqdHVlTzNJRVBDUTBJM1o3SVBBN3plVW5qdDkzaWRrUno3aXRwNzJIZmtubTlnelFkeVZaRXlVVjRRWWpzeUVHYnE?oc=5">forbes.com</a><a href="https://news.google.com/rss/articles/CBMi0gFBVV95cUxNT3l1OHlWZnphX2NLU25wMlIwcnVqM0xXQ0xVVVJoYlhKVGJKNEVJSnFkV09OQzgzRWczdzhCRjRLcTRkb240QWg2Z2x0UXF3TmlLMG1ua3QtUGFpckxvZEpsZE5LeW10UzhWTGp6TDJrMDByTXNsVGE2QnVMOXlCYTFuS3NIUk9YaFljam0yMzRkZlMya0xua085STMzWFZZTnc2THkydEJ3QmtybmVhbWhTYWVocHpEMENZM1Nqa3lCR1ZxaGlTMzZ3MGJ3OVdkQnc?oc=5">nypost.com</a></p>
+        </div>
+        
+      </article>
+      <ol class="daftar">
+        <li>
+          <span class="nomor">02</span>
+          <div>
+            <h3><a href="https://news.republika.co.id/berita/tl63908230000/brin-keberhasilan-pengembangan-ai-nasional-diukur-dari-kemanfaatan-bagi-masyarakat">BRIN: Keberhasilan Pengembangan AI Nasional Diukur dari Kemanfaatan bagi Masyarakat</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">news.republika.co.id</span> <span>04:19 WIB</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Tenaga ahli bidang kecerdasan artifisial dan transformasi digital Badan Riset dan Inovasi Nasional (BRIN) Prof. Dr. Ir. Hammam Riza, M.Sc., menegaskan bahwa tolok ukur keberhasilan pengembangan...</p>
+            <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5735752/ahli-brin-keberhasilan-pengembangan-ai-mesti-diukur-dari-kemanfaatan">antaranews.com</a><a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxQYUtTLWYtQTBJOFMxaW43ZkNPbGpzMmhXTlZ1cWp4YmFlZHlCcmdiZzZuSk5kMTd4NE9RUDB0UjZKT1kxOTVJcFlxekttR0JhdVVBanNRVF9RTXBxMFktQUlQSE44el9uSF9iMGltbjVac0NaanBxVWw1NGhIX0xJWEp1cFVBc2JUQ1ozWktxZ3huSl8tZWl4UnBNNUlzZDV2TFFEOdIBpAFBVV95cUxQYUtTLWYtQTBJOFMxaW43ZkNPbGpzMmhXTlZ1cWp4YmFlZHlCcmdiZzZuSk5kMTd4NE9RUDB0UjZKT1kxOTVJcFlxekttR0JhdVVBanNRVF9RTXBxMFktQUlQSE44el9uSF9iMGltbjVac0NaanBxVWw1NGhIX0xJWEp1cFVBc2JUQ1ozWktxZ3huSl8tZWl4UnBNNUlzZDV2TFFEOQ?oc=5">m.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMipgFBVV95cUxPQTBWSkh6TUtwSDViMC1PbTkzZmFDejJ4Qy1iQ0IzaUhGc1JoRHJ0aHVfUlZ5WTVnc2pzQlE0LXFMcW84V041V2NJcHZQelhSWkJwZ0FqaEFTbXBKSVAyUVhhdEQ5NjNlai1sNmNTNDNRNFZVbWtCX2xJeGpjRVA4a3FUZXZKZGRCU2h6cnJRaUh1VzUydXB5MWdJZE5OODJaaERCVjlR?oc=5">sulteng.antaranews.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">03</span>
+          <div>
+            <h3><a href="https://www.cnbc.com/2026/09/10/openai-chatgpt-for-financial-services-targets-work-of-junior-bankers.html" hreflang="en">OpenAI menargetkan pekerjaan para bankir junior Wall Street dengan ChatGPT baru untuk Layanan Keuangan</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">cnbc.com</span> <span>02:02 WIB</span> <span class="terjemah" title="OpenAI targets work of Wall Street junior bankers with new ChatGPT for Financial Services">diterjemahkan</span></p>
+            <p class="alasan">Model &amp; produk</p>
+            <p class="ringkas">OpenAI meluncurkan ChatGPT untuk Layanan Keuangan, yang menargetkan penelitian padat karya, pemodelan, dan tugas pitchbook yang biasanya ditangani oleh bankir junior.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMickFVX3lxTE55RjB3U1pjRUtMSUlGaGhvX0ptWFVkYlg5Rk1Fd3AtYVBEZm5UQmpVQmc1Yi1WRkFqbEVrOVFrQ2FpMVNCTDRDZDNsY1k5VHhBS1FQSjhaM2Y1aVliOC1XSW1HLW8wY1RfZWJFMDE3N3Zmdw?oc=5">openai.com</a><a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxOSldUSEZwamtyN2hWd3dvU2RoWXpwWG1jWW9IRmFWM2Y0MlFSWG9qekUyN0NiWFdGT0F1RFZoNVZVbXQyOW5hbjFTNHpNYlkzLVNrelJGbG9kQjJhcVJTX3A3OFJDb01FQkFoaUE0TS1wdkNQdDR1ZWpQOEpJWVR0RUVnT1otQUg1R1JVTVlteGRJbl94OWNSLWtlQlo?oc=5">reuters.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">04</span>
+          <div>
+            <h3><a href="https://www.cnbc.com/2026/09/10/ant-international-visa-mastercard-ai-agent-payment-standard.html" hreflang="en">Ant International bermitra dengan Visa, Mastercard dalam mengembangkan pembayaran AI</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">cnbc.com</span> <span>08:53 WIB</span> <span class="terjemah" title="Ant International partners with Visa, Mastercard on developing AI payments">diterjemahkan</span></p>
+            <p class="alasan">Model &amp; produk</p>
+            <p class="ringkas">Visa, Mastercard, dan Ant International sedang mengerjakan standar umum untuk pembayaran agen AI — termasuk cara memverifikasi dan memantau transaksi mereka.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.investing.com/news/stock-market-news/payment-firms-visa-mastercard-and-ant-international-team-up-on-ai-agent-trust-framework-4894891">investing.com</a><a href="https://news.google.com/rss/articles/CBMixgFBVV95cUxONjFMLWdlN2p4R0h2Q0hDU2ktaWNJLW1HME5HbnBoWGxPcnJDMHYyQjluN2VhclJYNENmd3BuOGh4TElfTTJhdWYxWXBUTG1ua3VhNl9kYUx4ZGJkM2dLYUhxYVFzQjN0alY2SXNKM2lORHVqaDh4bmJHbm9ITmE3OUpNMDYwUFlSTlNSUFBCQzJPTXBfY1N4ejNzRzRxQVdMMGFheHhWQnF6OEc1RnlJdTEzVF80QXJoYW5uQWF4dkcyaG4wWWc?oc=5">reuters.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">05</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMiW0FVX3lxTE14dlpjTUFBSU9DSnc4Y3pBMHcyNE5ncHNlaVBSNXBvU3liZzVqZlJBVlFleGRXOUJvRXQ4UTNZRko0NVVPLVZvWFF2NVMtenpqWjd0S244ekRKbUE?oc=5" hreflang="en">Mantan peneliti Antropik berhenti dan membunyikan alarm eksistensial AI</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">foxbusiness.com</span> <span>04:53 WIB</span> <span class="terjemah" title="Former Anthropic researcher quits and sounds an existential AI alarm">diterjemahkan</span></p>
+            <p class="alasan">Liputan meluas</p>
+            
+            <p class="juga"><span>juga di</span><a href="https://www.aljazeera.com/news/2026/9/10/anthropic-discloses-fourth-ai-breach-as-researcher-quits-over-safety?traffic_source=rss">aljazeera.com</a><a href="https://news.google.com/rss/articles/CBMid0FVX3lxTE8tengyUVFUb0w0X2lha3NqWXhWWGM3bGpfMENGY1NOU3UzREtoOXJvbXBjLXc3VmJLUlMxSWF1a0VOWXRpRFZoaVJEbVBZUGg2bHNjTmVGRTB2SEVSd3Y1Qkt3VkFSaUdOX3psdjVUOXNVc3ZSZmpJ?oc=5">mashable.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">06</span>
+          <div>
+            <h3><a href="https://techcrunch.com/2026/09/10/metas-ai-agent-muse-is-now-the-no-2-app-in-the-us/" hreflang="en">Agen AI Meta, Muse, kini menjadi aplikasi No. 2 di AS</a></h3>
+            <p class="meta"><span class="media">2 media</span> <span class="sumber">techcrunch.com</span> <span>02:50 WIB</span> <span class="terjemah" title="Meta’s AI agent Muse is now the No. 2 app in the US">diterjemahkan</span></p>
+            <p class="alasan">Model &amp; produk</p>
+            <p class="ringkas">Aplikasi terbaru Meta, Muse, dimulai lebih lambat dibandingkan aplikasi perusahaan lainnya, seperti Meta AI atau Threads.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.theverge.com/tech/993391/meta-muse-ai-hands-on">theverge.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">07</span>
+          <div>
+            <h3><a href="https://ekbis.sindonews.com/read/1748513/34/kadin-dorong-industri-tambang-percepat-adopsi-ai-dan-elektrifikasi-1789045788">Kadin Dorong Industri Tambang Percepat Adopsi AI dan Elektrifikasi</a></h3>
+            <p class="meta"><span class="arah positif" title="modal meningkatkan">↑ positif</span> <span class="media">2 media</span> <span class="sumber">ekbis.sindonews.com</span> <span>20:23 WIB</span></p>
+            <p class="alasan">Kerja &amp; adopsi</p>
+            <p class="ringkas">Kamar Dagang dan Industri (Kadin) Indonesia mendorong pelaku industri pertambangan meningkatkan efisiensi modal dan mempercepat adopsi teknologi.</p>
+            <p class="juga"><span>juga di</span><a href="https://ekonomi.republika.co.id/berita/tl55ob416/industri-tambang-indonesia-bersiap-hadapi-era-ai-dan-elektrifikasi">ekonomi.republika.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">08</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMi4AFBVV95cUxPNmxzZWhnNm9KMXZSUHh2TWYtT1U4akNwOGlnQkg5b3V5TTJ5TjFFU2JnZDJhN3hqV1R2TzJ5QW52bWpWS2VpaU1Jak05bkMwRzZSZzVkQVc4dlFEXzNETVNCcV9PZHNrQkRKaFhDaHlMTERtNEZ4Y1d6NEM0QWZoNHpZU3MyWHBTZVduRHRMY2hhLVNfVTRScFlpTEF0WkF3ODRxV282WTZpdVNjVkZfSENIX0pkbjI2Ml9pTjh0ZEJ4ZjltUUk0THJuUlBXcm1HMEJ4eTVLcERZRjlZSGVoOA?oc=5">Averondale Capital Hadirkan Nusantara AI Capital Fund di Pasar Keuangan Indonesia, Selaras Arahan DEN</a></h3>
+            <p class="meta"><span class="media">2 media</span> <span class="sumber">einpresswire.com</span> <span>18:36 WIB</span></p>
+            <p class="alasan">Liputan meluas</p>
+            
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMi2gFBVV95cUxOa1FGYUJfUHV1cnlIUXVlbHNsdGVMRnpqdFRlc0w2VDcxdnZIM2VhbG9HcDVDZXN2RjFCWkVNX2VvT3ZKNXdrblF4LUY2N3ptRzJRN0FLaEpRblZiMDB6WGJZSF9pMXNkSEVyXzY1bDB5NjRpMW1TT2I1a0FiTlF3UFBKeEJBT1NybTEtX056V1BLM3VFOGU5cHFKV3p6RnkxejFxbXN0amNBOHFoOXVqRVYtRFZ1ZTBucE0xUU9vRXFkWW1iakZLVGtfUTVxcExFYS1objFaZ0ZlUQ?oc=5">einnews.com</a></p>
+          </div>
+        </li>
       </ol>
     </section>
     <footer>
-      Disusun 11:59 WIB · <a href="2026-09-10.html">Edisi sebelumnya</a>.
+      Disusun 13:48 WIB · <a href="2026-09-10.html">Edisi sebelumnya</a>.
       <br>Tautan menuju penerbit aslinya. Kutipan pendek untuk keperluan baca pribadi.
     </footer>
   </div>
