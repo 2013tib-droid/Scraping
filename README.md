@@ -5,7 +5,13 @@ ter-dedup dan terurut, cukup dibaca lima menit sambil ngopi. Di belakangnya,
 pipeline yang lama-lama juga menyimpan seri data makro untuk dipakai
 `Screening-Saham`. Dipakai satu orang, bukan produk multi-user.
 
-**Halaman paginya: <https://2013tib-droid.github.io/Scraping/>**
+**Halaman paginya: <https://kopi-pagi-three.vercel.app/>**
+(cermin di GitHub Pages: <https://2013tib-droid.github.io/Scraping/>)
+
+Keduanya melayani isi `docs/` yang sama. Vercel mengambil folder itu apa adanya
+— Root Directory `docs`, preset Other, tanpa build dan tanpa environment
+variable — dan membangun ulang sendiri tiap kali bot meng-commit edisi baru.
+Pipeline-nya tetap di GitHub Actions; Vercel hanya menyajikan hasilnya.
 
 Terbit sendiri tiap 05:00 WIB, berisi berita 24 jam terakhir yang sudah
 di-dedup dan diurutkan menurut berapa banyak media meliputnya. Edisi lama ada di
