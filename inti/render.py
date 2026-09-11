@@ -17,8 +17,10 @@ fungsinya, bukan hiasan. Keputusan tampilannya:
   satu kolom 42rem, panjang baris yang nyaman dibaca sambil berdiri di dapur.
   Di atas itu wadahnya melebar ke 80% layar **dan** isinya pecah jadi dua kolom
   — melebar tanpa memecah cuma menghasilkan baris ~200 karakter, yang membuat
-  mata kehilangan jejak saat kembali ke awal baris berikutnya. Serif untuk
-  judul, membedakan "isi" dari "keterangan".
+  mata kehilangan jejak saat kembali ke awal baris berikutnya. Ke bawah berlaku
+  batas yang sama dari arah sebaliknya: di bawah 34rem gambar sorotan pindah ke
+  atas teks, karena di sampingnya ia menyisakan ~190 px dan judulnya pecah dua
+  kata per baris. Serif untuk judul, membedakan "isi" dari "keterangan".
 - **Terang/gelap ikut setelan perangkat.** Dibaca jam 5 pagi; memaksa latar putih
   menyilaukan.
 - **Tanpa JavaScript.** Satu berkas yang bisa dibuka dari mana saja.
@@ -32,7 +34,9 @@ fungsinya, bukan hiasan. Keputusan tampilannya:
   `docs/arsip/` permanen, jadi edisi lama akan kehilangan fotonya. Karena itu
   `alt` sengaja kosong dan tiap gambar duduk di atas bidang berwarna — yang mati
   meninggalkan kotak sunyi, bukan ikon rusak, dan teksnya tetap lengkap tanpa
-  gambar itu sejak awal.
+  gambar itu sejak awal. Di ponsel bidang itu selebar kartu, jadi kotak sunyi di
+  arsip lama ikut membesar — harga yang diterima supaya edisi hari ini, yang
+  jauh lebih sering dibaca, tidak terjepit.
 - **Waktu selalu WIB** — satu-satunya tempat konversi dari UTC terjadi (§15 #9).
 """
 
@@ -152,19 +156,51 @@ section.ai { --warna: var(--ai); }
   background: var(--kertas); border-radius: 14px; padding: 1.1rem 1.2rem 1rem;
   border-left: 4px solid var(--warna); box-shadow: var(--bayang); margin-bottom: .6rem;
 }
-/* Teks dan gambar berdampingan; gambar di kolom kanan tapi urutan DOM-nya
-   sesudah teks, jadi judul tetap yang pertama dibaca pembaca layar. Lebar
-   kolomnya tetap, sehingga tidak ada pergeseran tata letak saat gambar masuk —
-   dan tidak ada bedanya kalau gambar itu tidak pernah datang. */
-.sorotan.bergambar { display: grid; grid-template-columns: 1fr auto; column-gap: 1rem; align-items: start; }
+/* Di ponsel gambar duduk di atas, selebar kartu.
+
+   Berdampingan tidak muat di lebar ponsel, dan ruginya lebih besar daripada
+   kelihatannya: kolom `auto` untuk gambar memesan lebarnya sepanjang tinggi
+   kartu, bukan hanya setinggi gambarnya. Di layar 390 px teks tinggal 192 px,
+   jadi bukan cuma judul yang pecah dua kata per baris — meta, alasan, dan
+   seluruh ringkasan ikut terjepit di kolom sempit itu sementara ruang di
+   sebelah kanan, di bawah gambar, menganggur sampai kartu habis. Menumpuk
+   mengembalikan lebar penuh ke semua teks.
+
+   `object-fit: cover` menerima perbandingan sisi apa pun yang dikirim penerbit
+   (830x556, 620x413) tanpa penyok, dan tingginya dibatasi supaya satu kartu
+   tidak menghabiskan satu layar — ini ringkasan pagi, bukan galeri. Ruang
+   gambar tetap dipesan lewat `aspect-ratio`, jadi teks di bawahnya tidak
+   melompat saat gambar akhirnya datang.
+
+   Batas tingginya sengaja dalam piksel, satu-satunya di berkas ini yang bukan
+   rem: pembaca yang menaikkan ukuran huruf sistem meminta teks yang lebih
+   besar, bukan foto yang lebih besar. Dengan rem, justru gambarnya yang ikut
+   tumbuh dan mendorong teks itu makin jauh ke bawah. */
+.sorotan.bergambar { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: .85rem; }
+.sorotan.bergambar .isi { grid-row: 2; }
 .sorotan .isi { min-width: 0; }
 .thumb {
-  width: 6.5rem; height: 6.5rem; border-radius: 10px; object-fit: cover;
+  width: 100%; aspect-ratio: 16 / 9; max-height: 176px; grid-row: 1;
+  border-radius: 10px; object-fit: cover;
   display: block; background: var(--sorot); border: 1px solid var(--garis);
 }
-@media (max-width: 24rem) {
-  .sorotan.bergambar { column-gap: .7rem; }
-  .thumb { width: 4.5rem; height: 4.5rem; }
+
+/* Dari 34rem ke atas teks masih kebagian ~21rem setelah gambar mengambil
+   bagiannya — di situ berdampingan baru lebih baik daripada menumpuk, dan
+   gambar kembali jadi thumbnail persegi di kanan. Ambangnya bukan 24rem
+   seperti dulu: pada ponsel terlebar sekalipun (430 px) cara lama hanya
+   menyisakan 232 px untuk teks, jadi yang perlu dikecualikan bukan layar
+   tersempit, melainkan semua layar ponsel. Urutan DOM-nya tetap teks dulu,
+   jadi judul yang pertama dibaca pembaca layar. */
+@media (min-width: 34rem) {
+  .sorotan.bergambar {
+    grid-template-columns: minmax(0, 1fr) auto; column-gap: 1rem; align-items: start;
+  }
+  .sorotan.bergambar .isi { grid-row: 1; }
+  .thumb {
+    width: 6.5rem; height: 6.5rem; aspect-ratio: auto; max-height: none;
+    grid-row: 1; grid-column: 2;
+  }
 }
 .sorotan h3 {
   font: 700 clamp(1.25rem, 4.6vw, 1.5rem)/1.25 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
