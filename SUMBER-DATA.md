@@ -248,6 +248,33 @@ Kontan. Kalau terjadi, gejalanya "DJP pengumuman: HTTP 403" di laporan
 kegagalan Telegram — feed-nya dihapus atau dibiarkan, bagian Perpajakan tetap
 terisi dari Google News.
 
+## C5. AI — hasil verifikasi 2026-09-11
+
+Ditembak langsung dari jaringan Indonesia, lalu seluruh 40 feed diambil ke
+salinan basis data dan edisi 11–12 Sep dibangun darinya.
+
+| Feed | URL | Item | dlm 24j | Bahasa | Catatan |
+|---|---|---:|---:|---|---|
+| Google News AI | `news.google.com/rss/search?q=("kecerdasan buatan" OR AI OR ChatGPT OR OpenAI)…` | 100 | 100 | id | **Mentok 100 item.** Sepertiganya sampah: halaman profil "AI at Meta", sosialisasi polres/pemda/kampus, tren prompt foto, Kompasiana, judul terpotong Pluang — dibuang `inti/ai.py` |
+| Google News AI global | `news.google.com/rss/search?q=(OpenAI OR Anthropic OR "artificial intelligence" OR Nvidia)…` | 100 | 100 | en | Mentok 100 item, menumpuk di beberapa cerita teratas (11 Sep: puluhan redaksi soal satu laporan Anthropic) |
+| TechCrunch AI | `techcrunch.com/category/artificial-intelligence/feed/` | 19 | 9 | en | Ikut memuat liputan acara Apple dan promosi Disrupt |
+| The Verge AI | `theverge.com/rss/ai-artificial-intelligence/index.xml` | 10 | 6 | en | Produk dan dampak AI ke konsumen |
+| CNBC US tech | `cnbc.com/id/19854910/device/rss/rss.html` | 30 | 17 | en | Bisnis teknologi umum; sekitar separuhnya AI |
+
+Varian `intitle:` di Google News diuji dan hasilnya nyaris sama dengan query
+biasa, jadi tidak dipakai.
+
+Feed yang **sudah ada** juga membawa berita AI: pada 8–9 Sep ~45 judul AI di
+Makro (Bloomberg Technoz, Katadata, Antara), Pasar (IDN Financials), Politik
+(Detik), dan Global (Reuters, CNBC, BBC, MarketWatch). Di edisi 11 Sep, dari 54
+peristiwa AI yang lolos, 39 dari feed khusus AI dan 15 pindahan dari Makro dan
+Global; bagian AI menampilkan 8.
+
+**Belum diketahui: 429 dari Google News.** Satu permintaan pertama ke Google
+News AI dibalas 429 saat verifikasi (percobaan berikutnya lancar). Kalau itu
+berulang dari runner, gejalanya "Google News AI: HTTP 429" di laporan kegagalan
+Telegram; bagian AI tetap terisi dari feed lain.
+
 ## C2. Feed yang ditolak, dan alasannya
 
 Dicatat supaya tidak dicoba ulang tiap beberapa bulan.
@@ -263,6 +290,9 @@ Dicatat supaya tidak dicoba ulang tiap beberapa bulan.
 | **Investor.id, Bareksa, Stockwatch, IQPlus, Tirto, Kumparan** | 404 / 403 / bukan XML |
 | **Kemenkeu, BI** | Tidak menyediakan RSS. Rilisnya lewat halaman dan file — jalur berbeda (§A) |
 | **DDTCNews, Pajak.com, Ortax, IKPI, Bea Cukai** | Tidak ada RSS (§C4). DDTCNews diambil lewat Google News `site:` |
+| **Kompas Tekno** | `tekno.kompas.com/rss` 404 (§C5). Artikel AI-nya tertangkap Google News AI |
+| **detikinet, Liputan6 tekno, Antara tekno** | Hidup, tapi didominasi ulasan gawai, esports, dan panduan ("Cara mengembalikan foto…"); berita AI-nya 2–5 sehari dan sudah tertangkap Google News AI (§C5) |
+| **VentureBeat AI** | HTTP 429 saat verifikasi |
 
 ## D. Yang sebaiknya tidak dikejar
 

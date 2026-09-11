@@ -10,7 +10,7 @@ fungsinya, bukan hiasan. Keputusan tampilannya:
   mata tahu mana yang wajib dan mana yang boleh dilewati.
 - **Navigasi lengket di atas.** Tiap bagian dengan jumlah itemnya; satu ketuk
   langsung ke Pasar tanpa menggulir Makro. Murni CSS, tanpa JavaScript.
-- **Warna aksen per bagian.** Makro, Perpajakan, Pasar, Politik, Global
+- **Warna aksen per bagian.** Makro, Perpajakan, Pasar, Politik, Global, AI
   masing-masing punya warna; nomor, garis, dan tautan bagian mengikutinya.
   Membedakan bagian saat digulir cepat tanpa harus membaca judul bagiannya.
 - **Panjang baris dijaga tetap, lebarnya yang berubah.** Sampai ~1.120 px:
@@ -57,6 +57,7 @@ BAGIAN = {
     "pasar": ("Pasar &amp; Emiten", "IHSG, aksi korporasi, laporan keuangan"),
     "politik": ("Politik &amp; Sosial", "yang berpotensi menggerakkan pasar"),
     "global": ("Global", "The Fed, komoditas, geopolitik"),
+    "ai": ("AI", "model baru, chip, pendanaan, regulasi, dampak ke pekerjaan"),
 }
 
 # Dateline di awal ringkasan: "REPUBLIKA.CO.ID, JAKARTA — ", "Jakarta, CNBC
@@ -68,7 +69,7 @@ GAYA = """
 :root {
   --bg: #f7f5f0; --kertas: #fffdf9; --teks: #1c1b18; --redup: #6f6c65;
   --garis: #e4e0d7; --sorot: #efebe2; --tautan: #8a3324;
-  --utama: #a5700a; --makro: #b5462f; --pajak: #0f7482; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0;
+  --utama: #a5700a; --makro: #b5462f; --pajak: #0f7482; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0; --ai: #b0336f;
   --naik: #1f7a4d; --turun: #b3261e;
   --bayang: 0 1px 2px rgba(30,25,15,.06), 0 6px 20px -8px rgba(30,25,15,.12);
 }
@@ -76,7 +77,7 @@ GAYA = """
   :root {
     --bg: #131417; --kertas: #1b1c20; --teks: #e9e6e0; --redup: #9a978f;
     --garis: #2b2d33; --sorot: #22242a; --tautan: #e8a88f;
-    --utama: #e9c060; --makro: #e58a72; --pajak: #5ec3d0; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0;
+    --utama: #e9c060; --makro: #e58a72; --pajak: #5ec3d0; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0; --ai: #ee8fbd;
     --naik: #6ecf9c; --turun: #f08a80;
     --bayang: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.6);
   }
@@ -140,6 +141,7 @@ section.pajak { --warna: var(--pajak); }
 section.pasar { --warna: var(--pasar); }
 section.politik { --warna: var(--politik); }
 section.global { --warna: var(--global); }
+section.ai { --warna: var(--ai); }
 .judul-bagian { display: flex; align-items: baseline; gap: .7rem; margin-bottom: 1rem; }
 .judul-bagian::before { content: ""; width: .35rem; height: 1.3rem; background: var(--warna); border-radius: 2px; align-self: center; }
 .judul-bagian h2 { font: 700 1.15rem/1.2 system-ui, sans-serif; margin: 0; letter-spacing: -.01em; }

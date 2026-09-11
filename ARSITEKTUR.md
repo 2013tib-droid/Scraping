@@ -479,13 +479,14 @@ jam terbitnya.
 
 ### Bagian dan pembatasan
 
-Lima bagian, sesuai yang mau dibaca:
+Enam bagian, sesuai yang mau dibaca:
 
 1. **Makro & kebijakan Indonesia** — rilis BPS/BI, APBN, suku bunga, kurs, regulasi
 2. **Perpajakan** — DJP, Coretax, PPN/PPh, restitusi, bea cukai, aturan dan sengketa pajak
 3. **Pasar & emiten IDX** — aksi korporasi, laporan keuangan, IPO, berita emiten
 4. **Politik & sosial** — yang berpotensi menggerakkan pasar
 5. **Global** — The Fed, komoditas, geopolitik
+6. **AI** — model baru, chip & pusat data, pendanaan, regulasi, keamanan, dampak ke pekerjaan
 
 > **Ditambahkan 2026-09-10: Perpajakan.** Satu-satunya bagian yang ditentukan
 > **isi**, bukan asal feed. Berita pajak tersebar di feed ekonomi umum dan
@@ -494,7 +495,24 @@ Lima bagian, sesuai yang mau dibaca:
 > promosi brevet/seminar. Pasar dan Global sengaja tidak ikut dipindah —
 > analisis saham tetap milik Pasar, dan bagian ini perpajakan Indonesia.
 
-**Tiap bagian dibatasi jumlah itemnya.** Lima kategori dari belasan media
+> **Ditambahkan 2026-09-11: AI.** Bagian kedua yang ditentukan isi
+> (`inti/ai.py`). Berita AI dari Makro, Politik, **dan Global** pindah ke sini —
+> berita AI dunia justru isi utamanya; Pasar tetap tidak disentuh. Lima feed
+> khusus AI (kategori `ai`) ikut mengisi, tapi itemnya tetap harus berjudul AI:
+> yang tidak, dibuang, bukan dikembalikan ke bagian lain. Tiga keputusan yang
+> hanya berlaku di bagian ini, semuanya diukur ke data 10–12 Sep:
+>
+> - **Liputan ganda digabung ulang dengan ambang 0,25** (dedup umum 0,42), tapi
+>   hanya di antara calon bagian AI (`gabung_ai` di `alur/edisi.py`). Judul
+>   Inggris satu peristiwa sering hanya berbagi tiga kata.
+> - **"Liputan luas" tidak mengangkat berita AI ke blok utama.** Feed Google
+>   News AI menumpuk puluhan redaksi di satu cerita; tanpa ini blok *Penting
+>   Pagi Ini* diambil alih AI.
+> - **Bahasa dicatat per feed** (kolom `artikel.bahasa`), karena berita
+>   berbahasa Inggris kini tidak hanya ada di Global. Terjemahan mengikuti
+>   bahasa, bukan bagian.
+
+**Tiap bagian dibatasi jumlah itemnya.** Enam kategori dari belasan media
 gampang menghasilkan seratus item, dan halaman yang tidak muat dibaca dalam lima
 menit tidak akan dibaca sama sekali. Batas ini fitur, bukan keterbatasan.
 

@@ -13,7 +13,7 @@ Tabel di DuckDB (§7 — tanpa server, satu berkas yang bisa di-backup dengan co
     artikel     satu baris per URL kanonik, isinya tidak pernah di-UPDATE
     feed_state  ETag/Last-Modified terakhir per feed, untuk conditional request
     metrik_run  satu baris per feed per run (§12)
-    terjemahan  judul/ringkasan Global yang sudah diterjemahkan (inti/terjemah.py)
+    terjemahan  judul/ringkasan berbahasa Inggris yang sudah diterjemahkan (inti/terjemah.py)
 """
 
 from __future__ import annotations
@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS artikel (
     feed          VARCHAR NOT NULL,
     kategori      VARCHAR NOT NULL,
     bobot         DOUBLE  NOT NULL DEFAULT 1.0,
-    gambar        VARCHAR                -- URL thumbnail dari feed; NULL kalau tidak ada
+    gambar        VARCHAR,               -- URL thumbnail dari feed; NULL kalau tidak ada
+    bahasa        VARCHAR                -- "id" | "en" dari feed.toml; NULL untuk baris lama
 );
 
 CREATE TABLE IF NOT EXISTS feed_state (
@@ -77,8 +78,13 @@ CREATE TABLE IF NOT EXISTS terjemahan (
 #
 # Aman dijalankan tiap kali `buka()` dipanggil: IF NOT EXISTS membuatnya
 # idempoten, dan biayanya nol pada basis data yang sudah punya kolomnya.
+#
+# `bahasa` menyusul 2026-09-11 bersama bagian AI: sebelumnya "berbahasa
+# Inggris" sama dengan "kategori global", jadi baris lama yang NULL tetap bisa
+# dibaca dengan aturan itu (lihat alur/edisi.py `ambil`).
 MIGRASI = """
 ALTER TABLE artikel ADD COLUMN IF NOT EXISTS gambar VARCHAR;
+ALTER TABLE artikel ADD COLUMN IF NOT EXISTS bahasa VARCHAR;
 """
 
 
@@ -95,6 +101,7 @@ class Artikel:
     kategori: str
     bobot: float = 1.0
     gambar: str | None = None
+    bahasa: str | None = None
 
 
 def buka(berkas: Path | str | None = None) -> duckdb.DuckDBPyConnection:
@@ -158,8 +165,8 @@ def simpan_artikel(con: duckdb.DuckDBPyConnection, artikel: list[Artikel]) -> in
     con.executemany(
         """INSERT INTO artikel
            (artikel_id, url, domain, judul, ringkasan, waktu_terbit,
-            waktu_fetch, feed, kategori, bobot, gambar)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?)
+            waktu_fetch, feed, kategori, bobot, gambar, bahasa)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
            ON CONFLICT (artikel_id) DO NOTHING""",
         # Kolomnya ditulis satu per satu, bukan asdict().values(), supaya
         # menambah field di dataclass tidak diam-diam menggeser urutan kolom.
@@ -167,7 +174,7 @@ def simpan_artikel(con: duckdb.DuckDBPyConnection, artikel: list[Artikel]) -> in
             (
                 a.artikel_id, a.url, a.domain, a.judul, a.ringkasan,
                 _utc_polos(a.waktu_terbit), _utc_polos(a.waktu_fetch),
-                a.feed, a.kategori, a.bobot, a.gambar,
+                a.feed, a.kategori, a.bobot, a.gambar, a.bahasa,
             )
             for a in artikel
         ],

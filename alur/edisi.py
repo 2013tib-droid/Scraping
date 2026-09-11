@@ -6,8 +6,9 @@ dari jaringan; ia membaca artikel yang sudah tersimpan. Karena tanggalnya
 parameter, edisi tanggal berapa pun bisa dibangun ulang kapan saja — kalau logika
 dedup atau tampilannya diperbaiki bulan depan, seluruh arsip bisa di-render ulang.
 
-Satu-satunya pengecualian: terjemahan bagian Global (inti/terjemah.py), yang
-hanya jalan kalau `bangun()` diberi penerjemah — `main()` memberinya, uji tidak.
+Satu-satunya pengecualian: terjemahan berita berbahasa Inggris — Global dan
+sebagian bagian AI (inti/terjemah.py), yang hanya jalan kalau `bangun()` diberi
+penerjemah — `main()` memberinya, uji tidak.
 Hasilnya disimpan, dan kalau gagal halaman tetap terbit dalam bahasa Inggris.
 
 Alurnya:
@@ -29,7 +30,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
-from inti import dampak, notifikasi, pajak, render, sentimen, terjemah
+from inti import ai, dampak, notifikasi, pajak, render, sentimen, terjemah
 from inti.dedup import kelompokkan
 from inti.penyimpanan import buka
 
@@ -41,8 +42,12 @@ JAM_EDISI = time(5, 0)  # 05:00 WIB — §16
 #
 # Perpajakan diisi dari isi berita, bukan dari feed (inti/pajak.py): berita
 # pajak yang dulu menumpang di Makro pindah ke sini, jadi Makro tidak kehilangan
-# tempat untuk berita lain.
-BATAS = {"makro": 12, "pajak": 10, "pasar": 10, "politik": 6, "global": 8}
+# tempat untuk berita lain. AI disusun dengan cara yang sama (inti/ai.py).
+BATAS = {"makro": 12, "pajak": 10, "pasar": 10, "politik": 6, "global": 8, "ai": 8}
+
+# Ambang kemiripan judul di antara calon bagian AI — lihat `gabung_ai`. Lebih
+# longgar dari dedup.AMBANG (0,42), dan hanya aman karena kumpulannya kecil.
+AMBANG_AI = 0.25
 
 # Blok "Penting Pagi Ini": peristiwa berdampak 3 menurut penilai (inti/dampak.py),
 # lintas kategori. Kosong pada hari yang memang sepi, dan itu jawaban yang benar.
@@ -110,7 +115,13 @@ class Peristiwa:
     # Diisi di `bangun()` hanya untuk peristiwa yang berakhir di bagian
     # Perpajakan: daerah/pusat, buang, dan subtopiknya (inti/pajak.py).
     klasifikasi_pajak: pajak.Klasifikasi | None = None
-    # Judul bahasa Inggris sebelum diterjemahkan (`terjemahkan_global`); None
+    # Sama, untuk peristiwa yang berakhir di bagian AI (inti/ai.py).
+    klasifikasi_ai: ai.Klasifikasi | None = None
+    # Bahasa artikel wakil — yang menentukan diterjemahkan atau tidak. Bukan
+    # kategori: sejak bagian AI, berita berbahasa Inggris tidak hanya ada di
+    # Global.
+    bahasa: str = "id"
+    # Judul bahasa Inggris sebelum diterjemahkan (`terjemahkan_asing`); None
     # kalau judulnya memang tidak diterjemahkan. `url` tidak pernah disentuh —
     # tautannya tetap ke artikel penerbit aslinya.
     judul_asli: str | None = None
@@ -141,14 +152,17 @@ def jendela(tanggal: date) -> tuple[datetime, datetime]:
 
 def ambil(con, mulai: datetime, akhir: datetime) -> list[dict]:
     baris = con.execute(
-        """SELECT judul, url, domain, ringkasan, waktu_terbit, kategori, bobot, gambar
+        # Baris dari sebelum kolom `bahasa` ada bernilai NULL; waktu itu satu-
+        # satunya kategori berbahasa Inggris adalah Global.
+        """SELECT judul, url, domain, ringkasan, waktu_terbit, kategori, bobot, gambar,
+                  coalesce(bahasa, CASE WHEN kategori = 'global' THEN 'en' ELSE 'id' END)
            FROM artikel
            WHERE waktu_terbit >= ? AND waktu_terbit < ?
            ORDER BY waktu_terbit DESC""",
         [mulai, akhir],
     ).fetchall()
     kolom = ("judul", "url", "domain", "ringkasan", "waktu_terbit", "kategori",
-             "bobot", "gambar")
+             "bobot", "gambar", "bahasa")
     return [dict(zip(kolom, b)) for b in baris]
 
 
@@ -207,6 +221,9 @@ def jadikan_peristiwa(artikel: list[dict]) -> list[Peristiwa]:
                 # redaksi ini akan salah atribusi — dan kadang salah peristiwa,
                 # karena dedup mencocokkan kemiripan judul, bukan isi.
                 gambar=utama["gambar"],
+                # Bahasa juga dari wakil: yang diterjemahkan adalah judul dan
+                # ringkasan yang tampil, dan itu milik wakil.
+                bahasa=utama["bahasa"],
                 # Kategori kelompok = yang terbanyak di antara anggotanya.
                 kategori=Counter(a["kategori"] for a in anggota).most_common(1)[0][0],
                 jumlah_media=len({a["domain"] for a in anggota}),
@@ -256,6 +273,90 @@ def tandai_pajak(peristiwa: list[Peristiwa]) -> None:
             p.alasan = k.topik
 
 
+def tandai_ai(peristiwa: list[Peristiwa]) -> None:
+    """Pindahkan berita AI ke bagian AI dan beri subtopiknya.
+
+    Dua jalan masuk, seperti pajak: feed khusus AI (kategori `ai`), atau berita
+    Makro/Politik/Global yang judulnya AI. Bedanya, item feed khusus AI tetap
+    diperiksa — yang judulnya bukan AI ditandai lalu dibuang `_lolos`, tidak
+    kembali ke bagian lain. Jalan setelah `tandai_pajak`, jadi "PPN atas
+    layanan AI" tetap milik Perpajakan.
+    """
+    for p in peristiwa:
+        if p.kategori != "ai" and p.kategori not in ai.DAPAT_PINDAH:
+            continue
+        k = ai.periksa(p)
+        if p.kategori != "ai" and not k.ai:
+            continue
+        p.kategori, p.klasifikasi_ai = "ai", k
+        # "Liputan luas" tidak berlaku di sini. Google News AI global memuat
+        # 100 item sehari yang menumpuk di beberapa cerita AI teratas — pada
+        # 11 Sep, puluhan redaksi soal satu laporan Anthropic — jadi liputan
+        # lima media lebih mudah dicapai berita AI daripada berita apa pun, dan
+        # tanpa ini blok "Penting Pagi Ini" diambil alih AI. Yang naik ke blok
+        # utama hanya yang menyentuh frasa besar (tarif, perang dagang, ...);
+        # sisanya tetap memimpin bagian AI lewat jumlah medianya.
+        if p.dampak == 3 and p.alasan == "Liputan luas":
+            p.dampak, p.alasan = 2, "Liputan meluas"
+        if k.topik and p.dampak != 3:
+            p.alasan = k.topik
+
+
+def _calon_ai(p: Peristiwa) -> bool:
+    """Akan tampil di bagian AI menurut `tandai_ai` dan `_lolos`, tanpa perlu
+    menunggu penilai dampak. Yang akan diambil Perpajakan tidak ikut."""
+    if p.kategori != "ai" and p.kategori not in ai.DAPAT_PINDAH:
+        return False
+    if p.kategori in pajak.DAPAT_PINDAH and pajak.periksa(p).pajak:
+        return False
+    k = ai.periksa(p)
+    return k.ai and not k.buang
+
+
+def gabung_ai(peristiwa: list[Peristiwa]) -> list[Peristiwa]:
+    """Gabungkan liputan ganda di bagian AI yang lolos dari dedup umum.
+
+    Dedup (inti/dedup.py) dikalibrasi ke judul Indonesia, dan judul Inggris
+    untuk satu peristiwa sering hanya berbagi tiga kata: "Anthropic Says It
+    Blocked Possible Efforts to Build Biological Weapons" dan "Anthropic says it
+    blocked possible attempts to use AI to develop bioweapons" — Jaccard 0,27.
+    Pada 11 Sep keduanya tampil berdampingan di bagian AI.
+
+    Menurunkan ambang dedup umum membuat seluruh halaman menggumpal, jadi yang
+    dilonggarkan hanya perbandingan **di antara calon bagian AI**: kumpulan
+    kecil (~60-100) dan satu tema. Ambang 0,25 diukur ke 10-12 Sep: semua
+    gabungannya benar. Pada 0,20 mulai salah — "AI chip startup Positron's
+    valuation skyrockets in latest funding round" menyatu dengan startup lain
+    yang kebetulan juga "funding round".
+
+    Jalan **sebelum** penilai dampak, supaya jumlah media hasil gabungan ikut
+    menentukan dampak dan urutannya.
+    """
+    calon = [p for p in peristiwa if _calon_ai(p)]
+    if len(calon) < 2:
+        return peristiwa
+
+    terserap: set[int] = set()
+    for kelompok in kelompokkan([p.judul for p in calon], ambang=AMBANG_AI):
+        if len(kelompok) < 2:
+            continue
+        anggota = sorted(
+            (calon[i] for i in kelompok),
+            key=lambda p: (-p.jumlah_media, -(p.waktu_terbit or datetime.min).timestamp()),
+        )
+        wakil = anggota[0]
+        tautan = {wakil.domain: wakil.url, **dict(wakil.juga)}
+        for p in anggota[1:]:
+            for d, u in ((p.domain, p.url), *p.juga):
+                tautan.setdefault(d, u)
+            wakil.bobot = max(wakil.bobot, p.bobot)
+            terserap.add(id(p))
+        tautan.pop(wakil.domain)
+        wakil.juga = sorted(tautan.items())
+        wakil.jumlah_media = len(tautan) + 1
+    return [p for p in peristiwa if id(p) not in terserap]
+
+
 def _lolos(p: Peristiwa) -> bool:
     """Dua saringan yang menumpuk, bukan saling menggantikan.
 
@@ -266,9 +367,17 @@ def _lolos(p: Peristiwa) -> bool:
     *tidak* ekonomi, dan daftar-izin tidak menyaring peresmian pabrik.
 
     Bagian Perpajakan punya daftar-tolak ketiga (brevet, seminar, halaman tag)
-    yang sengaja tidak berlaku di bagian lain — lihat inti/pajak.py."""
+    yang sengaja tidak berlaku di bagian lain — lihat inti/pajak.py. Bagian AI
+    punya daftar-tolaknya sendiri (prompt, tips, sosialisasi), ditambah
+    daftar-izin untuk feed khusus AI: judulnya harus AI (inti/ai.py)."""
     k = p.klasifikasi_pajak
-    return relevan(p) and p.dampak != 0 and not (k and k.buang)
+    a = p.klasifikasi_ai
+    return (
+        relevan(p)
+        and p.dampak != 0
+        and not (k and k.buang)
+        and not (a and (a.buang or not a.ai))
+    )
 
 
 def _urutan(p: Peristiwa) -> tuple:
@@ -280,9 +389,10 @@ def _urutan(p: Peristiwa) -> tuple:
     # Dan di antara yang sama-sama diliput satu media, yang punya subtopik
     # (Restitusi, Coretax, ...) di atas yang cuma menyebut "pajak": yang kedua
     # itu sebagian besar opini, panduan, dan berita investasi luar negeri.
-    k = p.klasifikasi_pajak
+    # Di bagian AI sama: yang tanpa subtopik kebanyakan esai dan gawai.
+    k = p.klasifikasi_pajak or p.klasifikasi_ai
     return (
-        bool(k and k.daerah),
+        bool(p.klasifikasi_pajak and p.klasifikasi_pajak.daerah),
         -(p.dampak or 0),
         -p.skor,
         bool(k and not k.topik),
@@ -320,18 +430,19 @@ def per_bagian(peristiwa: list[Peristiwa]) -> dict[str, list[Peristiwa]]:
 Penerjemah = Callable[[list[str]], dict[str, str]]
 
 
-def terjemahkan_global(bagian: dict[str, list[Peristiwa]], penerjemah: Penerjemah) -> None:
-    """Ganti judul dan ringkasan peristiwa Global dengan terjemahannya.
+def terjemahkan_asing(bagian: dict[str, list[Peristiwa]], penerjemah: Penerjemah) -> None:
+    """Ganti judul dan ringkasan peristiwa berbahasa Inggris dengan terjemahannya.
 
     Jalan **setelah** `per_bagian`: yang diterjemahkan hanya yang tampil, dan
     penilai dampak, status arah, serta pengurutan sudah selesai membaca teks
     aslinya — aturan mereka ditulis untuk teks yang mereka baca waktu itu, dan
     terjemahan mesin tidak boleh diam-diam menggeser apa yang naik ke halaman.
 
-    Ikut juga peristiwa Global yang naik ke blok utama, karena yang dilihat
-    adalah kategorinya, bukan bagian tempatnya mendarat.
+    Yang dilihat bahasanya, bukan bagian tempatnya mendarat: peristiwa Global
+    yang naik ke blok utama ikut, begitu juga berita AI dari Reuters atau
+    TechCrunch — sementara berita AI dari Detik tidak.
     """
-    asing = [p for v in bagian.values() for p in v if p.kategori == "global"]
+    asing = [p for v in bagian.values() for p in v if p.bahasa == "en"]
     if not asing:
         return
     hasil = penerjemah([t for p in asing for t in (p.judul, p.ringkasan) if t])
@@ -347,7 +458,7 @@ def bangun(
 ) -> tuple[str, dict[str, list[Peristiwa]], int]:
     mulai, akhir = jendela(tanggal)
     artikel = ambil(con, mulai, akhir)
-    peristiwa = jadikan_peristiwa(artikel)
+    peristiwa = gabung_ai(jadikan_peristiwa(artikel))
 
     # Penilaian dampak menempel ke peristiwa, bukan ke artikel: yang dinilai
     # adalah "kejadian"-nya, dan URL wakil stabil untuk kelompok yang sama.
@@ -366,9 +477,10 @@ def bangun(
             p.sentimen, p.pemicu = s.label, s.pemicu
 
     tandai_pajak(peristiwa)
+    tandai_ai(peristiwa)
     bagian = per_bagian(peristiwa)
     if penerjemah:
-        terjemahkan_global(bagian, penerjemah)
+        terjemahkan_asing(bagian, penerjemah)
     # Tautan ke edisi kemarin hanya kalau berkasnya memang ada di arsip —
     # tautan mati lebih buruk daripada tidak ada tautan.
     kemarin = tanggal - timedelta(days=1)
@@ -419,12 +531,12 @@ def main(argv: list[str] | None = None) -> int:
     berkas = tulis(html, tanggal)
     dipilih = sum(len(v) for v in bagian.values())
     print(f"edisi {tanggal}: {dipilih} peristiwa dari {total} artikel -> {berkas}")
-    asing = [p for v in bagian.values() for p in v if p.kategori == "global"]
+    asing = [p for v in bagian.values() for p in v if p.bahasa == "en"]
     if asing:
         # Kalau angka pertama jauh di bawah yang kedua, endpoint terjemahan
         # sedang menolak — halamannya tetap terbit, sebagian dalam bahasa Inggris.
         diterjemahkan = sum(1 for p in asing if p.judul_asli)
-        print(f"terjemahan: {diterjemahkan}/{len(asing)} judul Global")
+        print(f"terjemahan: {diterjemahkan}/{len(asing)} judul berbahasa Inggris")
 
     if not dipilih:
         # Halaman kosong hampir selalu berarti pengambilnya tidak jalan, bukan

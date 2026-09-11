@@ -3,12 +3,16 @@
 #
 # Dibaca dengan `tomllib` (stdlib sejak Python 3.11), tanpa dependensi tambahan.
 #
-# kategori: makro | pajak | pasar | politik | global
+# kategori: makro | pajak | pasar | politik | global | ai
 #           `pajak` hanya untuk feed yang SELURUH isinya pajak. Berita pajak dari
 #           feed lain masuk bagian Perpajakan lewat isinya (inti/pajak.py).
+#           `ai` untuk feed khusus AI/teknologi. Itemnya tetap harus berjudul AI
+#           (inti/ai.py) — yang tidak, dibuang, bukan pindah ke bagian lain.
 # bobot   : pengali prioritas saat pengurutan. Feed bank sentral jarang terbit,
 #           tapi kalau terbit hampir pasti layak dibaca — jumlah item bukan
 #           ukuran nilai.
+# bahasa  : "id" atau "en"; menentukan judulnya diterjemahkan atau tidak.
+#           Bawaan: "en" untuk kategori global, "id" untuk sisanya.
 
 [[feed]]
 nama = "CNBC Indonesia news"
@@ -215,3 +219,44 @@ nama = "Google News pajak"
 url = "https://news.google.com/rss/search?q=(%22Ditjen+Pajak%22+OR+DJP+OR+Coretax+OR+PPN+OR+PPh+OR+%22wajib+pajak%22+OR+restitusi+OR+%22Bea+Cukai%22)+-kendaraan+-samsat+-PBB+-reklame+when:1d&hl=id&gl=ID&ceid=ID:id"
 kategori = "makro"
 catatan = "mentok 100 item dalam ~23 jam; pajak daerah dikurangi di query, sisanya diturunkan inti/pajak.py"
+
+# --------------------------------------------------------------------------- #
+# AI. Diverifikasi 2026-09-11 — SUMBER-DATA.md §C5. Berita AI juga datang dari
+# feed Makro/Politik/Global di atas; inti/ai.py memindahkannya menurut judul.
+# Media teknologi Indonesia tanpa RSS yang bisa dipakai (Kompas Tekno 404), dan
+# yang ada (detikinet, Liputan6 tekno) isinya didominasi gawai — AI-nya sudah
+# tertangkap Google News AI.
+
+[[feed]]
+nama = "Google News AI"
+url = "https://news.google.com/rss/search?q=(%22kecerdasan+buatan%22+OR+AI+OR+ChatGPT+OR+OpenAI)+when:1d&hl=id&gl=ID&ceid=ID:id"
+kategori = "ai"
+catatan = "mentok 100 item sehari; banyak sosialisasi pemda/polres dan tren prompt foto — dibuang inti/ai.py"
+
+[[feed]]
+nama = "Google News AI global"
+url = "https://news.google.com/rss/search?q=(OpenAI+OR+Anthropic+OR+%22artificial+intelligence%22+OR+Nvidia)+when:1d&hl=en-US&gl=US&ceid=US:en"
+kategori = "ai"
+bahasa = "en"
+catatan = "mentok 100 item sehari, menumpuk di beberapa cerita teratas — itu yang membuat jumlah media bermakna di bagian ini"
+
+[[feed]]
+nama = "TechCrunch AI"
+url = "https://techcrunch.com/category/artificial-intelligence/feed/"
+kategori = "ai"
+bahasa = "en"
+catatan = "~10 item sehari; ikut memuat acara Apple dan Disrupt — yang judulnya bukan AI dibuang"
+
+[[feed]]
+nama = "The Verge AI"
+url = "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+kategori = "ai"
+bahasa = "en"
+catatan = "~6 item sehari; produk dan dampak AI ke konsumen"
+
+[[feed]]
+nama = "CNBC US tech"
+url = "https://www.cnbc.com/id/19854910/device/rss/rss.html"
+kategori = "ai"
+bahasa = "en"
+catatan = "~17 item sehari, bisnis teknologi; hanya yang berjudul AI yang dipakai"

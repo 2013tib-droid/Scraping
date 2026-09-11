@@ -216,6 +216,9 @@ def ke_artikel(entri, feed: dict, saat_fetch: datetime) -> Artikel | None:
         kategori=feed["kategori"],
         bobot=float(feed.get("bobot", 1.0)),
         gambar=gambar(entri),
+        # Feed Global semuanya berbahasa Inggris, jadi tidak perlu menulisnya
+        # satu per satu; feed lain yang berbahasa Inggris (AI) menyebutnya.
+        bahasa=feed.get("bahasa") or ("en" if feed["kategori"] == "global" else "id"),
     )
 
 
