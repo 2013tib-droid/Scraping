@@ -5,7 +5,7 @@ ter-dedup dan terurut, cukup dibaca lima menit sambil ngopi. Di belakangnya,
 pipeline yang lama-lama juga menyimpan seri data makro untuk dipakai
 `Screening-Saham`. Dipakai satu orang, bukan produk multi-user.
 
-**Halaman paginya: <https://kopi-pagi-three.vercel.app/>**
+**Halaman paginya: <https://sruput-kopi.vercel.app/>**
 (cermin di GitHub Pages: <https://2013tib-droid.github.io/Scraping/>)
 
 Keduanya melayani isi `docs/` yang sama. Vercel mengambil folder itu apa adanya
