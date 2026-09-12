@@ -51,6 +51,16 @@ a { color: inherit; }
 .angka { display: flex; flex-wrap: wrap; gap: .45rem; font-size: .8rem; color: var(--redup); }
 .angka span { background: var(--sorot); border-radius: 999px; padding: .2rem .7rem; }
 .angka b { color: var(--teks); font-weight: 600; }
+/* Pintu ke kalender arsip (inti/kalender.py). Duduk di antara angka-angka
+   karena di situlah mata sudah berhenti sebelum mulai membaca, dan dibuat
+   berbingkai supaya kelihatan bisa diketuk — yang lain di baris ini cuma
+   keterangan. */
+.angka .ke-arsip {
+  text-decoration: none; font-weight: 600; color: var(--teks);
+  background: var(--kertas); border: 1px solid var(--garis);
+  border-radius: 999px; padding: .2rem .7rem;
+}
+.angka .ke-arsip:hover { border-color: var(--tautan); color: var(--tautan); }
 
 /* --- navigasi lengket ----------------------------------------------------- */
 .nav {
@@ -237,6 +247,7 @@ footer a { color: var(--tautan); }
         <span><b>60</b> peristiwa</span>
         <span>dari <b>2219</b> artikel</span>
         <span><b>309</b> sumber</span>
+        <a class="ke-arsip" href="index.html">Arsip · pilih tanggal</a>
       </div>
     </header>
   </div>
@@ -878,7 +889,7 @@ footer a { color: var(--tautan); }
       </ol>
     </section>
     <footer>
-      Disusun 13:48 WIB · <a href="2026-09-10.html">Edisi sebelumnya</a>.
+      Disusun 13:48 WIB · <a href="2026-09-10.html">Edisi sebelumnya</a> · <a href="index.html">Arsip</a>.
       <br>Tautan menuju penerbit aslinya. Kutipan pendek untuk keperluan baca pribadi.
     </footer>
   </div>

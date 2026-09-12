@@ -15,7 +15,8 @@ Pipeline-nya tetap di GitHub Actions; Vercel hanya menyajikan hasilnya.
 
 Terbit sendiri tiap 05:00 WIB, berisi berita 24 jam terakhir yang sudah
 di-dedup dan diurutkan menurut berapa banyak media meliputnya. Edisi lama ada di
-`docs/arsip/`.
+`docs/arsip/`, dan **kalendernya di <https://sruput-kopi.vercel.app/arsip/>** —
+tinggal pilih tanggalnya.
 
 **Status: fase 1 jalan.** Pengambil, dedup, dan halaman sudah ada dan
 terjadwal. Seri makro (fase 3) belum.
@@ -95,6 +96,23 @@ berarti tidak menandai apa pun. Status ini **tidak** ikut memilih atau
 mengurutkan apa pun; berita buruk bukan berita yang kurang penting. Lencananya
 menyimpan frasa pemicu di `title`, jadi label yang terasa meleset bisa
 ditelusuri ke barisnya di berkas itu.
+
+**Arsip dipilih lewat kalender** (`inti/kalender.py`). Untuk membaca edisi
+seminggu lalu, rantai "Edisi sebelumnya" di kaki halaman menuntut tujuh klik —
+dan tidak menjawab pertanyaan yang sebenarnya ditanya: tanggal berapa saja yang
+ada edisinya. Halaman `docs/arsip/` menampilkan tiap bulan sebagai kalender;
+tanggal yang ada edisinya bisa diketuk, yang tidak tetap tampil tapi redup. Di
+atasnya ada pintasan "Kemarin / 3 hari lalu / Seminggu lalu", dihitung dari edisi
+terbaru — bukan dari hari ini, supaya "kemarin" tetap menunjuk halaman yang ada
+kalau cron semalam gagal. Masthead tiap edisi menaut ke sana.
+
+Kalendernya satu halaman terpisah, bukan blok di tiap edisi: menempelkannya ke
+tiap halaman berarti tiap edisi baru harus menulis ulang kalender di semua edisi
+lama supaya tanggal baru ikut muncul — 365 berkas berubah tiap hari, dan riwayat
+git menyimpan semuanya (`ARSITEKTUR.md` §5). Daftar tanggalnya dibaca dari nama
+berkas di `docs/arsip/`, bukan dari DuckDB, karena folder itulah arsip yang
+sesungguhnya; state di cache Actions boleh tergusur. Tetap tanpa JavaScript:
+kalender adalah tabel.
 
 **Gambar hanya di kartu sorotan** — enam kartu blok utama dan satu per bagian,
 sekitar sepuluh gambar. Item bernomor tetap teks murni. Batasnya berdasar
