@@ -56,6 +56,32 @@ Ambangnya dikalibrasi ke sebaran nyata, bukan ke intuisi: ~90% peristiwa hanya
 diliput satu media dan liputan tertingginya 11. Liputan dipakai sebagai bukti
 hanya ketika angkanya ekstrem, dan frasa yang memikul sebagian besar beban.
 
+**Musibah transportasi punya pintunya sendiri** (`inti/musibah.py`, sejak 14 Sep
+2026). Kasus yang memaksanya ditulis: KM Virgo Transport 8 terbalik di Laut Jawa
+membawa 243 penumpang, dan nol beritanya masuk halaman. Dua pintu menutup
+sekaligus — `relevan()` menyaring bagian Politik dengan daftar kata ekonomi yang
+tidak memuat "kapal" atau "terbalik", dan `FRASA_BUANG` di penilai dampak memuat
+"kecelakaan", dibuat untuk tabrakan motor tapi tidak bisa membedakan satu motor
+dari satu kapal penumpang. Di edisi yang sama, kebakaran satu rumah justru lolos
+karena ringkasannya menyebut "korsleting listrik" dan "listrik" ada di daftar
+untuk urusan tarif.
+
+Aturannya menuntut **dua syarat sekaligus**: satu kata peristiwa (kapal,
+terbalik, pesawat, kereta) dan satu kata skala (penumpang, awak, hilang,
+evakuasi, Basarnas). Masing-masing sendirian terlalu sering muncul — "kapal" ada
+di kapal pesiar dan ekspor, "penumpang" ada di berita tarif dan mudik — tapi
+berpasangan keduanya berarti hal yang spesifik: kendaraan pengangkut orang
+sedang celaka dan ada operasi penyelamatan. Tabrakan motor tidak punya sisi
+skala, jadi tetap tertahan; daftar-buang tidak dilonggarkan sedikit pun
+untuknya.
+
+Nilainya 2, bukan 3: skala dampak di sini soal pasar dan ekonomi luas, dan feri
+yang terbalik — sebesar apa pun beritanya — tidak menggerakkan keduanya. Yang
+menaikkannya ke *Penting Pagi Ini* tetap bukti yang sama seperti berita lain,
+yaitu liputan lintas redaksi. Diukur ke 322 item yang sudah terbit di enam
+edisi, aturan ini menyentuh **satu** item — dan item itu memang berita pencarian
+korban di Selat Sunda.
+
 **Dedup punya dua jalan.** Yang pertama Jaccard atas kata judul. Yang kedua ada
 karena dua redaksi bisa menulis peristiwa yang sama nyaris tanpa kata yang sama:
 

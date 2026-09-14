@@ -30,7 +30,10 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
-from inti import ai, dampak, kalender, notifikasi, pajak, render, sentimen, terjemah
+from inti import (
+    ai, dampak, kalender, musibah, notifikasi, pajak, render, sentimen,
+    terjemah,
+)
 from inti.dedup import kelompokkan
 from inti.penyimpanan import buka
 
@@ -244,7 +247,13 @@ def relevan(p: Peristiwa) -> bool:
     if p.domain in DOMAIN_BANK_SENTRAL:
         return bool(_kata(p.judul) & KATA_BANK_SENTRAL)
     if p.kategori == "politik":
-        return bool(_kata(f"{p.judul} {p.ringkasan or ''}") & KATA_POLITIK)
+        teks = f"{p.judul} {p.ringkasan or ''}"
+        # Musibah transportasi berskala besar punya pintunya sendiri
+        # (inti/musibah.py). KATA_POLITIK tidak bisa menampungnya: menambahkan
+        # "kapal" atau "kecelakaan" ke daftar ini berarti membuka pintu untuk
+        # seluruh tabrakan motor di feed berita umum, dan daftar itu memang ada
+        # untuk menahannya.
+        return bool(_kata(teks) & KATA_POLITIK) or musibah.periksa(teks)
     return True
 
 
