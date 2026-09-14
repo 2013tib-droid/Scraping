@@ -41,6 +41,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from inti import musibah
+
 # Ambang liputan dikalibrasi ke sebaran yang **sebenarnya**, bukan ke intuisi.
 #
 # **Dihitung ulang 10 Sep 2026**, setelah dedup diberi jalan kedua (kata langka
@@ -150,11 +152,19 @@ FRASA_BUANG: tuple[str, ...] = (
     # layanan & evergreen
     "tips", "cara mudah", "cara cek", "resep", "wisata", "kuliner",
     "zodiak", "horoskop", "ramalan", "link download", "jadwal sholat",
-    # kriminal & kecelakaan biasa
+    # kriminal
     "begal", "pencurian", "pembunuhan", "pemerkosaan", "pelecehan",
-    "narkoba", "sabu", "kecelakaan", "tabrakan", "laka lantas",
-    "curanmor", "penganiayaan", "tawuran",
+    "narkoba", "sabu", "curanmor", "penganiayaan", "tawuran",
 )
+
+# Kecelakaan biasa. Dipisah dari daftar di atas sejak 14 Sep 2026 karena hanya
+# bagian ini yang punya pengecualian: kata-katanya tidak bisa membedakan satu
+# motor dari satu kapal penumpang. KM Virgo Transport 8 terbalik membawa 243
+# penumpang dan dinilai 0 di sini — lalu dibuang halaman — karena beritanya
+# menyebut "kecelakaan". Yang lolos pengecualian hanya yang diakui
+# inti/musibah.py: ada kendaraan pengangkut orang **dan** ada skalanya.
+# Tabrakan motor tetap kena, persis seperti sebelumnya.
+FRASA_BUANG_LAKA: tuple[str, ...] = ("kecelakaan", "tabrakan", "laka lantas")
 
 
 @dataclass(slots=True, frozen=True)
@@ -171,12 +181,21 @@ def nilai(peristiwa: list) -> dict[str, Penilaian]:
         teks = _teks(p)
         besar = _cocok(teks, FRASA_BESAR)
         sedang = _cocok(teks, FRASA_SEDANG)
+        laka = musibah.periksa(teks)
         primer = p.bobot >= BOBOT_PRIMER
 
-        if _dibuang(teks, besar):
+        if _dibuang(teks, besar, laka):
             d, label = 0, None
         elif besar or p.jumlah_media >= BATAS_RAMAI:
             d, label = 3, besar or "Liputan luas"
+        # Musibah transportasi dinilai 2, bukan 3: skala ini soal pasar dan
+        # ekonomi luas, dan feri yang terbalik — sebesar apa pun beritanya —
+        # tidak menggerakkan keduanya. Yang menaikkannya ke blok utama tetap
+        # bukti yang sama seperti berita lain, yaitu liputan >= BATAS_RAMAI di
+        # cabang atas. Jadi musibah besar naik sendiri karena diliput belasan
+        # redaksi, sementara satu bus yang hilang kendali tidak.
+        elif laka:
+            d, label = 2, "Kecelakaan transportasi"
         elif sedang:
             d, label = 2, sedang
         elif p.jumlah_media >= BATAS_SEDANG or primer:
@@ -210,10 +229,17 @@ def _cocok(teks: str, kelompok: dict[str, tuple[str, ...]]) -> str | None:
     return None
 
 
-def _dibuang(teks: str, besar: str | None) -> bool:
+def _dibuang(teks: str, besar: str | None, laka: bool = False) -> bool:
     """Noise dibuang kecuali peristiwanya juga menyentuh frasa besar — peresmian
     pabrik tetap seremonial, tapi "Prabowo teken inpres di sela peresmian"
-    bukan."""
+    bukan.
+
+    `laka` hanya membebaskan dari FRASA_BUANG_LAKA, tidak dari yang lain. Itu
+    disengaja: musibah transportasi tidak boleh jadi pintu belakang untuk
+    promo, lomba, atau peresmian yang kebetulan menyebut kapal.
+    """
     if besar:
         return False
-    return any(f" {f} " in teks for f in FRASA_BUANG)
+    if any(f" {f} " in teks for f in FRASA_BUANG):
+        return True
+    return not laka and any(f" {f} " in teks for f in FRASA_BUANG_LAKA)
