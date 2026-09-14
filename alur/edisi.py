@@ -30,7 +30,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 
-from inti import ai, dampak, notifikasi, pajak, render, sentimen, terjemah
+from inti import ai, dampak, kalender, notifikasi, pajak, render, sentimen, terjemah
 from inti.dedup import kelompokkan
 from inti.penyimpanan import buka
 
@@ -508,6 +508,11 @@ def tulis(html: str, tanggal: date, keluaran: Path | None = None) -> Path:
     arsip.write_text(html.replace('href="arsip/', 'href="'), encoding="utf-8")
     # index.html selalu edisi terbaru — satu URL yang bisa di-bookmark.
     (akar / "index.html").write_text(html, encoding="utf-8")
+    # Kalender arsip di-render ulang di sini, bukan di `main()`: halaman edisi
+    # menaut ke sana sejak masthead, jadi siapa pun yang menulis halaman harus
+    # ikut menulis tujuannya — kalau tidak, uji dan build ulang lokal
+    # menghasilkan tautan mati.
+    kalender.tulis(akar)
     return arsip
 
 

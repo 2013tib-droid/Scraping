@@ -51,6 +51,17 @@ a { color: inherit; }
 .angka { display: flex; flex-wrap: wrap; gap: .45rem; font-size: .8rem; color: var(--redup); }
 .angka span { background: var(--sorot); border-radius: 999px; padding: .2rem .7rem; }
 .angka b { color: var(--teks); font-weight: 600; }
+/* Pintu ke kalender berita (inti/kalender.py): sebaris dengan merek, rata
+   kanan. Tempat itu dipilih karena di sanalah menu halaman lain di proyek ini
+   berada — satu kebiasaan, bukan dua. Warna tautan, bukan pil berbingkai:
+   pil membuatnya bersaing perhatian dengan judul edisi di bawahnya, padahal
+   yang dibaca pagi-pagi adalah judulnya. */
+.atas { display: flex; align-items: center; justify-content: space-between; gap: .9rem; }
+.ke-arsip {
+  text-decoration: none; white-space: nowrap; color: var(--tautan);
+  font: 600 .82rem/1 system-ui, sans-serif;
+}
+.ke-arsip:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* --- navigasi lengket ----------------------------------------------------- */
 .nav {
@@ -246,7 +257,10 @@ footer a { color: var(--tautan); }
 <body>
   <div class="bungkus">
     <header class="kepala">
-      <div class="merek">Ringkas Pagi</div>
+      <div class="atas">
+        <div class="merek">Ringkas Pagi</div>
+        <a class="ke-arsip" href="arsip/index.html">Kalender berita →</a>
+      </div>
       <h1>Senin, 14 September 2026
         <small>Berita 24 jam terakhir, sampai 05:00 WIB</small></h1>
       <div class="angka">
@@ -894,7 +908,7 @@ footer a { color: var(--tautan); }
       </ol>
     </section>
     <footer>
-      Disusun 06:47 WIB · <a href="arsip/2026-09-13.html">Edisi sebelumnya</a>.
+      Disusun 06:47 WIB · <a href="arsip/2026-09-13.html">Edisi sebelumnya</a> · <a href="arsip/index.html">Kalender berita</a>.
       <br>Tautan menuju penerbit aslinya. Kutipan pendek untuk keperluan baca pribadi.
     </footer>
   </div>
