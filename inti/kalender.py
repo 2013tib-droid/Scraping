@@ -54,11 +54,9 @@ PINTASAN = ((1, "Kemarin"), (3, "3 hari lalu"), (7, "Seminggu lalu"),
             (14, "2 minggu lalu"), (30, "Sebulan lalu"))
 
 GAYA_KALENDER = """
-/* Merek di masthead jadi jalan pulang ke edisi terbaru; garis bawahnya baru
-   muncul saat disentuh, supaya kepala halaman tetap terbaca sebagai kepala
-   halaman, bukan sebagai tautan. */
-.merek a { text-decoration: none; }
-.merek a:hover { color: var(--tautan); }
+/* `.atas` dan `.ke-arsip` datang dari GAYA halaman edisi: di sana tautannya
+   menuju kalender, di sini menuju edisi terbaru — posisi dan bentuknya sama,
+   jadi pojok kanan atas selalu berarti "pindah halaman" di kedua arah. */
 .pintasan { display: flex; flex-wrap: wrap; gap: .45rem; margin: 0 0 2.2rem; }
 .pintasan a {
   text-decoration: none; font-size: .82rem; font-weight: 600;
@@ -211,14 +209,17 @@ def halaman(tanggal: list[date]) -> str:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Arsip — Ringkas Pagi</title>
+<title>Kalender Berita — Ringkas Pagi</title>
 <style>{GAYA}{GAYA_KALENDER}</style>
 </head>
 <body>
   <div class="bungkus">
     <header class="kepala">
-      <div class="merek"><a href="../index.html">Ringkas Pagi</a></div>
-      <h1>Arsip edisi
+      <div class="atas">
+        <div class="merek">Ringkas Pagi</div>
+        <a class="ke-arsip" href="../index.html">← Edisi terbaru</a>
+      </div>
+      <h1>Kalender berita
         <small>{escape(keterangan)}</small></h1>
     </header>
 {pintasan}{isi}

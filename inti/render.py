@@ -25,8 +25,8 @@ fungsinya, bukan hiasan. Keputusan tampilannya:
   menyilaukan.
 - **Tanpa JavaScript.** Satu berkas yang bisa dibuka dari mana saja.
 - **Arsip lewat kalender, bukan cuma rantai.** "Edisi sebelumnya" di kaki
-  halaman menuntut tujuh klik untuk membaca edisi minggu lalu, jadi masthead
-  juga menaut ke kalender arsip (`inti/kalender.py`) — satu halaman terpisah,
+  halaman menuntut tujuh klik untuk membaca edisi minggu lalu, jadi pojok kanan
+  atas menaut ke kalender berita (`inti/kalender.py`) — satu halaman terpisah,
   supaya edisi yang sudah terbit tidak perlu ditulis ulang tiap hari.
 - **Gambar hanya di kartu sorotan, dan hanya itu satu-satunya aset eksternal.**
   Item bernomor tetap teks murni — di sana kerapatannya yang berguna. Batas ini
@@ -119,16 +119,17 @@ a { color: inherit; }
 .angka { display: flex; flex-wrap: wrap; gap: .45rem; font-size: .8rem; color: var(--redup); }
 .angka span { background: var(--sorot); border-radius: 999px; padding: .2rem .7rem; }
 .angka b { color: var(--teks); font-weight: 600; }
-/* Pintu ke kalender arsip (inti/kalender.py). Duduk di antara angka-angka
-   karena di situlah mata sudah berhenti sebelum mulai membaca, dan dibuat
-   berbingkai supaya kelihatan bisa diketuk — yang lain di baris ini cuma
-   keterangan. */
-.angka .ke-arsip {
-  text-decoration: none; font-weight: 600; color: var(--teks);
-  background: var(--kertas); border: 1px solid var(--garis);
-  border-radius: 999px; padding: .2rem .7rem;
+/* Pintu ke kalender berita (inti/kalender.py): sebaris dengan merek, rata
+   kanan. Tempat itu dipilih karena di sanalah menu halaman lain di proyek ini
+   berada — satu kebiasaan, bukan dua. Warna tautan, bukan pil berbingkai:
+   pil membuatnya bersaing perhatian dengan judul edisi di bawahnya, padahal
+   yang dibaca pagi-pagi adalah judulnya. */
+.atas { display: flex; align-items: center; justify-content: space-between; gap: .9rem; }
+.ke-arsip {
+  text-decoration: none; white-space: nowrap; color: var(--tautan);
+  font: 600 .82rem/1 system-ui, sans-serif;
 }
-.angka .ke-arsip:hover { border-color: var(--tautan); color: var(--tautan); }
+.ke-arsip:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* --- navigasi lengket ----------------------------------------------------- */
 .nav {
@@ -495,7 +496,7 @@ def halaman(
     # Rantai "Edisi sebelumnya" tetap ada di samping kalender: ia menjawab
     # pertanyaan yang berbeda — bukan "tanggal berapa", melainkan "sebelum ini
     # apa" — dan tidak memerlukan halaman lain untuk dibuka.
-    tautan_arsip = ' · <a href="arsip/index.html">Arsip</a>'
+    tautan_arsip = ' · <a href="arsip/index.html">Kalender berita</a>'
     if sebelumnya:
         tautan_arsip = (
             f' · <a href="{escape(sebelumnya)}">Edisi sebelumnya</a>{tautan_arsip}'
@@ -513,14 +514,16 @@ def halaman(
 <body>
   <div class="bungkus">
     <header class="kepala">
-      <div class="merek">Ringkas Pagi</div>
+      <div class="atas">
+        <div class="merek">Ringkas Pagi</div>
+        <a class="ke-arsip" href="arsip/index.html">Kalender berita →</a>
+      </div>
       <h1>{hari}, {_tanggal_panjang(tanggal)}
         <small>Berita 24 jam terakhir, sampai 05:00 WIB</small></h1>
       <div class="angka">
         <span><b>{ditampilkan}</b> peristiwa</span>
         <span>dari <b>{total_dipertimbangkan}</b> artikel</span>
         <span><b>{jumlah_sumber}</b> sumber</span>
-        <a class="ke-arsip" href="arsip/index.html">Arsip · pilih tanggal</a>
       </div>
     </header>
   </div>

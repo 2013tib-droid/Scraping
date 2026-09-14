@@ -104,7 +104,9 @@ ada edisinya. Halaman `docs/arsip/` menampilkan tiap bulan sebagai kalender;
 tanggal yang ada edisinya bisa diketuk, yang tidak tetap tampil tapi redup. Di
 atasnya ada pintasan "Kemarin / 3 hari lalu / Seminggu lalu", dihitung dari edisi
 terbaru — bukan dari hari ini, supaya "kemarin" tetap menunjuk halaman yang ada
-kalau cron semalam gagal. Masthead tiap edisi menaut ke sana.
+kalau cron semalam gagal. Tiap edisi menautnya di **pojok kanan atas**,
+bertuliskan "Kalender berita" — posisi yang sama dengan menu halaman lain di
+`Screening-Saham`, jadi satu kebiasaan berlaku di dua tempat.
 
 Kalendernya satu halaman terpisah, bukan blok di tiap edisi: menempelkannya ke
 tiap halaman berarti tiap edisi baru harus menulis ulang kalender di semua edisi
