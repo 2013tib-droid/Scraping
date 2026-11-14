@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Ringkas Pagi — 14 November 2026</title>
+<style>
+:root {
+  --bg: #f7f5f0; --kertas: #fffdf9; --teks: #1c1b18; --redup: #6f6c65;
+  --garis: #e4e0d7; --sorot: #efebe2; --tautan: #8a3324;
+  --utama: #a5700a; --makro: #b5462f; --pajak: #0f7482; --pasar: #2e7d5b; --politik: #3b5fa8; --global: #7a4fa0; --ai: #b0336f;
+  --naik: #1f7a4d; --turun: #b3261e;
+  --bayang: 0 1px 2px rgba(30,25,15,.06), 0 6px 20px -8px rgba(30,25,15,.12);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131417; --kertas: #1b1c20; --teks: #e9e6e0; --redup: #9a978f;
+    --garis: #2b2d33; --sorot: #22242a; --tautan: #e8a88f;
+    --utama: #e9c060; --makro: #e58a72; --pajak: #5ec3d0; --pasar: #6cc59c; --politik: #8fabe8; --global: #bc9be0; --ai: #ee8fbd;
+    --naik: #6ecf9c; --turun: #f08a80;
+    --bayang: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -8px rgba(0,0,0,.6);
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 3.4rem; scroll-behavior: smooth; }
+body {
+  margin: 0; padding: 0 0 4rem;
+  background: var(--bg); color: var(--teks);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%; overflow-wrap: anywhere;
+}
+a { color: inherit; }
+/* Lebar dipegang satu variabel supaya wadah dan navigasi lengket tidak pernah
+   berbeda — kalau keduanya bergeser sendiri-sendiri, tombol navigasi berhenti
+   sejajar dengan teks di bawahnya. */
+:root { --lebar: 42rem; }
+.bungkus { max-width: var(--lebar); margin: 0 auto; padding: 0 1.1rem; }
+
+/* --- masthead ------------------------------------------------------------ */
+.kepala { padding: 2.4rem 0 1.4rem; }
+.merek {
+  font: 600 .74rem/1 system-ui, sans-serif; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--redup);
+}
+.kepala h1 {
+  font: 700 clamp(1.9rem, 6vw, 2.5rem)/1.1 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  margin: .45rem 0 .6rem; letter-spacing: -.015em;
+}
+.kepala h1 small { display: block; font-size: .5em; font-weight: 400; color: var(--redup); margin-top: .2rem; letter-spacing: 0; }
+.angka { display: flex; flex-wrap: wrap; gap: .45rem; font-size: .8rem; color: var(--redup); }
+.angka span { background: var(--sorot); border-radius: 999px; padding: .2rem .7rem; }
+.angka b { color: var(--teks); font-weight: 600; }
+/* Pintu ke kalender berita (inti/kalender.py): sebaris dengan merek, rata
+   kanan. Tempat itu dipilih karena di sanalah menu halaman lain di proyek ini
+   berada — satu kebiasaan, bukan dua. Warna tautan, bukan pil berbingkai:
+   pil membuatnya bersaing perhatian dengan judul edisi di bawahnya, padahal
+   yang dibaca pagi-pagi adalah judulnya. */
+.atas { display: flex; align-items: center; justify-content: space-between; gap: .9rem; }
+.ke-arsip {
+  text-decoration: none; white-space: nowrap; color: var(--tautan);
+  font: 600 .82rem/1 system-ui, sans-serif;
+}
+.ke-arsip:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* --- navigasi lengket ----------------------------------------------------- */
+.nav {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--garis);
+}
+.nav ul {
+  list-style: none; margin: 0 auto; padding: .5rem 1.1rem; max-width: var(--lebar);
+  display: flex; gap: .35rem; overflow-x: auto; scrollbar-width: none;
+}
+.nav ul::-webkit-scrollbar { display: none; }
+.nav a {
+  display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap;
+  text-decoration: none; font-size: .8rem; font-weight: 600;
+  padding: .35rem .75rem; border-radius: 999px; border: 1px solid var(--garis);
+  background: var(--kertas);
+}
+.nav a i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--warna); }
+.nav a em { font-style: normal; font-weight: 500; color: var(--redup); }
+
+/* --- bagian --------------------------------------------------------------- */
+section { --warna: var(--makro); margin-top: 2.6rem; }
+section.utama { --warna: var(--utama); }
+section.utama .sorotan { margin-bottom: .8rem; }
+section.pajak { --warna: var(--pajak); }
+section.pasar { --warna: var(--pasar); }
+section.politik { --warna: var(--politik); }
+section.global { --warna: var(--global); }
+section.ai { --warna: var(--ai); }
+.judul-bagian { display: flex; align-items: baseline; gap: .7rem; margin-bottom: 1rem; }
+.judul-bagian::before { content: ""; width: .35rem; height: 1.3rem; background: var(--warna); border-radius: 2px; align-self: center; }
+.judul-bagian h2 { font: 700 1.15rem/1.2 system-ui, sans-serif; margin: 0; letter-spacing: -.01em; }
+.judul-bagian small { font-size: .78rem; color: var(--redup); }
+
+/* --- sorotan (item pertama) ------------------------------------------------ */
+.sorotan {
+  background: var(--kertas); border-radius: 14px; padding: 1.1rem 1.2rem 1rem;
+  border-left: 4px solid var(--warna); box-shadow: var(--bayang); margin-bottom: .6rem;
+}
+/* Di ponsel gambar duduk di atas, selebar kartu.
+
+   Berdampingan tidak muat di lebar ponsel, dan ruginya lebih besar daripada
+   kelihatannya: kolom `auto` untuk gambar memesan lebarnya sepanjang tinggi
+   kartu, bukan hanya setinggi gambarnya. Di layar 390 px teks tinggal 192 px,
+   jadi bukan cuma judul yang pecah dua kata per baris — meta, alasan, dan
+   seluruh ringkasan ikut terjepit di kolom sempit itu sementara ruang di
+   sebelah kanan, di bawah gambar, menganggur sampai kartu habis. Menumpuk
+   mengembalikan lebar penuh ke semua teks.
+
+   `object-fit: cover` menerima perbandingan sisi apa pun yang dikirim penerbit
+   (830x556, 620x413) tanpa penyok, dan tingginya dibatasi supaya satu kartu
+   tidak menghabiskan satu layar — ini ringkasan pagi, bukan galeri. Ruang
+   gambar tetap dipesan lewat `aspect-ratio`, jadi teks di bawahnya tidak
+   melompat saat gambar akhirnya datang.
+
+   Batas tingginya sengaja dalam piksel, satu-satunya di berkas ini yang bukan
+   rem: pembaca yang menaikkan ukuran huruf sistem meminta teks yang lebih
+   besar, bukan foto yang lebih besar. Dengan rem, justru gambarnya yang ikut
+   tumbuh dan mendorong teks itu makin jauh ke bawah. */
+.sorotan.bergambar { display: grid; grid-template-columns: minmax(0, 1fr); row-gap: .85rem; }
+.sorotan.bergambar .isi { grid-row: 2; }
+.sorotan .isi { min-width: 0; }
+.thumb {
+  width: 100%; aspect-ratio: 16 / 9; max-height: 176px; grid-row: 1;
+  border-radius: 10px; object-fit: cover;
+  display: block; background: var(--sorot); border: 1px solid var(--garis);
+}
+
+/* Dari 34rem ke atas teks masih kebagian ~21rem setelah gambar mengambil
+   bagiannya — di situ berdampingan baru lebih baik daripada menumpuk, dan
+   gambar kembali jadi thumbnail persegi di kanan. Ambangnya bukan 24rem
+   seperti dulu: pada ponsel terlebar sekalipun (430 px) cara lama hanya
+   menyisakan 232 px untuk teks, jadi yang perlu dikecualikan bukan layar
+   tersempit, melainkan semua layar ponsel. Urutan DOM-nya tetap teks dulu,
+   jadi judul yang pertama dibaca pembaca layar. */
+@media (min-width: 34rem) {
+  .sorotan.bergambar {
+    grid-template-columns: minmax(0, 1fr) auto; column-gap: 1rem; align-items: start;
+  }
+  .sorotan.bergambar .isi { grid-row: 1; }
+  .thumb {
+    width: 6.5rem; height: 6.5rem; aspect-ratio: auto; max-height: none;
+    grid-row: 1; grid-column: 2;
+  }
+}
+.sorotan h3 {
+  font: 700 clamp(1.25rem, 4.6vw, 1.5rem)/1.25 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  margin: 0 0 .5rem; letter-spacing: -.012em;
+}
+.sorotan .ringkas { font-size: .96rem; opacity: 1; }
+
+/* --- item biasa ----------------------------------------------------------- */
+.daftar { list-style: none; margin: 0; padding: 0; }
+.daftar li {
+  display: grid; grid-template-columns: 1.6rem 1fr; column-gap: .6rem;
+  padding: .85rem 0; border-bottom: 1px solid var(--garis);
+}
+.daftar li:last-child { border-bottom: 0; }
+.nomor {
+  font: 700 .8rem/1.9 ui-monospace, "SF Mono", Consolas, monospace;
+  color: var(--warna); padding-top: .05rem;
+}
+.daftar h3 {
+  font: 600 1.06rem/1.35 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  margin: 0 0 .25rem;
+}
+h3 a { text-decoration: none; }
+h3 a:hover { color: var(--tautan); text-decoration: underline; text-underline-offset: 3px; }
+
+/* --- meta, ringkasan, liputan --------------------------------------------- */
+.meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .55rem;
+  font-size: .76rem; color: var(--redup); margin: 0 0 .4rem;
+}
+.sumber { font-weight: 600; color: var(--teks); }
+.media {
+  font-weight: 700; color: var(--warna); background: color-mix(in srgb, var(--warna) 12%, transparent);
+  padding: .05rem .5rem; border-radius: 999px;
+}
+.tinggi {
+  font-weight: 700; color: var(--utama); background: color-mix(in srgb, var(--utama) 14%, transparent);
+  padding: .05rem .5rem; border-radius: 999px;
+}
+/* Status arah. Bentuknya ikut membedakan, bukan hanya warna: panah naik/turun
+   tetap terbaca oleh mata yang tidak membedakan merah-hijau. Netral tidak
+   diberi lencana sama sekali — sebagian besar berita netral, dan menandai
+   semuanya berarti tidak menandai apa pun. */
+.arah {
+  font-weight: 700; padding: .05rem .5rem; border-radius: 999px;
+  color: var(--nada); background: color-mix(in srgb, var(--nada) 14%, transparent);
+}
+.arah.positif { --nada: var(--naik); }
+.arah.negatif { --nada: var(--turun); }
+.alasan {
+  margin: 0 0 .4rem; font-size: .88rem; font-weight: 600; color: var(--warna);
+  padding-left: .6rem; border-left: 2px solid var(--warna);
+}
+.ringkas { margin: 0; font-size: .92rem; opacity: .86; }
+.juga { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; margin: .5rem 0 0; font-size: .72rem; color: var(--redup); }
+.juga a {
+  text-decoration: none; background: var(--sorot); border-radius: 6px;
+  padding: .1rem .45rem; color: var(--teks); opacity: .8;
+}
+.juga a:hover { opacity: 1; }
+.lagi { color: var(--redup); }
+.terjemah { font-style: italic; cursor: help; }
+
+/* --- layar lebar ----------------------------------------------------------- */
+/* Wadahnya melebar ke 80% viewport, tapi isinya pecah jadi dua kolom di titik
+   yang sama. Keduanya satu paket, bukan dua keputusan: satu kolom selebar
+   1.500 px berarti baris ~200 karakter, dan mata kehilangan jejak saat kembali
+   ke awal baris berikutnya. Dipecah dua, tiap kolom ~700 px — senyaman versi
+   sempit, tapi layarnya terpakai.
+
+   Ambangnya 70rem (~1.120 px), bukan 1.024: pada laptop 1.024 px dua kolom
+   dari 80vw tinggal ~390 px masing-masing, dan kartu sorotan hanya menyisakan
+   ~260 px untuk teks setelah gambarnya. Di bawah ambang ini semuanya tetap
+   satu kolom 42rem seperti sebelumnya — ponsel dan tablet tidak tersentuh. */
+@media (min-width: 70rem) {
+  :root { --lebar: min(80vw, 96rem); }
+
+  /* Blok utama: enam kartu berdampingan dua-dua, bukan menumpuk sendirian. */
+  section.utama .kartu {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem;
+  }
+  section.utama .sorotan { margin-bottom: 0; }
+
+  /* Bagian lain: sorotan di kiri, daftar bernomor di kanan — judul bagiannya
+     membentang di atas keduanya. */
+  section:not(.utama) {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 3rem; align-items: start;
+  }
+  section:not(.utama) .judul-bagian { grid-column: 1 / -1; }
+  section:not(.utama) .sorotan { margin-bottom: 0; }
+  .daftar li:first-child { padding-top: 0; }
+
+  /* Ruang yang bertambah dipakai gambar, bukan dibiarkan jadi margin. */
+  .thumb { width: 8rem; height: 8rem; }
+}
+
+/* --- kaki ------------------------------------------------------------------ */
+footer {
+  margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--garis);
+  font-size: .78rem; color: var(--redup); line-height: 1.7;
+}
+footer a { color: var(--tautan); }
+.kosong { color: var(--redup); font-style: italic; padding: 3rem 0; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="bungkus">
+    <header class="kepala">
+      <div class="atas">
+        <div class="merek">Ringkas Pagi</div>
+        <a class="ke-arsip" href="index.html">Kalender berita →</a>
+      </div>
+      <h1>Sabtu, 14 November 2026
+        <small>Berita 24 jam terakhir, sampai 05:00 WIB</small></h1>
+      <div class="angka">
+        <span><b>60</b> peristiwa</span>
+        <span>dari <b>1879</b> artikel</span>
+        <span><b>258</b> sumber</span>
+      </div>
+    </header>
+  </div>
+  <nav class="nav"><ul><li><a href="#utama" style="--warna: var(--utama)"><i></i>Penting Pagi Ini<em>6</em></a></li><li><a href="#makro" style="--warna: var(--makro)"><i></i>Makro &amp; Kebijakan<em>12</em></a></li><li><a href="#pajak" style="--warna: var(--pajak)"><i></i>Perpajakan<em>10</em></a></li><li><a href="#pasar" style="--warna: var(--pasar)"><i></i>Pasar &amp; Emiten<em>10</em></a></li><li><a href="#politik" style="--warna: var(--politik)"><i></i>Politik &amp; Sosial<em>6</em></a></li><li><a href="#global" style="--warna: var(--global)"><i></i>Global<em>8</em></a></li><li><a href="#ai" style="--warna: var(--ai)"><i></i>AI<em>8</em></a></li></ul></nav>
+  <div class="bungkus">
+    <section class="utama" id="utama">
+      <div class="judul-bagian"><h2>Penting Pagi Ini</h2><small>dampak tinggi, lintas bagian</small></div>
+      <div class="kartu">
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://finance.detik.com/bursa-dan-valas/d-8751865/296-saham-hsc-dikeluarkan-dari-perhitungan-ihsg-ini-daftarnya">296 Saham HSC Dikeluarkan dari Perhitungan IHSG, Ini Daftarnya</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">27 media</span> <span class="sumber">finance.detik.com</span> <span>16:43 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Bursa Efek Indonesia (BEI) merevisi jumlah saham dengan kategori high shareholding concentration (HSC) atau kepemilikan terkonsentrasi tinggi menjadi 296.</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiYEFVX3lxTFAxUVJoT0dVa3MyY1VzTHo1bkQ3VHVPam56ZHpncjgwNG9YQXVoa3JOd3dWUDFmU2FQeUNGRFQ0OXVOMDBhcjhOZE1GdzdLSm94VUFtLTVJd1dfVlVxZXJheQ?oc=5">chatnews.id</a><a href="https://www.cnbcindonesia.com/market/20261113131818-17-785000/bei-ungkap-risiko-ini-jadi-alasan-saham-hsc-terpisah-dari-ihsg">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMivwFBVV95cUxPZkpCaGNMejJETWdhRHc1ZWRGYlJsSkhDX2NKcHZNNzl5M0EzcUc5NHhxd3dOQkhrYXZWWE81NndOa3BVNTN1OUZrWDg1WFhfbHN4S0hIOURoN0VfSGd6elFPcU1jbUN4TlV4anBMdldjR0twTnZCSUktT3ZCdmxqeWlvcTFVTGdERzhjZ3hLSG9kMDVzcVo1endVYzQ2TWpBZngxYXZkVUVwRHZTY1VqcXIxZ3JJTE9rQ0NHbkhHNNIBxAFBVV95cUxQSmRUUFJyeGpRVmN4aUhZWG1FcE05SVh0d3ktMXU1bDVVU0dKRkhfU3N5cjZWTXZQZlhjTWpHM3VIMkpPNnUzUENIekVRQnowdlI3SG80dDBLaS12STd1TXY3RFh2VVVNZWdja0Y3ZnZ6Y3BVM1lfdXZPeHUyb0d0cmxudnlmbE5qR2VsVjBtSjRXM05PRDBpWVNoTTgyUkZJZzNlUEZHVUxfWm5VQlp3dHZTamhSbWdiNjJCMzdkUHFKWGNM?oc=5">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNQVdScGJEQnl4dXJHOXdzOW5ZcHRoUmsyNXh2VFFOM2x0VXhCYmxDeHQtTUlIS0k1aS03NFdhU1BFWF9pWFdxa1hISVRLVjhPR0JOUXBQN2FzeWdNaENDQm9LSURtRklYaE1DaVJuOUQwWVliZ3Y4VmZURy1pLUdaNTFyY292NTQ?oc=5">cwibc.co.id</a><a href="https://news.google.com/rss/articles/CBMizAFBVV95cUxOQ3hCU1p1MlZHamVrVEJPWlhXNVhjMzNVTVpoTklYeEl0V3ZUUmsxUkZURnI1NnVWd0ptcDQzSXoxVHctckVIazlpNWdFRDN6blV5NTBWWjhweHlYYy1GSE4tbnl6SWgyRXlPUldVRnlNQURMdEt5ZnYxZ3BrczBzWkhYNnluYzBLc2xYeWwyeXRZUkUwOVBsLXR1Z2hhVU40c2oxNUZZcG90MHJkRkF2czlmdFVqdUZvZEg3MHR1WTFsT2dCZ21td0Etd1U?oc=5">databoks.katadata.co.id</a><span class="lagi">+21 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://akcdn.detik.net.id/community/media/visual/2026/05/18/ihsg-anjlok-ke-zona-merah-bursa-saham-melemah-tajam-1779098741182_169.jpeg?w=360&amp;q=90" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://ekbis.sindonews.com/read/1771789/33/pemerintah-tarik-utang-rp6293-triliun-hingga-oktober-2026-setara-756-dari-target-apbn-1794561107">Pemerintah Tarik Utang Rp629,3 Triliun hingga Oktober 2026, Setara 75,6% dari Target APBN</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">22 media</span> <span class="sumber">ekbis.sindonews.com</span> <span>16:45 WIB</span></p>
+          <p class="alasan">Fiskal &amp; pajak</p>
+          <p class="ringkas">Kementerian Keuangan mencatat realisasi pembiayaan utang neto pemerintah mencapai Rp629,3 triliun hingga 31 Oktober 2026 atau setara 75,6% dari target Anggaran Pendapatan dan Belanja Negara (APBN) 2026 sebesar Rp832,2 triliun.</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxPRktqRm51c0pwcndtY1dBTXJlOFQ4S1lTWk82amFjVFJ3N0xfd2xsb1FTa1UwSjNvcE1tb1RkSEhMV1FuU0VUeXA5X0o1aWJkb1o3d3Vlb29RS0tuNjhFQ180TDl2MlF3SExpMkJwazdSX1kxek9LX0tzeUxxUlB3a0tRNEhLZVpsem1GQUZCZEg0RnlXNk1NU1lyQzZpRDVnWHk5aENVUEZ3OW1MS3fSAbABQVVfeXFMUFZVQ1NsOUVBY1dEN1Q4Z3JCdENOUElQc1JHUzhWdFNaaVAtZ1RHU2hfWTRvQkNFSk9Nb2cyNTZHYlp1bGhSUU5xeVhacVAtLWpFVmdrSC02cmZLQk55RmwzaE45TURGaGliWmJ3dnlFZjNhQXJhV3lzMkpKOUtLMFR1b3paZF9Za1dpRHNLdkR4TTVqbVMzV29fS3pqYWY5djB4RWFjdm5RYWRqQW5FZzA?oc=5">antaranews.com</a><a href="https://news.google.com/rss/articles/CBMipwFBVV95cUxOT0JRXzVCeVRqVnRZamFfQjBLUFAzSmtGNHdtei1kN3lvS3c0NDhSdmFTWE1iXzhBNGMxcEZ1TWpnUzVLaUpvOThjOTNsQWxWWUNxV2RJSlRFWlJ1N2hfYzJha3BlbmpNQ001aWtFRjhJb1laa2twV0tBa280T0xpLVQyNnZWS2NITDdJVzhIcUl0ckZKLVJHOUdiNTFJU3BZTU53VWtYWdIBrAFBVV95cUxPdFFKQmpKcHBqZklLWWVqODR1RkJESlZheGpXMmpJc3BpTEVYVDNlMThTMDVxYkVLbHBSUVFmVmxvWS0waExNbEZxM1hlc3JnX0Qta1VPRE9PbWpsTXpYSVBPZmZoemtkNDNtTG1aU1Y4d1FRcEktNldPVzdOTW5MSWFPbWMzQnY3akVOVEg4ZmRxWTNfNTNVcDNzeDIwQTJrZENIMWJpbkZLOXp3?oc=5">bali.antaranews.com</a><a href="https://www.bloombergtechnoz.com/detail-news/127642/penerimaan-negara-bukan-pajak-hingga-oktober-capai-rp551-8-t">bloombergtechnoz.com</a><a href="https://www.cnbcindonesia.com/news/20261113170226-8-785125/menkeu-suahasil-belanja-apbn-tembus-rp2997-t-per-oktober-2026">cnbcindonesia.com</a><a href="https://www.cnnindonesia.com/ekonomi/20261113145455-532-1426871/setoran-pajak-tembus-rp1796-t-per-oktober-2026">cnnindonesia.com</a><span class="lagi">+16 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://pict.sindonews.com/dyn/850/pena/news/2026/11/13/33/1771789/pemerintah-tarik-utang-rp6293-triliun-hingga-oktober-2026-setara-756-dari-target-apbn-pkq.jpeg" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://www.liputan6.com/bisnis/read/8334986/airlangga-siapkan-strategi-kejar-target-ekonomi-6-pada-2027">Airlangga Siapkan Strategi Kejar Target Ekonomi 6% pada 2027</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">12 media</span> <span class="sumber">liputan6.com</span> <span>21:30 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Menteri Koordinator Bidang Perekonomian Airlangga Hartarto dalam acara Kadin Indonesia Economic &amp; Diplomatic Breakfast of November 2026 di Kantor Kementerian Koordinator Bidang Perekonomian, Jumat (13/11/2026). (Dok Kemenko Perekonomian)</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxQeW5vZWhNbUQwNjE4SmVWdEJ4ZnlQQVFTdDBuelhrYnFGTU1NV3JiRi1iMF8zaGIzWGo4SnFmQzJoeHVUakl0MFFVX09RRHFzR2ZaVjZEdFR5aWs1OGhHV25WWG1FUkhpa2U3M2RUSThzSFJvSDF3S2w4Nmc4dDBheFR3X28tMzVzZzJtaFRUWWhmb3dkcm5fd1BsUFdTVTNpZ19wcG9HVnEyYUV3NG9LZkxFbk1XMEhuakE?oc=5">afu.id</a><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxNZVhQd1lXRUNEUmlwdmkxbmdtOFN4dDlyNE5sZGxVRURQMkRhM19JSjZkQVRNNURoWDBsYlpNckFMN09kZGVuQ2ZCSE5QbU1YaEZGUjhrUmxweEdsVjdESTFGYVhEeWh1enVWZF82Z05qLUFwOXV4U0tBZFEtZ2NfX3NfLTNyOTZlNGFPa3psandmVjJh?oc=5">centralbatam.co.id</a><a href="https://news.google.com/rss/articles/CBMiwwFBVV95cUxPaWVMWS1hOXVaZzl0aDZaQ2NIUlZIX3NOUXdoYlBHWG5QM3YxYmlMLWVjQmtXNmpnLWxzRTl6LTFrdzRBRE9fYTQ2bXdzSDNRbDdPd0RkVE1pQ3dKam81dExKak1ZZTdNTjBFWGt6amNod1R5d3hOZENiMnR4QmFSVS1IQnlFc1FSZ183cVNFSzVmdEdQRlhtWU1aai1mVFhuQ0pJRlpjQ2QxdXVvdzlZN3UwOGFXY3Z3akpsN1M4ZXp1OUU?oc=5">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMia0FVX3lxTFBTQkFjeG1LNk0xa1pTWTg1UFN5YzBnOExXZDQ4YjNPYXBaR3hIUTd5SDJnT2gyc3NEeHRXZVh0aG4xVkprc0dKZFBmSVRZbTlJVjV1dDRVWm9STGl3cXgxRjFKWjVFVWx2ZHhz?oc=5">cwibc.co.id</a><a href="https://news.google.com/rss/articles/CBMioAFBVV95cUxNX1M5V3lnMUQ3RjV5TFlGYVlBTEY2d2FlcmRzNXVXR1ctQ3RtWDRQaHh3VDN1NnhvbkJSa09FZlFOYkVvQlY2R0lkZFE3bGJqcUhaeDBfb3NWZHozQWlnaDg2ZHVSWl9pVWJXV1l4c1BVbjhScDF4STNLalRMb2dxM1F3aVBYTnBfcHA5a0FySmk4T3k1WkR3dndiTXd2Z1dC?oc=5">ekbis.harianjogja.com</a><span class="lagi">+6 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://cdn0-production-images-kly.akamaized.net/DFG6lqESrK9dSAEBHpg-lkMeBGA=/673x379/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/9397325/original/005851800_1794579271-publikasi_1794567414_6af6ecf63ddb2.jpeg" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://www.cnnindonesia.com/ekonomi/20261113153203-532-1426890/bea-cukai-sita-17-miliar-batang-rokok-ilegal-hingga-oktober-2026">Bea Cukai Sita 1,7 Miliar Batang Rokok Ilegal hingga Oktober 2026</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">11 media</span> <span class="sumber">cnnindonesia.com</span> <span>20:50 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Direktorat Jenderal Bea dan Cukai (DJBC) Kementerian Keuangan (Kemenkeu) mengamankan sebanyak 1,7 miliar batang rokok ilegal hingga Oktober 2026.</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMilwFBVV95cUxQOUFkbm5SVlFMZWFwUTVfenRiVFB2WVFmS1ZoWEptUm1CaVlVZXdyLTlhNTVCNlQ4Wnp1cGNLaGxENTBJVWpSS2pDdWxWczlZZXd2SEsyLTZMaU0wak9WaEszWFFBekVlS0JtR1k2endoXzhUTmMyQkFDVE9uLWJjeEdoSGViYlhab0cyN2FLYmpvZTFiWnFR0gGcAUFVX3lxTE1Rc2ZNX1diNTU1dWxodUlZbmd6RnZqdG9NQ0VVYzNvODVTREM2OVkzZlIwX2dNSUxOdWFaNmNXVGxUY25fdFFWajM4RkgtNkJkbE82QlNteTVuVWw0ak1mc21nUWd4UjdiNGVveU1FSlV3enAtb2xYbERMU1RmTjBzeHR0ejFuU2Z0aE1XT2pLMGdlNW5vb2FPTGpILQ?oc=5">ambon.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxQc21uTmVzcGQxMXIzM1lqbFdvRDVQTU4zWEdVRzZiZ2FEaGExWXVxT2xjQWtrSllZdzZmZGdkSko2aWxVVE5lWmNTR1REZXJja2hMT1NyUFZBV2ktcjZQdnF0Q040WGlEQnZrSzkyUG9HN1RQdGtZckVRczhibWRCem5DeklIZTBfMFBQYU9KNXdfU3VzRi1lZUdLS0ZOenBJSFJ2QWl4SkY5UE9SN0hnWtIBtgFBVV95cUxQVkZWYkU3S3hrZTg0QXZMbVVqb2tpLXg1eHBKUTNkdDFIbktLWGZSWUwxWkpDQUVFSEcwMlJiTUg1Uk9PclZvTExtd2RBTmF4VTN1eHNlYkE1bVJ3Yzd6aUs3TDY5YUNEZWxZN3poblE5SHZsX09HUC10TlRpdnRJQTFoLTJyek1WeWxzU0xaLVkwMGJiQXdZaWVzSmxtUk1EVlBxN0NmVGprVk44eEFOdHVacmdWQQ?oc=5">batampos.jawapos.com</a><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxQRXdSX2VnWElXMWtMTF9KcC14bHJrMWt0WlduaWdHc2xLTUZ3YVdFbzhXR3FUSVA0SnNXbi16ckczcllZOG5TbTY0VUREVVd4b1lQdXRhSjhXLXVUTEdScTdBUTlVOTRLd1dEX0lKak9nc2NYNzBXS3Bydk5PS0dnNUJnUld0V0dPX3FXYzloYVlGZWwxaVhIdXh6SGxTLV9GaEFWYmdTOFNlRUtpYW0zbVBYdXB6cGJSeVZWOEZfYThyZw?oc=5">indoposco.id</a><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxPTjZXV3k2TW5lMGRxTmFmVkhGOERJbUw1SzNWUlNodDJ2ZHJEVUlOOHZ0UWxFbHNOYjBOdzVHR0NHRVFieTMzdDNjWEx0YUhfdGs1N2Y0V3ZrYkdyMlhyOFRDamw1REFCY0ZCRmNpaTRqWnpTYTNPQzJzWFV4N0VHc3FIbG10SG05Rm9vSTduemlzcE5Od2xBaTQyRTl5RDZGRkM4WHRSdVNlVGhieTA5MTFyejFEQ3c?oc=5">infojateng.id</a><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxOY05fWnNtdzFNYnVQZktsMUpJMzJXR2Y2V3QwNFVGUWRpZWdIWmtyUUFBcDNvbWtoQjB1d3JKYmVQREhWVXVnUTVHclNJVGs5SW5tRU5ENmpFTWtjc2lkbTBZNjg5Q204OGg4WG1kME5LalhuMkJoOXd6MzljMEUtRGZMakx1NE9DOUE3X0lpYWVqdHVpTEFqVUFPeENtcExmS1A0OFBJcEMyUGFqaF9mc2Z3bWtYdTA?oc=5">kanalsatu.com</a><span class="lagi">+5 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://akcdn.detik.net.id/visual/2022/12/27/ilustrasi-rokok_169.jpeg?w=360&amp;q=90" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <article class="sorotan">
+        <div class="isi">
+          <h3><a href="https://mediaindonesia.com/teknologi/956043/microsoft-minta-maaf-atas-gangguan-global-pastikan-bukan-serangan-siber">Microsoft Minta Maaf Atas Gangguan Global, Pastikan Bukan Serangan Siber</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">8 media</span> <span class="sumber">mediaindonesia.com</span> <span>03:44 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Microsoft sampaikan permohonan maaf atas gangguan global yang melumpuhkan layanan publik, bisnis, hingga kesehatan di berbagai negara, serta pastikan bukan karena siber atau AI.</p>
+          <p class="juga"><span>juga di</span><a href="https://www.aljazeera.com/news/2026/11/13/microsoft-says-services-still-returning-amid-widespread-outage?traffic_source=rss">aljazeera.com</a><a href="https://www.bbc.co.uk/news/articles/c5gm3g9ldz8xo?at_medium=RSS&amp;at_campaign=rss">bbc.co.uk</a><a href="https://www.bloombergtechnoz.com/detail-news/127636/microsoft-outloook-teams-copilot-gangguan-di-banyak-negara">bloombergtechnoz.com</a><a href="https://www.cnbc.com/2026/11/12/microsoft-outage-outlook-aws-google.html">cnbc.com</a><a href="https://news.google.com/rss/articles/CBMivAFBVV95cUxQdkVWcmFWbm1ZYVBHUFg2bmVOd0o4c0J5cTluNkcweTl6ZzZmWEZnajJYd3NHTDVrY0p3cWo1VWJwRUlTSVNrdDUySld1U3cwd3c2cjNCT0UyZzhyZEgwRS1zRGVEOHZlRnptakl2dm0xczFPYnlrQklhRTRkZnliVlhpaVBGR29tY25RR01nUEs1UE1JTzR1UHBkeFJpRGllSlRBazdVU1QtU2dFV2p1bU5Sc1JHVEE2UW54Nw?oc=5">cryptowave.co.id</a><span class="lagi">+2 lagi</span></p>
+        </div>
+        
+      </article>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://www.liputan6.com/bisnis/read/8334828/naik-pangkat-asn-dan-tnipolri-wajib-kantongi-surat-ini">Naik Pangkat, ASN dan TNI/Polri Wajib Kantongi Surat Ini</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">8 media</span> <span class="sumber">liputan6.com</span> <span>17:43 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Sejumlah Pegawai Negeri Sipil (PNS) Pemprov DKI Jakarta berakitivitas di Balaikota, Jakarta, Senin (10/6/2019). PNS kembali berdinas di masing-masing instansinya pada hari pertama kerja usai libur nasional dan cuti bersama Hari Raya Idul Fitri 1440 H. (Liputan6.com/Faizal Fanani)</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxOVkFKYW5FNmNnUXVSMVM3TnA3TjE2aVBqS3NzMi0xSFpGZzJ0c0xieTBoeG14aF9aT3dheHVfdkEtdkFoTjBNR0lZWVljUFhJRUxQbXBCbk1Ua2FqaS1vQjBhamVNdFhId3JSUy10R1pIVXRGQWhfLUgwTVVYWEI5OTBhUWlXMmhQMTVFZUxrbWJ3YlNEUmVxSFZQR1RoV1hiUllxLQ?oc=5">bloombergtechnoz.com</a><a href="https://news.google.com/rss/articles/CBMivwFBVV95cUxPV2VOaFhfZTdhZU14VXZ6NHoxVzZ6cGV6YmxKMU5qUWRfU0ZFWFY5MGI0cU9XRHREVnZjRzF6Smw3bE1TRFZMV18xRldRUm81ZS1xbnJWZEFSSXVDUzZjNFdycElUck42QWY3N3dMRGxTcWVLMG5kU1RET01PeVoyY3gyT0NnMEd0VDRBMS1fMEp0LUstcnliYmtxSmxRaDZ2RnJsanJENkFlSUdoZ1VXUjJ3c0ZqdERWM3ZrNmdjY9IBxAFBVV95cUxNUjRTTk5XUHNRWVFjNHRVX1l4ZlduZXdZbHlUVkRQd2JPUEY5ZlJkREc3UThyX1lwOThqUExoTXFIVDIydlpaNkFsR2ZrRkRkeWl5YVRlbDVpZVpramZRZFB6M21IVGFlcHFERTZldHl0SW9yR2xBZ0hPOEYwOWZ1Y0hSRHJxcHVKaFZjMnF5cEVHTlEzTW01SXpxS1FwZnVQcVJKaHBOd1Q2emtnZTZ3UzVaQXUwb3d3cWhFeEwwQTZqVFcz?oc=5">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMiwwFBVV95cUxPN1lEdHo4Vm8yTnZzZGIwQ214cnBSeDk4YXhIU1l3cjd4bEJ5TW1XRGFkcHY5WlNIV25DcmQwYmNVb3lHckUyaXduSG1Td1E5dTd5SUR5QlMyWHNFU3hEY0stbEdRUGwyUUwzYzR5Y2tXSnY1a0JzV2NRMERiMWNQRHdLYng3b1owMDZQT2h6YlJOY1VoUktFUGxNZy1MRFp1WmQzZzRwVFlhbmFSOElTNzdpRERXLV8wN3RLVllvMnoxYTDSAcgBQVVfeXFMUDUyMFFkcHlwQUJlTkR0RExNTzRnYmpmUWptYTN3aGJ5Y0tZM21vSW5QUHQwT1JIQnRCMnkyc3N6NUJmUlJSVmt4RF9qYlJuWHVKRUNKSDRhWFI1SXBsTWF6MTROUi1jcE1VS2ZvZnY3T1k5MnhibVNETHU2MlNCdTVmTmszX3QxcUpwMEtMS3YtNDhpOEdyLUpDY0Ztbmk2UTJZVkZDWXpPVEpzZjEtQXI2bmUtbXI5NVhDRlBxc3ZlSkFrcGg4RXU?oc=5">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE9ERk1tbE5MUVp6Y21TdlVSSm5CMzI2S2lwSFg4V3JXa2Q5RU44amRiNGE0alo3Y2FzUHpGZGtEdktON3hLQmE3U3NXLWJLTFEtb3hOd1A1dmE1RGJlLWFwakJFN3p5NUJZa3c?oc=5">koridor.co.id</a><a href="https://news.google.com/rss/articles/CBMimwFBVV95cUxNWmdJclFaU1M5V2hhVndnSWhTZk1GUk50ekJJRDdoVjZzX21fWS00QUhuMEhINmlsWkl0VE5xZEEwZ1l4YW1VR3lyTThzalpHbDNqSWZTSzJfQlZPSUthMFhRREVXLXV1MTNLTGdaNWc4TTVwSXNrVDBadnNKbVZTT25felFrTHR1d0ZySzFQWHlRY2kxV1dfZUkwUQ?oc=5">news.ddtc.co.id</a><span class="lagi">+2 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://cdn1-production-images-kly.akamaized.net/xamB9k77LpJGsZzh_oAtDPgAopw=/0x208:2913x1849/673x379/filters:quality(75):strip_icc():format(webp):watermark(kly-media-production/assets/images/watermarks/liputan6/watermark-gray-landscape-new.png,573,20,0)/kly-media-production/medias/2824831/original/073757400_1560140444-20190610-Hari-Pertama-Kerja_-PNS-DKI-Langsung-Aktif-Bekerja2.jpg" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      </div>
+    </section>
+    <section class="makro" id="makro">
+      <div class="judul-bagian"><h2>Makro &amp; Kebijakan</h2><small>BPS, BI, APBN, kurs, regulasi</small></div>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://finance.detik.com/berita-ekonomi-bisnis/d-8751591/kemenkeu-masih-kaji-usulan-besaran-kenaikan-ptkp">Kemenkeu Masih Kaji Usulan Besaran Kenaikan PTKP</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">8 media</span> <span class="sumber">finance.detik.com</span> <span>14:49 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Kementerian Keuangan telah menerima usulan terkait kenaikan Penghasilan Tidak Kena Pajak (PTKP) 2027 dari Kementerian Koordinator Bidang Perekonomian.</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxQdlJPRm5pZHhFQXJrSDZYOE9ERFNEbWxtR2JESF9XUmJkWDBXaWd5S0s3WFlEdmxaMlA3Z2hYckdsVWU5U3N3d0k4bHFHVUtmTEpoeGg5SXRHUVdVV18xVk0xaU4tX25qVjRodElMRGh4TTRtLWpTelFKaGFGTXZTNlNqdUdITDRyd2hUQk9EbGw4bmwtaWs2Mk5paWhPbW9nbVo2TXVzRVoyOEnSAawBQVVfeXFMTlh1LXA1UnFmUXlQSFlLUXg5RnZjMUI0aGlhZTZUclVkU01LMjRNNGhJeUdZazNUaGlEY2VibWotbjlzVkFYQWgxUXpDclF4ZFpxam96U3ZjdlpYZUtUMXlQT2M1M1BjUzVyYTRRd01EV3pqSjNfQVNycWUtMjIta1pGMVJneVN6djhTRnlKU0s0M2k0QzN5enA0bWFFN3p4NTRNOFloTExYelFGTQ?oc=5">bali.antaranews.com</a><a href="https://www.bloombergtechnoz.com/detail-news/127662/kemenkeu-sebut-ptkp-ri-sudah-tinggi-penyesuaian-dikaji">bloombergtechnoz.com</a><a href="https://www.cnbcindonesia.com/news/20261113072050-4-784850/bos-pajak-soal-wacana-batas-ptkp-mau-dinaikkan-sudah-tinggi">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxORzFrcVB3bGhGT0J6TWsweGhGOUpXWTl4ekdLSVlKWDdGQTQtUzhZSnFFOG9OdUw3b0hFTk1ZNlU4dEdjYkJtTVRhSTRYOW9JTGFROUt6bkttTGtEd0tpb0VEV2ZHWmctU1AwX3hCUkVUOEdpb1R4c2lFSHlJeXBJLXpmcldUNkxfdWMzd0paQl9wYkU5MWpkeU5EbVlZcmZQTkhZWTZrQlljZkJHdHl0WXBjOGwySE0?oc=5">ekonomi.bisnis.com</a><a href="https://news.google.com/rss/articles/CBMiggFBVV95cUxNOW5ZSkF2ZXY5MGxENUpzaTRLcHppdF9iQmFJeXpZYmFLOEg0dG1HQ1YwZDVzMVJacEg4SlMtM1hvdTJmUDFIV0VicnVVaG9iU2ttbW9PZl9oQTVCNnh0U1pqdUVTQ3pmanRoa293SW1lQ0JFOUJuODVNTXBRNEpRSFN3?oc=5">ikpi.or.id</a><span class="lagi">+2 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://akcdn.detik.net.id/community/media/visual/2024/11/22/ilustrasi-pajak-2026_169.jpeg?w=360&amp;q=90" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <ol class="daftar">
+        <li>
+          <span class="nomor">02</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMiigFBVV95cUxOVXU1QW5SWnhyNFFGZ0Y1all5MU1MQlVEejQ0MTZFN2pQblNLejE1QUdNQTRWeVZ6NUxWQXdXUHRFUVduY1ZLZDdNTndkdG5kWkpQclI1UVllSExmYkpvZzRSZUpPOFlYSHRQenZaMFVRcVdFWWdWUVVaa1VPNkNCOUJHcy11TU55RWc?oc=5">Ekonomi Indonesia Tumbuh 5,47 Persen pada Kuartal III 2026</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="ekonomi tumbuh">↑ positif</span> <span class="media">7 media</span> <span class="sumber">demokratis.co.id</span> <span>21:14 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMikAFBVV95cUxPbFdQc3FON2IyTlZLXzdZOVlSRVF0VWI2aEk0QnFfakZjcjQ3dzU5ODhqMHRlNE81bVRhZ0FXV0FkSE14a01ReXBKSUR4Ujk0M0Jxd1B3R1FKWW1nUjN5Z3BRS0JUZzlwdGFydFREaDJvb1dJZVpTQi1RaWtUcHFSRnNzbkRJZXNLX2NaazVfR0w?oc=5">bsinews.id</a><a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxPc0NhTFFDSGJLQkF5ckYzbGtyLXE2MGJzZ20yb0lWX1JQTHE4RWdrRVdobGhxc0l6UEE0TzctbEtIWG5xRmdienlycmdwZzdxTUpwYl9FVnZfQ0VvZWNUNExvSHZwM2gyWXRtNm5adzRpNnFJYi1RNHhLcW1VdEZRRzd5eGkyZHVNcDlPaWRwRW5tSThMcXhGSTJ5bjR6YUhmdnl3?oc=5">jambi.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxNRU82Z2U3RnZwQmVadnpqOVlsVkFtTE1nSktVRkdVNmRFUG41VWdKaDR0czcwSEJhdUtsd3BxeHFpNmozdjZUYWtEb0VsRzloaEZoY2xNcGdpUzd0ZjBSUks2amVDc2xPQXhFMnN5R08tSWNDNU56cnMwdGxCaWR1VEpsWEdjemhZUUtlR2ctRVdYcWRYUDhwMUhEc29EVjZ4YWZCU1Q0Z2Y0YlBWRlcw?oc=5">kemenkeu.go.id</a><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxQcGJUMW04TWFvNEhXbHl4UWVVUUJ0cG9zRXh0cl9KTkU1UGQzQnVfMUhJV3BRQW05QjNxNHNYcHNHZDBiZE1yN0Q5dDJkX0tWWjQ5SmZzSm5IUHFTT0VHNjZtZk1PeDRWb05WY3lTQ1JONmtRa1lLTVBaSlphOU5rT1NpM214YTZjZ2lLVkM2cUZkUkNL?oc=5">koridor.co.id</a><a href="https://news.google.com/rss/articles/CBMikwFBVV95cUxOYUFvUGNVTDMxZEdKOGNMckVzRXpWZDBFX1gzUWc0VEtqN0JraEtuWE5kcGhRVlVIZV9Lb0Vkc2NSX2swUE1TaVdJTEFydGEwaTlHR2pBSF90bUxNTkY2UUNuc3dsNDE3STUwUVZoazZtTzQ5MWk3RHJ5aDBCRW8zc3JNWl9oenVHT2pfNjdDMjRxZEE?oc=5">peradaban.id</a><span class="lagi">+1 lagi</span></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">03</span>
+          <div>
+            <h3><a href="https://www.liputan6.com/bisnis/read/8334594/harga-emas-24-karat-13-november-2026-kompak-turun-intip-rinciannya">Harga Emas 24 Karat 13 November 2026 Kompak Turun, Intip Rinciannya</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah negatif" title="emas susut">↓ negatif</span> <span class="media">7 media</span> <span class="sumber">liputan6.com</span> <span>13:15 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">Pramuniaga menunjukkan emas batangan PT Aneka Tambang (Antam) Tbk di sebuah gerai emas, Jakarta, Senin (18/1/2021). Harga emas Antam kembali susut Rp 4.000 per gram di awal pekan. (Liputan6.com/Johan Tallo)</p>
+            <p class="juga"><span>juga di</span><a href="https://www.bloombergtechnoz.com/detail-news/127602/harga-emas-antam-turun-rp9-000-buyback-jauh-lebih-parah">bloombergtechnoz.com</a><a href="https://www.cnnindonesia.com/ekonomi/20261113090540-92-1426679/harga-emas-antam-lanjut-jatuh-ke-rp2509-juta-hari-ini">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxPcmdPQ3B2UHZuS0lPYjhZN0J2dVZKOVNULUU2MHRfa3BMck9zNDNwd0J1d3RoQ1Y0OXVSUWRFQi1BalB1SVpoWnF2YzdxNDdqRWMzS2lwTGFobDQ1X1NZdGJrNXAwWVJJTUhCVVU3TURDQ0ZNWFpBczNIWEZtSVlCd0F3SE0xcXEyM1Z2X0VMbHg4ZEhwNi1lV1A4eXE3eUJ4UFBVSHdlN2xhMEdMckHSAbMBQVVfeXFMT1RqcW1BTDJ0VE5IQWxPRkdqV2JUZWlMSURDbFNhUU1UNWF2Y3hJNm0xb3p6THhKeHFfbWtpZjBjTm1Qa1ZiUjlVc0h1TTBsOEFJVGg2Zl9MMnpFVWppRm5iWS05T0g1dXlRUmJTNlNHWlNaNnlMTnlTLVhFZFZMTk4zMW4tTzlGdE5LeThZOC13WjhfLS0tQjV3Z1pHdGxlVTRQQmNnYVY4a0dPemYtYjg5N28?oc=5">detik.com</a><a href="https://ekbis.sindonews.com/read/1771671/34/harga-emas-hari-ini-merosot-ke-rp25-juta-per-gram-buyback-ambles-rp31000-1794543062">ekbis.sindonews.com</a><a href="https://finance.detik.com/berita-ekonomi-bisnis/d-8750951/harga-emas-antam-belum-selesai-jatuh">finance.detik.com</a><span class="lagi">+1 lagi</span></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">04</span>
+          <div>
+            <h3><a href="https://ekbis.sindonews.com/read/1771779/33/rupiah-menguat-ke-18206-per-dolar-as-pasar-cermati-defisit-apbn-1794557492">Rupiah Menguat ke 18.206 per Dolar AS, Pasar Cermati Defisit APBN</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="rupiah menguat">↑ positif</span> <span class="media">6 media</span> <span class="sumber">ekbis.sindonews.com</span> <span>15:59 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Nilai tukar rupiah terhadap dolar Amerika Serikat (AS) ditutup menguat pada perdagangan Jumat dengan kenaikan 33 poin atau 0,18% menjadi Rp18.206 per dolar AS.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5850827/rupiah-pada-jumat-pagi-menguat-jadi-rp18237-per-dolar-as">antaranews.com</a><a href="https://www.cnbcindonesia.com/market/20261113151023-17-785065/rupiah-ditutup-menguat-019-ke-rp-18190-per-dolar-as">cnbcindonesia.com</a><a href="https://www.cnnindonesia.com/ekonomi/20261113160241-78-1426903/rupiah-menguat-ke-rp18206-per-dolar-as-jumat-sore">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMizAFBVV95cUxQMERqYWNHLUU1bDI1R09CMTFxOWFGWV91NlUyR1AzNUdMcElUaFhvU1gtekljOVd6cTlKWUdaczFlOHlnY2RCWHp5QXVfeUpIbFlfekhrSV9NOE5XSUdPWk0yOWozZjdQV3BJTlBpbTliWW53ZklyMWYzUnRVWjZrVDJlTTBNelp2Zy1CbGFycWhxTkZsZFpJS0J0YnlZUGY3Z1MzRmE5WVc5elJiRGVfOVdKY0JVWkxyVFZxejZZLXRETnpnVFFrSkIwSWjSAdQBQVVfeXFMTklEaUwtOUdYMWJObGFNY3lXbVNXZ19JTUEtSm9uWkVGYzNlcFIwaUJQZ2FJeW12SjhHX21nMnVPblJIbXBMSm9lYko2QmExZmttemNGQ0JTOHZYMENXQVAzX3JOZjZLdW5obWc1Q3NfU2NjdDVTYTc3b0ptVXBZTFZ3OEVQZ1gtZDJZblBJNWdCSGU0aVZCXzdWR3pfQUhEbHJFQUctakJjd19neDc5anFidFBQQktxU2xkeHhXSmFSdjVjR0l2RUUtb3EwbHFLQnp1WVA?oc=5">kumparan.com</a><a href="https://www.liputan6.com/bisnis/read/8334881/rupiah-menguat-ke-18206-per-dolar-as-tapi-ancaman-the-fed-membayangi">liputan6.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">05</span>
+          <div>
+            <h3><a href="https://www.cnnindonesia.com/ekonomi/20261113185158-78-1427006/ojk-serahkan-tersangka-kasus-korupsi-bprs-khasanah-ummat-ke-kejaksaan">OJK Serahkan Tersangka Kasus Korupsi BPRS Khasanah Ummat ke Kejaksaan</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah negatif" title="korupsi">↓ negatif</span> <span class="media">5 media</span> <span class="sumber">cnnindonesia.com</span> <span>19:09 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">Otoritas Jasa Keuangan (OJK) menuntaskan penyidikan dugaan tindak pidana perbankan syariah di PT BPRS Khasanah Ummat, Banyumas, Jawa Tengah.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.cnbcindonesia.com/market/20261113174238-17-785146/ojk-serahkan-2-tersangka-kasus-bprs-khasanah-ummat-ke-kejari-banyumas">cnbcindonesia.com</a><a href="https://finance.detik.com/moneter/d-8752182/ojk-serahkan-tersangka-kasus-dana-bprs-rp-1-72-miliar-ke-kejaksaan">finance.detik.com</a><a href="https://www.liputan6.com/bisnis/read/8334982/ojk-serahkan-tersangka-kasus-bprs-khasanah-ummat-ke-kejaksaan">liputan6.com</a><a href="https://pasardana.id/news/2026/11/13/pembiayaan-rp1-72-miliar-bermasalah-bos-bprs-khasanah-ummat-dan-konsultan-jadi-tersangka">pasardana.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">06</span>
+          <div>
+            <h3><a href="https://finance.detik.com/infrastruktur/d-8751877/uji-tuntas-whoosh-dikebut-sampai-desember-nasib-utang-china-belum-jelas">Uji Tuntas Whoosh Dikebut sampai Desember, Nasib Utang China Belum Jelas</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">5 media</span> <span class="sumber">finance.detik.com</span> <span>16:49 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">Kemenkeu mengungkapkan proses pengalihan saham PT KCIC dari PSBI ke pemerintah. Uji tuntas ditargetkan selesai Desember 2026, tanpa ganggu operasional Whoosh.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMipwFBVV95cUxOSlI5YVRsUVprX3FwYVFfdkdWdHBNcGFRcmZ3a05NWlRnS0o3NEh0amhJSWlrTS1YdS0zbUdBMDlyQzRKbXFyT0pLSUE1LWx2RjJxNlk0MVUtT2NkWUtGeDQ0ckd2U3JzZkZTUkJLOElEZDNfX29pWnJ4eTF2bkltdWF0T1hsZG1GZWhBRFJSZlVhejlCOWtPLXdRdzkwMWIzUWJwLUhpVQ?oc=5">bloombergtechnoz.com</a><a href="https://www.cnbcindonesia.com/news/20261113131244-4-785007/utang-whoosh-masih-dikaji-kemenkeu-tunggu-hasil-uji-tuntas">cnbcindonesia.com</a><a href="https://www.cnnindonesia.com/ekonomi/20261113171758-532-1426969/kemenkeu-kejar-uji-tuntas-caplok-saham-whoosh-kelar-desember-2026">cnnindonesia.com</a><a href="https://katadata.co.id/finansial/makro/6af7046d13ae1/uji-tuntas-pengalihan-saham-whoosh-ditargetkan-rampung-desember-2026">katadata.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">07</span>
+          <div>
+            <h3><a href="https://www.cnnindonesia.com/ekonomi/20261113135828-92-1426820/ri-selidiki-impor-baja-dari-belarus-dan-kazakstan-ada-dugaan-dumping">RI Selidiki Impor Baja dari Belarus dan Kazakstan, Ada Dugaan Dumping</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah negatif" title="bea masuk">↓ negatif</span> <span class="sumber">cnnindonesia.com</span> <span>03:45 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Komite Anti Dumping Indonesia menyelidiki impor baja HRC dari Belarus dan Kazakstan untuk meninjau bea masuk antidumping, berlangsung maksimal 12 bulan.</p>
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">08</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMilAFBVV95cUxOQXpqQ1E0R28wMFR2V0N6N2Z3dmhybkFDaG1RNUtfVU5GcVFnbC1uRGxqTGwtSWtNdWNObGF2Wkc0cmx1ZWJ6MWpFOWpUTnJyZy1aaVdLNTBHT3c3UW5MX3R2ZnQxRlROcjhFVGFQRVV0TC16NE82MC1SNF92UGZtWmNwZGp4ODQ3MXpHbEswSjk2b3dH?oc=5">💰 APBN Catat Defisit 1,47% terhadap PDB selama 10M26</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">snips.stockbit.com</span> <span>21:35 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">09</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMitAFBVV95cUxPNmJQeEVCUndEcDJnX0p0RUMzM3lOOXJ2dmZhR3AyZlc5NE5WdTdWWEcwMEU2SXYxaW9uOFdkU1ZZQ1dvYl9HR24ySEltZGZaTXBwbTdwY09zMTNzaVJKS2RqNjdVTDVYOUI1MEhoWUVZRjBhUXZkSXpFdmYwbjRLbkNuUS0tQ1lWQXZCQmMzT3FmSTlQY1IwTGVZU2lYcm9MREhQZDlaQTFfOEVOTEdMbkRBTVE?oc=5">Menkeu: Negara masih butuh pendapatan Rp590,1 triliun penuhi target APBN</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">manado.antaranews.com</span> <span>19:57 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">10</span>
+          <div>
+            <h3><a href="https://www.liputan6.com/bisnis/read/8334838/anggaran-bencana-rp-59-triliun-baru-terserap-56">Anggaran Bencana Rp 59 Triliun, Baru Terserap 56%</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">liputan6.com</span> <span>17:58 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Menteri Keuangan Suahasil Nazara, dalam konferensi pers APBN Edisi November 2026, di Kantor Kemenkeu, Jakarta, Jumat (13/11/2026). (Foto: Liputan6.com/Tira Santia)</p>
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">11</span>
+          <div>
+            <h3><a href="https://www.cnnindonesia.com/ekonomi/20261113125315-532-1426773/suahasil-kritik-istilah-apbn-tekor-tak-ada-urusan-dengan-untung-rugi">Suahasil Kritik Istilah APBN Tekor: Tak Ada Urusan dengan Untung-Rugi</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">cnnindonesia.com</span> <span>16:30 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Suahasil mengkritik istilah APBN tekor yang kerap digunakan untuk menggambarkan kondisi ketika pendapatan negara lebih rendah dibandingkan belanja.</p>
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">12</span>
+          <div>
+            <h3><a href="https://www.liputan6.com/bisnis/read/8334728/sisa-2-bulan-pemerintah-kebut-belanja-apbn-rp-9452-triliun">Sisa 2 Bulan, Pemerintah Kebut Belanja APBN Rp 945,2 Triliun</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">liputan6.com</span> <span>16:00 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Menteri Keuangan Suahasil Nazara. (Foto: Liputan6.com/Immanuel Christian)</p>
+            
+          </div>
+        </li>
+      </ol>
+    </section>
+    <section class="pajak" id="pajak">
+      <div class="judul-bagian"><h2>Perpajakan</h2><small>DJP, Coretax, PPN/PPh, bea cukai, aturan baru</small></div>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://news.detik.com/berita/d-8750916/jaksa-kpk-soal-vonis-3-pejabat-bea-cukai-alat-bukti-jadi-dasar-putusan">Jaksa KPK Soal Vonis 3 Pejabat Bea Cukai: Alat Bukti Jadi Dasar Putusan</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">7 media</span> <span class="sumber">news.detik.com</span> <span>08:50 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Tiga pejabat Ditjen Bea Cukai divonis 6 hingga 9 tahun penjara dalam kasus suap dari PT BlueRay Cargo. Jaksa KPK apresiasi putusan hakim terkait bukti yang ada.</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxOQ3oyRXBJcFFnbmhER1hMTWkyNnFOdGhYSld5cWwyZEx4SlZaY3NVR2Y4TTlNWFlGVXFabkdXZV80WlhKOE9UU3E3XzFwbGItekxCVTdxdzdkLUNiYVpZSnR2b1h5THNTX2Z0QTU4eVZmYTViNW1zbGZRZ29mOW9GN1hyQktLaWNBbUNSeDVtanhJUElsN2c3UklXRTRxSlBtSl9oYXRWcXVhU0l3bkNuVzhrRHBYVEpRY2fSAb8BQVVfeXFMTkdBZUlSeDZuOTQzdHV5WEFUWGE4Q05Zc3prOU16UU5wajZtSzk3Z0VvRDQySGpOeUQ4NnZoTDdWcEszd1Y3aDJPaTV5dndmbnJyLXBtbGc3djVGSXRKWmNRX09ubFpWSUU0VTJncFJXbHZDVl9ES21rZERubl9JY3RmMEhJeEtFTnZjYUJkMkF5eDI2V0UxeXkwbk84SENQcHdJbFM2SnFveUJEYms5ajJlak9EVHU3NEFXZjdVWkU?oc=5">batampos.jawapos.com</a><a href="https://www.cnnindonesia.com/nasional/20261113060828-12-1426624/kasus-suap-impor-eks-direktur-bea-cukai-rizal-divonis-9-tahun-penjara">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMiigFBVV95cUxQMFpCVXB6MmhOYnU5MjVmOFMzYWdWdVp3Y3lkM1F5WTE1TV8weWNJZzhncWw4SXI1WWdlOGNRa2hRMTZNbDRkbWlPa2NzOUFOVFhPVmNsNWdRS3hXNkpyVTFUSFZ6U29wLTZPLUVOMVJxZG5kUGF4OFpUN3huZnlHVXhfU0VpczBvbVE?oc=5">lampumerahnews.id</a><a href="https://news.google.com/rss/articles/CBMiugFBVV95cUxORG8tanFQMjBnQXFqUjNOQktDMjlKLWt6VktaZjFmZ05wbE5CMHRHVlZyYXQ0dllfWTZrdzB5SE9XYm9OWGdkcUZKWEl0VEI3RmNJLVF4eWc5UnYwMmxBZUpVSGxiY3QzM1RHMVhabUN0NnhPQmJzZ1JTUEVJMGxsRVJuRTBNaTYzWHVRYVZZWW5icGExS3V4T1FKdDBTSVg2TnZEcEZrYkNKVnJyWmYzV1pkQWhDYmJPVHfSAb8BQVVfeXFMT0hzbXpCV0pUNFZrY3FmYmRDT2RZY2pyYVJXLUtseEJ3c3hUWDdJODY4UUVtYURnbk5qSXl2ajJJTGhaUlJ4M1B5aFdVV3R5Y3p2dlgwNWtuZlo0bjFBbnVvNWhVYWVSVGRTR1JGVzc1ZllLMjFPSTl2MUJKSS00LUUwcEs4a0RtQ2lfUTZVNVlxcFIwR3BoRWJtaHd0TGF1ZkJEVUo0dlQ5TUFaMzItYU1ZblQ3NGRGX0hZR3BEeDQ?oc=5">megapolitan.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxONWFTdk05WHpuSy1ZbVJQYUhWZmlpQ1NnM3RmQTM1VTQyVHNqY2l5ZWNrQWJiVWp3UDNWY09RamJtOHJVelBPWS1yT09KVGR2RWFTZksyM1NKbGR3S2ZsWG4xTHBodEhWZmdCTDlUX3hXdkMxWlZYclY5d2NJYXR3TUxHbXdUencyQWVIanhpUE44ZElvNzRWWU9QOWowRjZSTHFkdTRwUGJ1Yllwb2ZkUDQ3enBzZDhqNk5zS0RtbFpzdw?oc=5">nasional.kompas.com</a><span class="lagi">+1 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://akcdn.detik.net.id/community/media/visual/2026/08/29/gedung-merah-putih-kpk-b-beliadetikcom-1787983627103_169.jpeg?w=360&amp;q=90" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <ol class="daftar">
+        <li>
+          <span class="nomor">02</span>
+          <div>
+            <h3><a href="https://finance.detik.com/berita-ekonomi-bisnis/d-8751663/setoran-pajak-kurang-rp-514-t-menkeu-saya-mohon-dukungan-masyarakat">Setoran Pajak Kurang Rp 514 T, Menkeu: Saya Mohon Dukungan Masyarakat</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">5 media</span> <span class="sumber">finance.detik.com</span> <span>15:08 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Menteri Keuangan Suahasil Nazara mengungkapkan kekurangan penerimaan pajak Rp 514 triliun. Dia meminta dukungan masyarakat untuk mencapai target APBN 2026.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxQTi1Ya2NIN1RmTkNUWk0zNGlpTU14eWRqRmZmVVZUS3JqNmFNNmYzbkpOZHlPdzlwRkFZVGtnQlN4ZFJ5RGlZNVV4ZWp1aElDc1IzZWxsOHQtM1ZsQXc4QUVNanJTR2JfQlg1RDJfbzdYSDVMRlRicm8zLU5ManRlQ1VtaHVYekVSdWhjWE94MnVFUERMWmgxRmJ2Q0JyZXlnT2FaRHNDWm1vRGx4dFJOTmNIckJlQ3VsbVhLSXJKQi0?oc=5">20.detik.com</a><a href="https://news.google.com/rss/articles/CBMiY0FVX3lxTE9YVzkxN1ZmR3dERHkzaVZVbUVDSGI3MFhUb092My16RFFiOTJoNWRQT1dOVDRCX1hleVM3MmFRSXRtWktJTnhIZkVvTTVpcllwWk11NkV5OG5BOG9wZEJReE1Ncw?oc=5">demokratis.co.id</a><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxNTWJvWmxaRmZnbGFNcDVZUC1TWGgyZXN4VW1NYzA0MGR4TmQtRU5hQ2tQUDdyd28wekk4cVl0TTNvTTBfTDJqV2M4OGFBSEJkLUE2MjczSTJBNzBWOGwyd2hOb25pS3BSeWt5V1JPRkQ3aUFwNWJfUGc2NFJzVkFqQ21FcXZFai1KS0FJMEtFbzgzS3lHdEI1aXVRTWRvbllrb2wtYzFwYXhkNTdKRDFBSQ?oc=5">idnfinancials.com</a><a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxNbzJYaUNEbmtSbTFPTVJJTkh3enVSblBBNy1WYjhydGdxenBGek00cjZrYTctVEtBbXpmWmRvVEg2U193Qk5faHY3VUMyTWZ3NkJVWEdQUVFLcXhpb2ZBQUx5bmdGWC1oeE5GcUFkODhhXzg4U0NGWi0zSW9UMWFNb2s2bzQ3Uk1DMFhHOHNNc3phdDQwVWtoVFduR0JpRTFrUnJlTA?oc=5">suaralandak.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">03</span>
+          <div>
+            <h3><a href="https://finance.detik.com/berita-ekonomi-bisnis/d-8751322/bea-cukai-gagalkan-penyelundupan-405-kg-emas-naik-2-159">Bea Cukai Gagalkan Penyelundupan 405 Kg Emas, Naik 2.159%</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="emas naik">↑ positif</span> <span class="media">5 media</span> <span class="sumber">finance.detik.com</span> <span>13:17 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">Direktorat Jenderal Bea dan Cukai menggagalkan penyelundupan 405,1 kg emas ilegal, meningkat 2.159,2% dibanding tahun lalu. Penindakan terus berlanjut.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMikwFBVV95cUxPWUxCWGtjMVlid3J3bzltempqbG9UMzBHQUIyM1FtTmllZXd5NUxMNFFLajRhME9ZUE9OMjBZYTFUMTZjSGJUTU5OaHF1TGZFbmRMOWlpWV9kWVdjTGpsbmMzeGFwM1ZoZlN0T2lIVXdJRVphcWdhVjVHZDZwOEIxY1JCZGVhS3JvNnZaNE8tLXBqV3M?oc=5">aktual.com</a><a href="https://www.cnnindonesia.com/ekonomi/20261113145001-532-1426866/bea-cukai-gagalkan-penyelundupan-4051-kg-emas-melesat-2159-persen">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE1zOUhfVTNqNXNBblRPbEJ0TnJsTU1lMHdCdzZlLXJXVXh0a3lsdk5COV8yNmdmYWMxVmw0Tl9weVR5bTVGQ2FfbkVHU1BkNUFwdEtuQi1JLVM0M0M2ZlVMLVpSZ2dPanFoX1E?oc=5">demokratis.co.id</a><a href="https://news.google.com/rss/articles/CBMizgFBVV95cUxNWmJsNXhjODFBTGxvRU1BX3g3a3I3aGE1M0dfd3FUcVR2RmZoLWtuRi1keEE2XzZ6aFdNdVFveU9WVHZ5NE9jMDhoVFJ3aTdEdm9KQ2pNZG4zUU9laWplQ2ZIeWpQMXU5T0hldE9EUXpnTFgyZ2xVc0xOU1VXVlZrMWVMWTdSdmRGQi1qdlhuTU5iWXkzM0wwUjF5c29Vaks0VmZ5NjFWYWcwSGlMQmV3SjBkYXViRkdLd2JGTlUxb2F0dUpHYWliVUlRUHBtdw?oc=5">swa.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">04</span>
+          <div>
+            <h3><a href="https://www.cnbcindonesia.com/news/20261113145138-4-785056/singapura-dan-ri-bakal-tukar-data-bidik-modus-manipulasi-pajak">Singapura dan RI Bakal Tukar Data, Bidik Modus Manipulasi Pajak</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="kerja sama">↑ positif</span> <span class="media">5 media</span> <span class="sumber">cnbcindonesia.com</span> <span>16:15 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">RI dan Singapura kaji kerja sama untuk atasi penghindaran pajak, termasuk transfer pricing dan misinvoicing, melalui pertukaran data dan reformasi tata kelola.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxPLXFfZ0FnNWstanBRQm00Y0FiaTQ0dnZySGNObG1BMy1yNUJBYk0zWnZpbEdzaVMzNll3MG13NDJiMnVRV0JBUXRmdEpoVVUwYUFVM3VYMUV6Tkx4OENSMndRMkVVVjViamk4Y0k5RnkxaWtGY2RJMFRZRkk5YkU5TEhNbXJ2UkVIaU5sd3FTMFZaUGUwd3hTNnEtdlV0YkxWc1JQSWNDcDIwZlExV2fSAbMBQVVfeXFMTVVnNy1YUnUxZ3BRWlVaNXBLRVNueWJ4Tkh6YUZUdlFkRjZWU1JFRDh1VUJfaUxOc3pqbFFDd3BCd2RMdktveTc3a0NlWExiN2FXb1lKYlFUUEZEWTUtTER0QmNfV25MT0h1SEp2M2pKT3Y3TnJjNkpGWjRKdDhadVZndVJkUEV5b085TjNFZEdmM21mazBoMFpGdjB4Y0MtZVhveXJOMGFJLXl3clpWT25FeTA?oc=5">ambon.antaranews.com</a><a href="https://news.google.com/rss/articles/CBMiywFBVV95cUxQQ3BoR3lRbGhuT25UYVJHN194VTUtejVNOFp2Smo4ZU1GTGlTRkpVMlowVjdHZHJLaTlheEFlMWlBT3ZSTndheUNobThtaTBfaGVHbEFSTEVjZ1NxVXhva2JoZHMwbjNrdm5GUTZUS3FnMW1wcEpvVkprSlJLOFBLa3I3RE5KYXRnY1FTb1VhTnpIX2t4RnJId1V1M3lPUmhab3ZXay04QnJMNzdScHJ4SmxNeDVucEY3RFRXSk9CYVNfV0JtWGtidmFjNA?oc=5">mistar.id</a><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxNY3hjZ1pXMmJzRTVRTmF5dTcwb1BnR0dkQTluQ183MktycGxHQUptS1dJQTNlY00wU092STdqQy02Y3BRRnNOakNhZlFRUVdQZHdCNjRqUmhLLUpJTkRjNkdFQ2xXUy1KYUFUU1pYODJkZjl6Qy1lVjRrbUZaQl9hNnpnaFZlcHdqTGRLd1g4QlFfOFgtbThGZ09NdTJ2TXpRX2pmUmhaVDJKZnNZM3NocXhnaFAyY1RLZEZZNWRpS0o5Zw?oc=5">money.kompas.com</a><a href="https://news.google.com/rss/articles/CBMimAFBVV95cUxNc1RtQnY4RmxXZ0hOSlZPTTN3dlFWdnlWcGtJLVluSWtaWGJ6RmN5cm5sY2UyLVFpcXBnTmkzWHQ3VUxZLWlfazBmV1E2ODFkMlp0QUxDQ3NzQUk5dEVzM0htNDlPaXpySGxCTHZqV0J1YTNyTWpsckFhZktRdGp4dm1WbTJ1VTJJSlYzRmE4LWNJbjFSLXdjbA?oc=5">ortax.org</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">05</span>
+          <div>
+            <h3><a href="https://www.cnbcindonesia.com/news/20261113150033-4-785060/setoran-pph-badan-tumbuh-double-digit-bos-pajak-bocorkan-penyebabnya">Setoran PPh Badan Tumbuh Double Digit, Bos Pajak Bocorkan Penyebabnya</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah negatif" title="pajak pertumbuhan">↓ negatif</span> <span class="media">2 media</span> <span class="sumber">cnbcindonesia.com</span> <span>16:40 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Dirjen Pajak Bimo Wijayanto mengungkapkan pertumbuhan penerimaan PPh Badan mencapai Rp303,5 triliun, didorong perekonomian solid dan produktivitas kantor pajak.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxQLWV2OWRpa1Z3U0p5SXI1Skh5WE5rbDlFMGVBTTZlaE1POVFmVU5IWFpWYmJCeUd1YWVSeHVOaU10YVRvWENBT1ZYRlJtTUNtTGxpQjdzYWFrTW9nY21XdXlySVc5UERLdVZjaktWTHZycWp6OVVlZkdpcjYzS0xFU09QZE85ZVZpZG9UcERkRnVtSklacHRERGw5RkdfTVVTLThySEs2OC01b0FwUDUzUkhWNFRWQQ?oc=5">news.ddtc.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">06</span>
+          <div>
+            <h3><a href="https://www.liputan6.com/bisnis/read/8334639/ekonomi-membaik-penerimaan-pph-badan-tumbuh-28">Ekonomi Membaik, Penerimaan PPh Badan Tumbuh 28%</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="membaik">↑ positif</span> <span class="media">2 media</span> <span class="sumber">liputan6.com</span> <span>14:00 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Festival Pelatihan Vokasi Nasional dan Job Fair Nasional 2022 yang diselenggarakan oleh Kementerian Ketenagakerjaan (Kemnaker) di Jakarta Convention Center, Minggu (30/10/2022). (Sumber: ekon.go.id)</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiZkFVX3lxTFBrZ3RDOGpRdmlaU0JVVVptdjdUampaUFRKdzl1V1o3elRlN1pmckZnVDRTVnBUcDEzVGY5ZXBGQTZDTVB5aUtJVVJUdXptZ1QwZDVIRVZFY0RuNWZiNFhTN0pYMjlKUQ?oc=5">cwibc.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">07</span>
+          <div>
+            <h3><a href="https://www.bloombergtechnoz.com/detail-news/127679/pemerintah-kaji-insentif-pajak-baru-untuk-pasar-modal">Pemerintah Kaji Insentif Pajak Baru Untuk Pasar Modal</a></h3>
+            <p class="meta"><span class="arah positif" title="insentif">↑ positif</span> <span class="media">3 media</span> <span class="sumber">bloombergtechnoz.com</span> <span>19:50 WIB</span></p>
+            <p class="alasan">Tarif &amp; insentif</p>
+            <p class="ringkas">Pemerintah tengah melakukan kajian terkait dengan insentif pajak baru untuk pasar modal. Hal ini diungkapkan oleh Wakil Menteri Koordinator (Wamenko)</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMijAFBVV95cUxQUV9TRkFVRnhZRmQ1NnN1YXNSS3hvckpLYnUtLU5rTFI1eGZYRTZaY3pqbnFKcnVCWm9MR1c4anV0U0MzTGJzZUFXbDIzdmNYdnk1bUJIZjVhSmdjaEpLUGROc042cFBWNVRRMDhGTGthNnVIdHlfRTJLR2ZMYnNybmZ2VXptQ01icGxjQw?oc=5">insight.kontan.co.id</a><a href="https://news.google.com/rss/articles/CBMirAFBVV95cUxQVi1sbHdMUWVZeVpESjRwOW5mZmswMnNUNDFPUjB6RTA3bFYtM0xLQ0JkSXkzSjB5OWJ0ekNfSG5zcXFOT0wtc0gzM3NTYmp6cThTdW5kNldvcElGWE4tOVV5MnowREFIS1d0OGtBVzdSU2JIR001Um1HTVhhaXpBUHE4WWloc2w0d1VSbmVjZnlzUC0xMUZ1N3ZTVXdqNGxSM0dneXlVek5WX2Vf?oc=5">news.ddtc.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">08</span>
+          <div>
+            <h3><a href="https://www.antaranews.com/berita/5850823/ditjen-pajak-spp-tdln-tak-timbulkan-pungutan-ppn-ganda">Ditjen Pajak: SPP-TDLN tak timbulkan pungutan PPN ganda</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">antaranews.com</span> <span>09:05 WIB</span></p>
+            <p class="alasan">Pajak digital &amp; internasional</p>
+            <p class="ringkas">Direktorat Jenderal Pajak (DJP) Kementerian Keuangan memastikan penerapan Sistem Pemungutan Pajak Transaksi Digital ...</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE5tLWI3bkdWdnBZNmZBcU8tVXk0dWprZ2NTNGpQRG5vSGxGcEZEaHU2cW02Q2hNX3h6YUNObVotdVcwX1d2dGVUUDg0Z1o2aE80Q0Jra0pwbFRFRmxPUm51SDlpTUtpUnV4NGZWREc2NVdUcVN5SDlZU2ZybXFLdmM?oc=5">infobanknews.com</a><a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxQOVdLRG5TZXFXMHo1VVJpeEQ3VVlyR1Y5by02dGpoTVY0NEtlV1U4dzRnbDU0ZDZUeGEyaG83REhoZ0RKZkpRckFweTJLeGFndXlGTG10bE50YUlmbF8yejhXREpVWUdVNEgwUUctWVRlM0VvZTRmTTVSaHNyaE4zUlh6TkRlMW80WjZSaXJha0ZXVEJkTERJVXFycmZIbllMLTFDWURESVpkcGM?oc=5">kalteng.antaranews.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">09</span>
+          <div>
+            <h3><a href="https://pasardana.id/news/2026/11/13/grup-multinasional-dikenakan-pajak-minimum-global-15-mulai-september-2026">Grup Multinasional Dikenakan Pajak Minimum Global 15% Mulai September 2026</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">pasardana.id</span> <span>08:15 WIB</span></p>
+            <p class="alasan">Pajak digital &amp; internasional</p>
+            <p class="ringkas">Direktorat Jenderal Pajak (DJP) menerapkan Pajak Minimum Global (Global Minimum Tax/GMT) dan berlaku bagi grup perusahaan dengan pendapatan konsolidasi lebih dari 750 juta euro per tahun.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiygFBVV95cUxQRF9oaXlZSGNRbWN6SXduSm90alV0cFd1UngtTmRRelBRTExjaU1sazFHbW1yeHNqRnlPdm95cDhHdkRqd19YNDU3QkVlOVVwNGxMSk5IZllHTGxnRjBUMU9tZEhMS1hkSC1xbXZiN1BhZHM2RVZiZWRPank4aVNIZk9qaEI2NGNJRkd3V2NxeFpmSnA5ZTI2YlZWcldsaEVYYjBFeTBCck9kcW9EWkhnZDYtZHRUYVhZMjBLVG9lVURyWkYyS2VwQ2Jn?oc=5">digivestasi.com</a><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxPZXJWTnFzTDlNM3dWSEcxa2k4Vm8weENUS3hhdlgyU3psZHFlM3VXTGdmUnVGMjN4STdSYUJmdHdSWlVVQUk4MVAxNXY4U0NuSHFjLXhWQ3VhTlEtejRzM21MM3V1Sy1acEItOU9YT3Iyby1FbVBJVHZobk1vVVJxZVBMOEdKMVRDU2M3R1c0d09lRC1BSnQzNW1fc3Bua3haQlllZm53X09LX3BaTFU1dTRzWdIBrAFBVV95cUxOTlp6VVRoRDJkM281LVJadUUxcERCUjVlbmpiTlA5MzJ0bnRNU1VwMC1LYnVnNTRUREdYQWdEeG95UzFLOTBEbk43bXJ2eGZNZkNHWHA0c05wamFRaEx6TjVDcmVDLTJIRGJ1UFNBOE9la192dHRGeEJpNUh0SllvUU4xNUJMNmJKbHFKUHkzNjVaU3lLWUpHaDBhSHVqTnBMNDJmR1hFai1iWEhi?oc=5">nasional.kontan.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">10</span>
+          <div>
+            <h3><a href="https://www.cnbcindonesia.com/news/20261112203540-4-784802/475-ribu-wajib-pajak-ketahuan-djp-hapus-bukti-potong-nilainya-rp2-t">475 Ribu Wajib Pajak Ketahuan DJP Hapus Bukti Potong, Nilainya Rp2 T!</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">cnbcindonesia.com</span> <span>06:40 WIB</span></p>
+            <p class="alasan">Coretax &amp; layanan</p>
+            <p class="ringkas">Direktur Jenderal Pajak Bimo Wijayanto mendapati 475.698 wajib pajak menghapus bukti potong pajak di akun sistem Coretax nya.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxPWmJpT1hraEc3WnNHVnk3YWZQSmh5V1dzVzBDLUIyWjBZd3lZYnNxRFhTUjhvM0ZJMHdMTVcwd3pIamszdHppX0xqR2IzV0JuSDRacUx4ZDFyZ0dJMFlmRHRCWERrSEt3dHZwY2tnT21hYjR6SVpKeElacjRvMTZlTG16SHlyY28ta2NnMDFTcEtTT0t2LXMzQnBfMWY5QmgwNkxfbHBxUXQyN2lWRkp4MU4zbTZIWHRhWHlF?oc=5">kendaripos.fajar.co.id</a><a href="https://news.google.com/rss/articles/CBMirwFBVV95cUxObzVZWVpKckdob2Z0YmlVYkpiTDhzanozNS1Nbzh3UjdCOUVkUWhKRmxScHZpOFFUNWd4a1dwWTgwWHIyVWFOLVB2bnhVTGVDX21vTkt2MlhuTmpxSlg3cHVrQi1RSVZDZGhXd0NwYTVJVkd4eDctSWN2QVEtVlJhSU5RM2t1NW1SNXBzcnUzODRiVVFtbFJOTFpuWnc2NThXTmJsUG5LU2U0SkZpVURB?oc=5">waspada.id</a></p>
+          </div>
+        </li>
+      </ol>
+    </section>
+    <section class="pasar" id="pasar">
+      <div class="judul-bagian"><h2>Pasar &amp; Emiten</h2><small>IHSG, aksi korporasi, laporan keuangan</small></div>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://www.bloombergtechnoz.com/detail-news/127633/ihsg-naik-1-lebih-berkat-saham-saham-ini">IHSG Naik 1% Lebih Berkat Saham-saham Ini</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="ihsg naik">↑ positif</span> <span class="media">8 media</span> <span class="sumber">bloombergtechnoz.com</span> <span>12:55 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">IHSG jeda siang hari ini di zona hijau pada Sesi I. Kala pembukaan perdagangan, Jumat (13/11/2026), IHSG mencatat tren positif di posisi 5.265,66.</p>
+          <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxQYmZ5MERwLW5wY0YwNkpTT1JnZ2Z3YkVNQkFiZFpmZi1jQjAtT3Jub3B6WE1pYm82RUcwa1dzeXBTUzlkQmttTUVfUTVDY2Z3WUVzU1hGSU5vUjBJTkJMMnBhc0JydDFoa05QYVo1TnpmSkdyWnJ5aHJ6U1ZYbzVXVW55TVhtRnFKQ1lGQ1hvTHczc0VNbk9JRm1PWGY?oc=5">ajaib.co.id</a><a href="https://news.google.com/rss/articles/CBMiswFBVV95cUxObHVnNHFaNXJyWklaSl9vN3J3ZmltemltZVhXU3VzZmRvRnpsb0l6cklHQkwxdzRlTDRPWjQ1UWVPaUVTQVVZMmlRTWo5UWkzZlFpRlUtNXFIc0RlOWk0ZlhGeFZXdjlJNUxBbW5OcWZmdUJZdDFSM0VKdWtBVWpmbGk2MFRsYm5IRm9Wbi1MNDVJaXVEVU5pZjR6VThia3JBWm43NHR3REFaRHFKUEUxQjhKb9IBuAFBVV95cUxOYXBnTjU2UGZDN3RiVEM5TjNjYzNFYjk4NFZDa1JQQU96QWNvbFBmLXZMTHFsUnJVRTZCWnVVdHUwYXpzYzZkdmc2LTVKUnZqcjRVVjZTYUVhUXZKeHk2emxlZFdXSnk2Wm9JVWQzRUcyaHFJcDU5VTZZVjdQa1FjMFp6NVBQXzlyNGtaX1c2LWwxTGlSWmViZTFsRXZDVlVzck1FaFYyOUh2VVEtNGR3enhtc0tKNFk1?oc=5">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMicEFVX3lxTE9QMGdMM0liMUxidHZtdlF4THpEM08tbGVJWmd3QjFIS2dZcTZUUXlZaWYydmxpanZBckdCUWMtSTU4ajc1ZWtFbHVKeG8tZFUwLWZ2MnVUVlVzSXVqWFNCbE42NUY4QU4wY09pS2tBS2c?oc=5">demokratis.co.id</a><a href="https://news.google.com/rss/articles/CBMixAFBVV95cUxNSXlhWDlEUjJZaGhfY3IzaDZkendCLXNZRlE2SHY4RVBUUV9nUmFpTENKSjVlVmpaaXNoNWVQbWVWQXRkZnVabVFrXzI1dnJuNGdxZXV4MDRYbG5FMEhWdzF0M1BFVGJzYjBqVEwxbzdTOFJma2pVaDhLcXZqN2l5cWptdFNZTTdnb1FqZjlkRFlHWXpXRTF5aU9aNXlya2MtMHNrMkxoblFPMW9va2tlenJ1dWNoSVhFb0pfenRKcmNQV0NM?oc=5">digivestasi.com</a><a href="https://www.idnfinancials.com/id/news/71717/ihsg-naik-1-78-jelang-keputusan-bi-rate-saham-ini-jadi-penopang">idnfinancials.com</a><span class="lagi">+2 lagi</span></p>
+        </div>
+        <img class="thumb" src="https://images.bloombergtechnoz.com/data/2024/10/image-20241021134512.jpg" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <ol class="daftar">
+        <li>
+          <span class="nomor">02</span>
+          <div>
+            <h3><a href="https://www.cnnindonesia.com/ekonomi/20261113054852-92-1426619/ihsg-diramal-lanjut-menguat-jelang-akhir-pekan">IHSG Diramal Lanjut Menguat Jelang Akhir Pekan</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="ihsg menguat">↑ positif</span> <span class="media">8 media</span> <span class="sumber">cnnindonesia.com</span> <span>06:15 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">Analis memperkirakan IHSG bakal melanjutkan penguatan menuju kisaran 5.356-5.520 apabila saat ini berada di awal wave 1 atau skenario terbaik (best case).</p>
+            <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5850839/ihsg-jumat-dibuka-menguat-1477-poin-ke-posisi-5265">antaranews.com</a><a href="https://www.cnbcindonesia.com/market/20261113114425-17-784960/akhiri-sesi-i-ihsg-menguat-115-ke-level-5311">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMifEFVX3lxTE9JQS1PX2pQbUJLdVlQU0FWTVItS3Z4WmdOTHc0VTJzRmliLU5lX0h4aGJWcUd5cllramx3Rzdhc0JYWkY1Z0hic2EwUG9yTW9ZRGNOOVpObmF6bktRUkFfTmxQTGxzZkFkeTBoOFNsSFN2dFRzMVlicFcyRHQ?oc=5">cwibc.co.id</a><a href="https://finance.detik.com/bursa-dan-valas/d-8751814/sambut-akhir-pekan-ihsg-ditutup-menguat-1-78-ke-level-5-344">finance.detik.com</a><a href="https://news.google.com/rss/articles/CBMimwFBVV95cUxNZVAxeDh6aXB5VTBBY25sdTB5X0NyTXBHNmJIY05qV1I0cnBsN3FHVlYwd2l5ZWpBZzJOSlF2d0hKYTNabFRXb0RiTkZUMk9Wdzg1czBTRGxsbHNfWHRiSE96NzVvemdEbm82ZHhOQ0psY0ZkMjhWaUkyaHJZbGY4SmlSaWlQM05zc1dtRGhvWUZscW1YeFRrZEY3RQ?oc=5">infobanknews.com</a><span class="lagi">+2 lagi</span></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">03</span>
+          <div>
+            <h3><a href="https://www.cnbcindonesia.com/market/20261113051902-17-784831/ri-mau-tiru-reformasi-bursa-jepang-dan-korea-ini-jurusnya">RI Mau Tiru Reformasi Bursa Jepang dan Korea, Ini Jurusnya</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">6 media</span> <span class="sumber">cnbcindonesia.com</span> <span>07:25 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">Pemerintah RI siapkan reformasi pasar modal dengan adopsi praktik Jepang dan Korea. Fokus pada peningkatan nilai emiten dan penegakan aturan yang lebih cepat.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiYkFVX3lxTFBTNGl5T1hoSkZJYnlmckpDcXM4LThWZmdmRHAzbzFnQXRNeVJIZEh1MllCUmlCRjNnU2xKU2VZeXJ4b25UeEhLVU9tOGg4U3pYbWhEeWwya1VwLWJySGtSVlhB?oc=5">chatnews.id</a><a href="https://www.cnnindonesia.com/ekonomi/20261112203634-532-1426594/wamenko-dradjad-ingin-ri-tiru-reformasi-pasar-modal-jepang-dan-korea">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMiaEFVX3lxTE9nNmhsTjJmMWJVRVQ0QkN2ZTB5TnE5Qkl1WW9TZVp5N3pVLUpWMnJfby1vMVZXcTNza21CYkJCQUpvZ0w1bDNfc1dyT21wWHZhX0ZUNDlOd3hITm9idTB3U2VrNnZlMzMw?oc=5">demokratis.co.id</a><a href="https://news.google.com/rss/articles/CBMipAFBVV95cUxOXy1WZG4wai1Gc2RDRlRIOXBUREhaR3VycjIwYUFZVDVVQ3FJRlFyUXozWVhPRmljOEFIVTdwV1lZWEpxUTBTWDBsVzQtZWxmNjJJUDgtVUk0QmU5MFVkbXktSTl6QnZTM2dsU2xpTmFNZFd3dW9kUWNRRjR2ZUVUcUJ2bFQzb2NCQU94LU9QMFVvbGI5eU1Ea1QtSHA2dnZRWDI2cA?oc=5">kabarbursa.com</a><a href="https://news.google.com/rss/articles/CBMijAFBVV95cUxOWFM4NGlMSEN0dmJNVVpCS0c5YzMyY1dBNGJSanIxcEV0QzlqRHVnVGt5S2hBbjlZYTlxR25GWXJRcTVOcE83ZE1TbC0wNVNPSkFsOVExaXlEb1c3RzVHek1zV0pxZFFORTR4a25TOUJRX2xKRy1jTU83WDdQQ1dtWUhvUmRzYkdZOGg2eNIBkgFBVV95cUxONEdhZ0kyMm54ZzJfLVVmTExXUVJWYTVpOHF2a2swOVh5aHQ2YWRFOTd1dlVCU29DVGxMUEEyYmhhZU9Za0dhc3Z3cjNvUEpGV2NTNHUySU1yamY1THNlVWdtZ2R2WUJZVkJibXhTOUVSNi01aFVhVDVPdkVQYlA1Ry1fNUhCQ2NDRjVzaU9Tb2drUQ?oc=5">kalsel.antaranews.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">04</span>
+          <div>
+            <h3><a href="https://www.bloombergtechnoz.com/detail-news/127594/rangkuman-rekomendasi-saham-hari-ini-13-november-2026">Rangkuman Rekomendasi Saham Hari Ini, 13 November 2026</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="ihsg menguat">↑ positif</span> <span class="media">5 media</span> <span class="sumber">bloombergtechnoz.com</span> <span>07:50 WIB</span></p>
+            <p class="alasan">Liputan luas</p>
+            <p class="ringkas">IHSG menguat pada perdagangan kemarin Kamis. Ada saham potensial dan saham pilihan menarik. Berikut rekomendasi saham hari ini Jumat 13 November 2026</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMisAFBVV95cUxNbExnZFhwYmFheXBJd2hFRDE3SU5UY1U5TVZybjBtQXJMWUNNUkxaT3ZrLVRNdW9jMjlJMHBfTmFyWHlzWkxCVlhIeEpnS05kTkVLOG9ONDJTQTNoQ2FTWEJFekJLaHBrU2tkakZhSkUtdUVFN1ctODFZQ0t1M3RiU1J3Yy10WHZXRnU5WjNXWFhXNVRXbkRtNkwwNXQ5Y3BBQ2l2a185UU9BSDZvdi1mcQ?oc=5">dataindonesia.id</a><a href="https://news.google.com/rss/articles/CBMib0FVX3lxTE9meWZvOHlFbVloZ0Q4WWJMYjdBblFNWFdhRTNDT0tUX01QSkc2dlZ3YVRkQTcyb2VwNVNzckVVc2ZSOF9kdnRxYWRESERyQUctZlVpZVpPNnh0VEhMVVpzNUtVR3NhY3VDLVlJSGhoaw?oc=5">inakoran.com</a><a href="https://news.google.com/rss/articles/CBMijAFBVV95cUxQUUhWNkFJQ1RNV0FycnpYTnoxTmtPNGZPNzh1cld6b1F2NkRLQzJUMEUzcmxEejR1V1NCREdHN0VYeVR6Vk44UFZfX0REb0JlZ2YtSFdNaW04V1BLRXJTNEYyUHY5SVg0aEt1NERSNE4yRTJHUUp0YWp4ZVpPVGhFZXQ4RTZILXRZd3JRbw?oc=5">infobanknews.com</a><a href="https://news.google.com/rss/articles/CBMiiwFBVV95cUxQVUxUeHdxT1VXZm5kYXYzTm5QRkgxdnliWWVSRkc3OHVhdW5xdHBQMkpqaFp3Nm1JdzhpclhlNTVqOGZWSVpvRU9KSy1kTnB1Z29OYmdaeTRwSHM4aTR0MldYQzNvYzRIakZxX1BzcEd5NFRkbjF0Y1JjcmpQYS1mX0tpcWZ6LU5BZC1N?oc=5">suaralandak.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">05</span>
+          <div>
+            <h3><a href="https://www.idnfinancials.com/id/news/71710/mendekati-akhir-tahun-pendapatan-negara-kurang-rp536-22-triliun">Mendekati akhir tahun, pendapatan negara kurang Rp536,22 triliun</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">idnfinancials.com</span> <span>16:00 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Menkeu Suahasil yakin pendapatan negara akan diperbesar hingga akhir tahun, agar sesuai target APBN. Selengkapnya di IDNFinancials.</p>
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">06</span>
+          <div>
+            <h3><a href="https://www.cnbcindonesia.com/market/20261113111420-17-784945/sempat-diganggu-msci-pemerintah-sudah-terbitkan-sbn-rp586-t">Sempat Diganggu MSCI, Pemerintah Sudah Terbitkan SBN Rp586 T</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">cnbcindonesia.com</span> <span>11:35 WIB</span></p>
+            <p class="alasan">Fiskal &amp; pajak</p>
+            <p class="ringkas">Menteri Keuangan Suahasil Nazara telah menerbitkan SBN Rp586,1 triliun untuk menutup defisit Anggaran Pendapatan dan Belanja Negara (APBN) hingga Oktober 2026.</p>
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">07</span>
+          <div>
+            <h3><a href="https://www.cnbcindonesia.com/market/20261113085057-17-784882/ihsg-dibuka-menguat-028-ke-5275">IHSG Dibuka Menguat 0,28% ke 5.275</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah positif" title="ihsg menguat">↑ positif</span> <span class="sumber">cnbcindonesia.com</span> <span>09:02 WIB</span></p>
+            <p class="alasan">Data makro</p>
+            <p class="ringkas">IHSG dibuka di zona hijau dengan kenaikan 0,28%. Perhatian pasar tertuju pada pengunduran Gibran dan data inflasi dari Jepang dan AS.</p>
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">08</span>
+          <div>
+            <h3><a href="https://www.cnbcindonesia.com/market/20261113091726-17-784896/efek-evaluasi-hsc-ini-daftar-10-saham-penguasa-ihsg">Efek Evaluasi HSC, Ini Daftar 10 Saham Penguasa IHSG</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">cnbcindonesia.com</span> <span>09:40 WIB</span></p>
+            <p class="alasan">Aksi korporasi</p>
+            <p class="ringkas">BEI merilis evaluasi insidental IHSG setelah penambahan emiten HSC.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMigAFBVV95cUxQRk15bFlGRWhkWjFxMTN5OHplTXBRbUs0SzJiRXQ5Q0VCTV8zYTdJSHlNeUdFbzhVdEwyUmRKWkxIaUtoeGdTdHJPMkRfWGFvdmt6TEg1SDB4YUZCc2ZuX0Z4TWt1ZVRFckhTZ2M1eGE0RnNuLTh3MFAweDdTeDV2dw?oc=5">aktualita.co</a><a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTE9qSHV3bXNFaUFwVjFDWWFwa3Z2Qm5fRDhrZnZ4MHhiNFZwMW1iQ0F0QmdPWGJBdHhPQkVXZFpvZFBxSUdBU0lWMHJCVXJoZDdONVE2MnVHUUJuVnJnTFE?oc=5">cwibc.co.id</a><a href="https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5hOWJuWkM3WEVXeTVnR2x1QmhpMmdVODZNa2h0NmR3TzZUczlVNTMwbkRwZnlPRFVzQ2hUNFVZOVJfWTdORTAyNnNWeVBvUVlfTUcxdUZuQTRmYXVJN2JCQzI4QjVJU2s?oc=5">demokratis.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">09</span>
+          <div>
+            <h3><a href="https://pasardana.id/news/2026/11/13/analis-market-13-11-2026-ihsg-diperkirakan-cenderung-menguat-terbatas">ANALIS MARKET (13/11/2026): IHSG Diperkirakan Cenderung Menguat Terbatas</a></h3>
+            <p class="meta"><span class="arah positif" title="ihsg menguat">↑ positif</span> <span class="media">4 media</span> <span class="sumber">pasardana.id</span> <span>08:41 WIB</span></p>
+            <p class="alasan">Pasar &amp; nilai tukar</p>
+            <p class="ringkas">IHSG hari ini diperkirakan cenderung menguat terbatas, sembari dibayangi adanya potensial terjadinya profit taking pasca penguatan yang cukup signifikan pada perdagangan sebelumnya.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiZkFVX3lxTE1qV0w2V2FWb3FnSlBWMFdUUm4tYnh2ZkNxaXpka0xUVmpSY2loWlN3RWNFWUpxOGVQUGpHVUpQOWU3WTRqcGNKYWg2b3hhbXBQcVhkajhjWU5OZWRqdnlqYUhpRnUydw?oc=5">cwibc.co.id</a><a href="https://news.google.com/rss/articles/CBMid0FVX3lxTFBCcTdQLS0wOXVYaHQwOURaRnJMUVJIRVpmM2d3TG5sZ1hpeHZPbC1KYW5TeXRCeHZoUUNtNGNpRlNNRmstSGZkZmJPU3RuMkw3R1ZzRlM2VUdCYVBpbHpnd0xsQ1VPLXI5MDNEMW80YkRCTHNLbG04?oc=5">emitennews.com</a><a href="https://news.google.com/rss/articles/CBMiqgFBVV95cUxQTHRldlVfYkhaVlRsYzZXbmF5WWJpWlR0Z1ZGM1hURnB5S0tVdUJEM1otZTRNamZESGdkanFwaUNsSnlOaC1iTFFORFVIRzgxRVA4eE55X0RDYllUZGFtcF9pWUZ4X2VpTjhCRUNFVFNSYjFHNHhVYnVnSkhhektwMC04Sno2eVRoN0dsQVV4aHJHcS1MazQwNmJuNUlBSWhOM0lYUU5nWXU3d9IBogFBVV95cUxNdElTczVIbzNSUkNaejhZbUxxT3g4Qk9UZnV3b1JHeGo4S2RtRlZrWnNMbnMtLUpXSmdKazY5M0ZyR01IYU80MkVIWUk0MEg3ei1CMVRBQmV2MVE0TTBneEh4MFdxLTVVOWVCNlE0eEVDeWJHSmRqUndMazc1MWhiYVRKUlpGWkFIYlpvbHBmbHQ3VzUwQ0thamE4ajdHTHZWQmc?oc=5">investasi.kontan.co.id</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">10</span>
+          <div>
+            <h3><a href="https://pasardana.id/news/2026/11/13/borong-11-4-juta-saham-mmix-kepemilikan-pt-pukul-rata-kanan-melesat-jadi-4-57">Borong 11,4 Juta Saham MMIX, Kepemilikan PT Pukul Rata Kanan Melesat Jadi 4,57%</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">pasardana.id</span> <span>07:46 WIB</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Pelaksanaan transaksi ini dipastikan tidak menimbulkan dampak merugikan maupun disrupsi terhadap kegiatan operasional harian Perseroan.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.idnfinancials.com/id/news/71698/pukul-rata-kanan-tambah-kepemilikan-saham-mmix-sebesar-11-4-juta">idnfinancials.com</a><a href="https://news.google.com/rss/articles/CBMitwFBVV95cUxQbTNrb1drVU9GanlBNjViNDZKMjFfNjBOaWdiN2ZpVkNsNUdBZHUtVVFXQ2NBN0ZFSFM4ZGZ0R1ZBV0dKcHRxN3FNZ0hYQWZBbjZReEpqckFaWWNCNFRMOFY1QnF5T2tlVFA3YWNYMkUwTEh3eFd2aFFQejR4WllyNnc5c3NlcmxFWnJlRUNNc2dSSUFkWURONUM5bzg5Vk12Qk0xRHJOTHhsTVVHREprSGF1bnlheVnSAa8BQVVfeXFMT0ZCSXlVSzY5Y0ZOUllTRjZjTUJxTHdBSVdPNHlud0loR0FfTUFoWGptNTBGSHVEX18tXzFzcDN2M3VhY0ZvRDJVSFNTYV82dTQ1QUl3cTU3b05ZbFlORzd3aG12dWVEQ3Ntc3RGVjl6RDhaWmZrTnhTenZralN1alVCZFlFbU9zNVZ1SnFIUnFtLWJGT2VlVncwMEhVU0xKdGwyZW1ldEtjYzZHT3BHYw?oc=5">investasi.kontan.co.id</a><a href="https://news.google.com/rss/articles/CBMilwFBVV95cUxQUk9YdVoxOEJzdE9SYVhwcVQyRU1pUW5TZE51VGFpUU8wQldsWElsN1BTZXVMWEhwWDh0YWtGcTZ1TkFwN25KU0dVNHNHMjYtV3ZzaFM2dUEtX1AwX2djajMtMnIyZ2w3Vlc5NnhhSzduUE1ubVh5RlpZalM1QVdKRnhCVXZjeWlXRjJORURINGNGUDdBYTVv?oc=5">lotussekuritas.com</a></p>
+          </div>
+        </li>
+      </ol>
+    </section>
+    <section class="politik" id="politik">
+      <div class="judul-bagian"><h2>Politik &amp; Sosial</h2><small>yang berpotensi menggerakkan pasar</small></div>
+      <article class="sorotan bergambar">
+        <div class="isi">
+          <h3><a href="https://katadata.co.id/berita/nasional/6af713a66b051/pan-tak-ajukan-nama-cawapres-pengganti-gibran-serahkan-ke-prabowo">PAN Tak Ajukan Nama Cawapres Pengganti Gibran, Serahkan ke Prabowo</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="media">5 media</span> <span class="sumber">katadata.co.id</span> <span>20:41 WIB</span></p>
+          <p class="alasan">Liputan luas</p>
+          <p class="ringkas">Ketua Umum PAN Zulkifli Hasan mengatakan partainya tidak mengajukan nama cawapres untuk menggantikan Gibran Rakabuming Raka. PAN menyerahkan keputusan kepada Prabowo.</p>
+          <p class="juga"><span>juga di</span><a href="https://www.bloombergtechnoz.com/detail-news/127651/demokrat-pastikan-tak-ajukan-nama-cawapres-ke-prabowo">bloombergtechnoz.com</a><a href="https://www.cnnindonesia.com/nasional/20261113144622-36-1426862/ahy-pastikan-demokrat-tak-ajukan-nama-untuk-wapres-usai-gibran-mundur">cnnindonesia.com</a><a href="https://news.google.com/rss/articles/CBMivwFBVV95cUxQVnBZZ0RQQjc1THZHcmswTjdxODhOOUIwZ3N5ZHZLZEhyXzY0ZWFxYXgtdUFWYUd6ckVacmVYZmJ1UzBoRmhtMk1ORzFhcEtidVNXdzVvTXV0QXVXZHFVOGMzTXNsMEI2VV8tYzdmSm5BUEZldGZDdVVCX0c0b2dlY1E4VnJXbDlfOXc1Sm4yOXAtM01QZDFjX3Z2MFBxUU83TXEzZ04zWFNQM2duaTVFM3RCM0wtbE1vaWdrS0owMNIBxwFBVV95cUxOQ2RpVTNQem4zM2plaGNKWnNET2RYNkxGdFZXbngtdkszOW5oeDE3aHVVcjRlUXp0ODBPb1BRYkdhOGlZbDNMTHd4dUZYamoxOHpiUWM5cnk4cm1hcXdSRHR6UDB1XzFPTW9pTUVkRkxtYXNjTTgtXzU4RG1fNGIyX0ZVeWdOY0hQcEY3eXBBT294U2E0QzkwVTJqc2dYY2p5Yk9VOVFRVG1aWFMzTjhfU1owUk9QclE4RTNhZlpsUGxQZFlFZTlR?oc=5">kumparan.com</a><a href="https://news.detik.com/berita/d-8750894/2-nama-cawapres-pengganti-gibran-pan-tegaskan-ikuti-pilihan-prabowo">news.detik.com</a></p>
+        </div>
+        <img class="thumb" src="https://cdn1.katadata.co.id/media/images/thumb/2022/06/15/Zulkifli_Hasan-2022_06_15-12_22_37_fdefdba618a8d5bf160b60632528f872_620x413_thumb.jpeg" alt="" loading="lazy" decoding="async" width="208" height="208">
+      </article>
+      <ol class="daftar">
+        <li>
+          <span class="nomor">02</span>
+          <div>
+            <h3><a href="https://analisis.republika.co.id/berita/tof19e393/studi-sanksi-ekonomi-as-sebabkan-38-juta-kematian-sejak-1971">Studi: Sanksi Ekonomi AS Sebabkan 38 Juta Kematian Sejak 1971</a></h3>
+            <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="arah negatif" title="sanksi ekonomi">↓ negatif</span> <span class="sumber">analisis.republika.co.id</span> <span>07:56 WIB</span></p>
+            <p class="alasan">Risiko global</p>
+            <p class="ringkas">Washington kembali memperkeras tekanan ekonomi terhadap Iran. Menteri Luar Negeri Amerika Serikat (AS) Marco Rubio menegaskan pemerintahan Presiden Donald Trump akan terus menjatuhkan sanksi yang menimbulkan dampak...</p>
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">03</span>
+          <div>
+            <h3><a href="https://katadata.co.id/berita/nasional/6af7002c9dd31/prabowo-beri-penghargaan-bintang-nararia-dan-jasa-utama-untuk-relawan-karhutla">Prabowo Beri Penghargaan Bintang Nararia dan Jasa Utama untuk Relawan Karhutla</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">katadata.co.id</span> <span>19:18 WIB</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Presiden Prabowo memberikan tanda kehormatan kepada 15 relawan dan petugas yang gugur dalam penanganan karhutla serta delapan tenaga kesehatan yang terluka saat bertugas di daerah bencana.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.cnbcindonesia.com/news/20261113181738-4-785157/presiden-anugerahkan-bintang-jasa-ke-relawan-dan-petugas-karhutla">cnbcindonesia.com</a><a href="https://www.cnnindonesia.com/nasional/20261113191608-24-1427013/prabowo-beri-bintang-jasa-23-relawan-petugas-yang-gugur-dan-cedera">cnnindonesia.com</a><a href="https://news.detik.com/berita/d-8752184/daftar-23-nakes-dan-relawan-karhutla-penerima-bintang-jasa-dari-prabowo">news.detik.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">04</span>
+          <div>
+            <h3><a href="https://news.detik.com/berita/d-8751753/tim-verifikasi-syarat-cawapres-pengganti-gibran-berisi-36-orang">Tim Verifikasi Syarat Cawapres Pengganti Gibran Berisi 36 Orang</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">news.detik.com</span> <span>15:58 WIB</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Ketua MPR Ahmad Muzani umumkan pembentukan tim verifikasi dan ad hoc. Masing-masing beranggotakan 36 orang, untuk proses calon wakil presiden pengganti Gibran.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.bloombergtechnoz.com/detail-news/127667/mpr-wapres-baru-dipilih-2-desember-2026">bloombergtechnoz.com</a><a href="https://www.cnbcindonesia.com/news/20261113174129-8-785144/video-mpr-tetapkan-2-desember-sebagai-hari-pemilihan-wapres">cnbcindonesia.com</a><a href="https://www.cnnindonesia.com/nasional/20261113173440-32-1426978/mpr-bentuk-tim-verifikasi-ad-hoc-pemilihan-wapres-berisi-36-orang">cnnindonesia.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">05</span>
+          <div>
+            <h3><a href="https://www.cnnindonesia.com/nasional/20261113142943-32-1426848/mpr-akan-kirim-surat-permintaan-2-nama-cawapres-ke-prabowo-hari-ini">MPR Akan Kirim Surat Permintaan 2 Nama Cawapres ke Prabowo Hari Ini</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">cnnindonesia.com</span> <span>14:34 WIB</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Ketua Fraksi Gerindra MPR RI, Habiburokhman, mengungkapkan MPR akan mengirim surat ke Presiden Prabowo Subianto yang berisikan permintaan dua nama Cawapres.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.bloombergtechnoz.com/detail-news/127664/mpr-calon-wapres-tak-harus-dari-partai-koalisi">bloombergtechnoz.com</a><a href="https://www.cnbcindonesia.com/news/20261113215710-4-785178/prabowo-minta-koalisi-siapkan-2-nama-cawapres-beri-waktu-1-minggu">cnbcindonesia.com</a><a href="https://news.detik.com/berita/d-8752168/hasil-pertemuan-prabowo-petinggi-parpol-usulan-cawapres-dibahas-1-pekan">news.detik.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">06</span>
+          <div>
+            <h3><a href="https://news.republika.co.id/berita/tof38u377/tolak-permintaan-refly-harun-polri-ijazah-jokowi-tak-perlu-diuji-ulang">Tolak Permintaan Refly Harun,  Polri: Ijazah Jokowi tak Perlu Diuji Ulang</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">news.republika.co.id</span> <span>08:38 WIB</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">JAKARTA -- Polri menyebut ijazah Presiden ke-7 RI Joko Widodo (Jokowi) telah diuji forensik secara prosedural oleh Pusat Laboratorium Forensik (Puslabfor). Polri memandang tidak perlu pengujian forensik baru terhadap...</p>
+            <p class="juga"><span>juga di</span><a href="https://www.antaranews.com/berita/5850719/polri-sebut-ijazah-jokowi-telah-diuji-forensik-secara-prosedural">antaranews.com</a><a href="https://www.cnnindonesia.com/nasional/20261113080616-12-1426666/sanggah-roy-suryo-polri-tegaskan-ijazah-jokowi-tak-perlu-diuji-ulang">cnnindonesia.com</a><a href="https://mediaindonesia.com/politik-dan-hukum/955730/roy-suryo-minta-ijazah-jokowi-diuji-forensik-ulang-polri--telah-dilakukan">mediaindonesia.com</a></p>
+          </div>
+        </li>
+      </ol>
+    </section>
+    <section class="global" id="global">
+      <div class="judul-bagian"><h2>Global</h2><small>The Fed, komoditas, geopolitik</small></div>
+      <article class="sorotan">
+        <div class="isi">
+          <h3><a href="https://www.cnbc.com/2026/11/13/treasury-yields-fed-rates.html" hreflang="en">Imbal hasil Treasury 10-tahun bergerak ke 5,17% karena para pedagang mempertimbangkan laporan harga produsen</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">cnbc.com</span> <span>04:08 WIB</span> <span class="terjemah" title="10-year Treasury yield moves to 5.17% as traders weigh producer price report">diterjemahkan</span></p>
+          <p class="alasan">Kebijakan moneter</p>
+          <p class="ringkas">Imbal hasil Treasury bergerak lebih tinggi karena ekspektasi investor terhadap kenaikan suku bunga Federal Reserve pada bulan Desember semakin menguat.</p>
+          
+        </div>
+        
+      </article>
+      <ol class="daftar">
+        <li>
+          <span class="nomor">02</span>
+          <div>
+            <h3><a href="https://www.cnbc.com/2026/11/13/robinhood-supreme-court-ipo-lawsuit.html" hreflang="en">Mahkamah Agung setuju untuk mendengarkan tantangan Robinhood terhadap gugatan penghilangan informasi IPO</a></h3>
+            <p class="meta"><span class="arah positif" title="ipo">↑ positif</span> <span class="media">2 media</span> <span class="sumber">cnbc.com</span> <span>03:48 WIB</span> <span class="terjemah" title="Supreme Court agrees to hear Robinhood challenge to IPO information omission lawsuit">diterjemahkan</span></p>
+            <p class="alasan">Aksi korporasi</p>
+            <p class="ringkas">Pemerintahan Trump telah mendesak Mahkamah Agung untuk mendengarkan banding Robinhood atas keputusan pengadilan yang lebih rendah untuk menghidupkan kembali gugatan investor atas IPO.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiuwFBVV95cUxOUE0zT1RvMFJtc1k0LXVEa0Y4WUV1SjRBQUd0T1RSYzVJSjJ1MTlVZEdXUmVLZUgyWGdXMXZkTGdja3I1WG10QklEb2JaN1dYbFY3ZG5YenpZTTdXY29HbTByeEQzTWRpak1FdjRtVnpoY1VHMGVIZkVBSzU3QlhISDQ3UE1vR3Q4RFd4a0NfMmJmbEV6OVpuYWdpUExFOEJlT1d5LWtrTE9nQTNRdnZWRDQ1VnVlS3BIX0gw?oc=5">reuters.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">03</span>
+          <div>
+            <h3><a href="https://www.aljazeera.com/news/2026/11/13/nigeria-ends-21-day-ebola-contact-monitoring-with-no-secondary-transmission?traffic_source=rss" hreflang="en">Nigeria mengakhiri pemantauan kontak Ebola selama 21 hari tanpa penularan sekunder</a></h3>
+            <p class="meta"><span class="media">2 media</span> <span class="sumber">aljazeera.com</span> <span>03:12 WIB</span> <span class="terjemah" title="Nigeria ends 21-day Ebola contact monitoring with no secondary transmission">diterjemahkan</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Tak satu pun dari 62 kontak yang teridentifikasi setelah kasus pertama mengidap penyakit tersebut, meskipun 13 kontak melaporkan demam.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMi4AFBVV95cUxQMXpndF85M293NHBSX3k2U055Y0hlQjVxTEZRRXdfenUtay1QUzhvVmNNamZJUk1IUXFYa2dwTkZLYUc5TVJnY3FGaUlzMVVVcDVsdUluRjhXOEhQS2IwZktVQnVTX3hxM3l4bUc5dGUyWXlUVGwzYkxkcjB6R3BKZGluTzkxTy1ZeUdGUjFyQkhHNHZBd0hlVTFnY2ozRXU0WVJDcmhnWC1iT1pwUEhsODVrTTE5by1ieHNhRjFvQ1dqbTVScl9aNm1Ua0p6R2JwY0F3S0dUbjNvXzhoWnV6Ug?oc=5">reuters.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">04</span>
+          <div>
+            <h3><a href="https://www.aljazeera.com/video/newsfeed/2026/11/13/israel-bars-supplies-needed-to-treat-six-year-old-gaza-burn-victim?traffic_source=rss" hreflang="en">Israel melarang pasokan yang diperlukan untuk merawat korban luka bakar di Gaza yang berusia enam tahun</a></h3>
+            <p class="meta"><span class="media">2 media</span> <span class="sumber">aljazeera.com</span> <span>01:28 WIB</span> <span class="terjemah" title="Israel bars supplies needed to treat six-year-old Gaza burn victim">diterjemahkan</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Korban luka bakar berusia enam tahun, Masa, adalah salah satu pasien di Gaza yang kesembuhannya terancam karena pembatasan yang dilakukan Israel</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMizgFBVV95cUxOaFo1ZDdUVlo4bHVVckx2ZkpOazJxa2Z6ZjhDNmhfamN4Q3g0LWdsaGNudjllVHBKYzlJRWgzSzJZbi01RlZJZXFTdk4wY3BFUDFIekFoMWh3M1J3amNfaFUtXzE4Z21OMDVYcV9YMVBoXzdHVzN4LXJIbG9DRFdCUzU1S3gwcGVTOWFRcFVBNXp3Y0ZVb01wbjd0WW1FekgwUEZDNnBnVllLcGJmYTJOcW83aWtmYnZYT3EteEduZWJmMnowOEJjN1dIX0dtZw?oc=5">reuters.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">05</span>
+          <div>
+            <h3><a href="https://www.cnbc.com/2026/11/13/chicago-feds-goolsbee-says-central-bank-has-definitely-got-work-to-do-on-inflation.html" hreflang="en">Goolsbee dari Fed Chicago mengatakan bank sentral &#x27;pasti punya pekerjaan yang harus dilakukan&#x27; dalam menangani inflasi</a></h3>
+            <p class="meta"><span class="media">2 media</span> <span class="sumber">cnbc.com</span> <span>21:22 WIB</span> <span class="terjemah" title="Chicago Fed&#x27;s Goolsbee says central bank &#x27;has definitely got work to do&#x27; on inflation">diterjemahkan</span></p>
+            <p class="alasan">Liputan meluas</p>
+            <p class="ringkas">Pembuat kebijakan tersebut menyatakan keprihatinannya mengenai data inflasi terbaru, dan mengatakan kepada CNBC bahwa bank sentral kemungkinan perlu mengambil tindakan.</p>
+            <p class="juga"><span>juga di</span><a href="https://www.investing.com/news/economy-news/feds-williams-says-central-bank-has-work-to-do-to-get-inflation-back-on-target-5023897">investing.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">06</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMiogFBVV95cUxOTE51c3BkMXhjUkhrTHo4UV9OSEFKSlRwTllET3dLRWRXZDA5eTNCV2hfTGhuVzZ6RUVVUGN0TkhpdWxqZHhnaHA0cTEwQ3FscDhRY1FvQ052b0p1MUZsUHB4dnJTcUFCS2Y1LWpUcW9FdTBzMTR0dGNNV3p5eXp1NVZ2d01EMTBHMVNwSlIxbU1ZSXlmaUdkdXN6TUwxcUNlMkE?oc=5" hreflang="en">Perusahaan fintech India Razorpay mendapat persetujuan peraturan untuk IPO</a></h3>
+            <p class="meta"><span class="arah positif" title="ipo">↑ positif</span> <span class="sumber">reuters.com</span> <span>00:47 WIB</span> <span class="terjemah" title="Indian fintech firm Razorpay gets regulatory nod for IPO">diterjemahkan</span></p>
+            <p class="alasan">Aksi korporasi</p>
+            
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">07</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMivAFBVV95cUxQQ2lneWN6TzV1ZXctMUFVUlJSbVVDUG1vOWNYM1d2Z25QV1ZlSHdjSFVmblhtX1UzNEQySEYwdjZNZGw3VnZPc00yOTEtSWFsY25CRTRhaGZJM2tFamQ3cDl6YTEwbmJLQ1VmdHo2Y2hjVThnNjdiQTNfai1xTDhFcmFITF9WblV6Rlk1M0FnbDRFWXJjdXA5R19ERUZ2WjdyZmg4bUxPQ2RZcmhaUzZxRjIwQk5jTWw1cUwxVw?oc=5" hreflang="en">AS memperpanjang keringanan hukum pelayaran selama 90 hari, untuk memungkinkan pergerakan minyak dan komoditas yang lebih bebas</a></h3>
+            <p class="meta"><span class="sumber">reuters.com</span> <span>04:46 WIB</span> <span class="terjemah" title="US extends shipping law waiver 90 days, to allow freer movement of oil, commodities">diterjemahkan</span></p>
+            
+            
+            
+          </div>
+        </li>
+        <li>
+          <span class="nomor">08</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMipwFBVV95cUxQbGhnekxYN2VBbGp2T1R2em5qV2ZVQ0FHa0tYWGRGNWZqUkoySzVhdU9yRUN0TzRWSXBsaHVla0dPT0U5RTAxMUlIcUloZzhFUnJ3MTNMQWMwWGt5QVNOTWxhTloweWpOb2JXcnd6cy1oblAxenl4WmtNNXJTaHc5QU1uUDE3cU1PbUJPUGUyLVpnaUxJRUxMeTE1SGRCWjNJeUU3NFM3WQ?oc=5" hreflang="en">Partai Demokrat di Kongres AS merencanakan kemenangan yang &#x27;harus diraih&#x27; pada tahun 2027</a></h3>
+            <p class="meta"><span class="sumber">reuters.com</span> <span>04:35 WIB</span> <span class="terjemah" title="US Congress Democrats plot &#x27;must-have&#x27; victories in 2027">diterjemahkan</span></p>
+            
+            
+            
+          </div>
+        </li>
+      </ol>
+    </section>
+    <section class="ai" id="ai">
+      <div class="judul-bagian"><h2>AI</h2><small>model baru, chip, pendanaan, regulasi, dampak ke pekerjaan</small></div>
+      <article class="sorotan">
+        <div class="isi">
+          <h3><a href="https://news.google.com/rss/articles/CBMi5AFBVV95cUxQZUd4TG05UHU1TTVMYURNZWVDaTF2dmNBNjRmYjBHelRvaWNtdDBka0RfMG10VV91Wldvelh0dUk4UXcycGk2RVE5MmRib1psNU1sYkVFNEtkSlFYeTZoTFhSOTJBVkd1VjhYSTJsR2REZnRsZEloQjRBM3RfSUJjSmRWREY2aUxrWGtlMjUxTUgyOGVUdURld2VXaGthUlZSVUxrUnJ3dFlYMk5CZzBBQXFBQU1JcWhkMnU1VXJGYjIyOWpCSHh1NFloVFdHaEZoV1NzYkxsYkJ5TWhmMVhHYzhzbE4?oc=5">Prakiraan Harga Ethereum: ETH Tetap di Bawah $2.000, Tertekan oleh Inflasi dan Penurunan AI</a></h3>
+          <p class="meta"><span class="tinggi">dampak tinggi</span> <span class="sumber">fxstreet-id.com</span> <span>04:14 WIB</span></p>
+          <p class="alasan">Data makro</p>
+          
+          
+        </div>
+        
+      </article>
+      <ol class="daftar">
+        <li>
+          <span class="nomor">02</span>
+          <div>
+            <h3><a href="https://www.marketwatch.com/story/who-can-replace-jensen-huang-as-nvidia-ceo-these-four-names-are-buzzing-in-ai-circles-66c31ec2?mod=mw_rss_topstories" hreflang="en">Siapa yang bisa menggantikan Jensen Huang sebagai CEO Nvidia? Keempat nama ini sedang ramai di kalangan AI.</a></h3>
+            <p class="meta"><span class="media">34 media</span> <span class="sumber">marketwatch.com</span> <span>05:57 WIB</span> <span class="terjemah" title="Who can replace Jensen Huang as Nvidia CEO? These four names are buzzing in AI circles.">diterjemahkan</span></p>
+            <p class="alasan">Chip &amp; infrastruktur</p>
+            <p class="ringkas">Saat dewan direksi Nvidia mencari CEO baru, para ahli mengatakan orang tersebut memerlukan keseimbangan antara visi teknologi dan pemahaman bisnis.</p>
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMilgFBVV95cUxPMW1FaTlaLXMwLUFWN2lxU202ZW9veTlQd1dCbF9KYlBnMWlTT0Y3Zi1BaFowMU9YT1h0M2JGd0xxM1l3dm9rS2otT1hpa0pwR0xjY1AxMTBld1pXcmFsMTl6UFJVV0VtYWk4bmNva3E1dlVLcVhlOWVlUy1aR3lKVUwwZm1LS0h3aEtEc1dHX3RxRERzaHfSAZsBQVVfeXFMTUdEVDRnMzVUQi1YdWl5V0MxcHVlM2pldTZrVTA2X2xzX2hhNEpaVnVlWlE0M29fSHU2Wm1EMjVBZ01LdlhJaThHV0JPcTVldEd5UFg2c1AtdlhIVVBCNF9ZVEpqaEhsOFc0cE80c216Yk9UWFVmbDFCV3ZiRURGUnFvOC10T21iZFhMS2dvc3BDVFE0Vl9fRGsxb2M?oc=5">aljazeera.com</a><a href="https://news.google.com/rss/articles/CBMifEFVX3lxTFA2QkdTejNlTkVzLS1pR040YnhzMHRVZXd1c1lhVkdIdE0zSGRMWXR4U0hLLVFQVjF1aUlINWxiTHhEWHNTdllScmxneE12QnBBUVFBdllOMnowYmZmazBNVzVpVnlINkRUbGQtbkpuQnl2TkNGTy1oRDZ5bng?oc=5">axios.com</a><a href="https://news.google.com/rss/articles/CBMie0FVX3lxTFBTbHVXbEZWNnBkNlRaU1A5QWdvS3pNV1lWdF9yRkU2UVNpUUpLWlNEY0JhX1ZJLWYtMjFXZXlmeWgxV09DRUdRZ19HbEhrSlBVZ1ZzWVVVSkl3bFN2azlEM0VQMloydHY4MERiYTJzWU9qNlVGczlkcUhJRQ?oc=5">barrons.com</a><a href="https://www.bbc.co.uk/news/articles/c67429m3vem3o?at_medium=RSS&amp;at_campaign=rss">bbc.co.uk</a><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxNLUFpTEJfdXRzTFZ2TklSSUpraEZZZVdGbTZjWHBVbWY5YVVWYzViaDkzNXBzaklIRUdmTDAxd3RYX3lscTFrTFRwdVR1Wnd3QzMtUVk4TVVmak5kNWkxWmMzYlltN1F6cVhRQXlMOGtaX1FKczc1cmQ3WUJJaDJmVGRkZWYzR2pnSWVZU3Z1TWhjUHVCREtWbEtVTUw0ckQ4M0VmR0Mya2o?oc=5">bloomberg.com</a><span class="lagi">+28 lagi</span></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">03</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMisgFBVV95cUxNWnRLUFljeVFkcXJzT2xiV3lQWnlaMENnaUNHVlZNdWtscEZSVnRIaWZYSERpb0hTVEc2cmVZaEw4Q1FBX3B6VmNvMnhaSm5GV1RvQ2pwNExEazBSNWRRejMyTU5NZU5RXzdhdU5xMDZZUHFWekdwZG9wWEJOeV9HQnVwLTR4b2FXc1FfWDRPVTd2Tm1JVkRCYk5aUjFROWhqR1pRay1oWVFjdnpnSTRHdzd3?oc=5" hreflang="en">Colette Kress, CFO yang menentang taruhan Huang, adalah CEO sementara Nvidia</a></h3>
+            <p class="meta"><span class="media">6 media</span> <span class="sumber">reuters.com</span> <span>09:08 WIB</span> <span class="terjemah" title="Colette Kress, the CFO who challenged Huang&#x27;s bets, is Nvidia&#x27;s interim CEO">diterjemahkan</span></p>
+            <p class="alasan">Chip &amp; infrastruktur</p>
+            
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiigFBVV95cUxNUnNuc2xHSkhhNmhPd1N3U25JeGFFTXV0d0RKV0lvSTA5ZllLeUxCR1hqX1pUUGVZd1F4ZWduMi1ITkFCSE1LZk9MSmxxVWVGbkVUcHZKMTdQLU96Y2pxaUZPdVZURENHc3RhTVJ4T09sejVHa1dhSV9iVm9Sa3BPMWswVGk1Zi1Hb3fSAY8BQVVfeXFMUE1rZElVakRqRF8tUl9TZVROR2dhMEpVV3ZVbHBPX3JVWTdjcHp6SUtGbnRMTmw2dUE1NzliTmhraTVVd0VFZTF0NnJSeVlidU1CN00tYnZTVzFwc1J4NFZIRnJ5d0o5bUVFanJHTWpjeGhPeTJpa3V5NVZpUFlraU0teWRWQW0xTnNnazV3N0k?oc=5">abcnews.com</a><a href="https://news.google.com/rss/articles/CBMiqAFBVV95cUxPOWl5VFRGVVRzS3dKZHludzRheHZpeVEwanoyTzMwWjZScjYxcThIXzdVOTdIVDJiVktPUjFFczNaMlpSNzhuZXp6XzJHSzVuRjFYREYtby1MLVNEQ2lkQ0FMQ09JN2dxZENpY2hHTEFRMlE1aDU4ODdUbVpzQVFoakRpb2JTRUt0NVQwbld3V29vWnlucjRILTVxdmcxS2JLeEowQUVUejHSAa4BQVVfeXFMTTktWnp5bnFZaHNtMk9uOFF2QXdDZmNOOXlmM3ZIS3YtSVpyMFMza3FSYTA2VkpLaU9iM2tMS0pZalpOdzh2NFRrdnlSRUFrSE53Sm5YZE8xVlBJYlBIMjlCSG9SODFfeDVxRWpQZ3hiaXJ4VUluV3MwSWNfekJCWWpRMWxKNTRYRUNzRnhsRHptWE9NN3hVelpDZ0RCVjlPdWV4T2d2QTJqZFNZdVRn?oc=5">aljazeera.com</a><a href="https://news.google.com/rss/articles/CBMimgFBVV95cUxPVHhzdDM0NHFEZDItZzBVNDRYbjd1dFVyWVk3ZzhrcjcxNVk3VDI2N3J4RnYxdnIxZnZmdnlnb2JGTFhjeDBtcWI3a3pScWRBcmtxZVBoaEJwM0tZTEMwRTkyTHJwVzhHOXZtN09mY2Rsak1YNWxCRW05TlJZY3hrVGtqbW84dERvQXNpZmg5b25TdnN3TmpyUHFn0gGfAUFVX3lxTFB4aWlsZVZhTTAtX1lKamNLMkFXcVNwTDh3TS00U1JkY0VubE1tMzJuaFhZUVFPMUM5VHlLWHE0Tjdua0h1cnE5bjgwR0RFMnpLSV96ejlMQ24yQ1VNb1RrQzVTckZ6MWNUb2RpZXlXZHJ6VERaZldXc1dQZG5ISDh4dmFvbmtvWk0xUVpXcjJvWDFUeTZlMFZQUlFRUm9ibw?oc=5">foxbusiness.com</a><a href="https://www.investing.com/news/stock-market-news/colette-kress-the-cfo-who-challenged-huangs-bets-is-nvidias-interim-ceo-5023936">investing.com</a><a href="https://news.google.com/rss/articles/CBMixAFBVV95cUxQa09nWXpLNXBrcVV3cndJR3dNNlV4R3VsaFNQcHdXb2ZvczNzOGhxRllFdElKRkRfVExGZk1odjFVQldSZ2RyYzI5ZGpjQ3E0RlRLbGxGeFdhQ3dHZVdrVFphOWpiZ2phX1FUWGV5VnVjV3E1VDQ5UmNjX2F6VXRnYlFlSWVCUlVTRjJWTk5ySkRudVAxZXNURkdLX0xCTUZ6emU5dld5UTJBUEhEdGlLcHlUM21hbGNHSVo1cmpFam9uR1dk?oc=5">nypost.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">04</span>
+          <div>
+            <h3><a href="https://www.theverge.com/ai-artificial-intelligence/1033425/openai-chatgpt-wallet" hreflang="en">Dompet ChatGPT memungkinkan agen Dots OpenAI melakukan pembelian untuk Anda</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">theverge.com</span> <span>03:45 WIB</span> <span class="terjemah" title="ChatGPT Wallet lets OpenAI’s Dots agents make purchases for you">diterjemahkan</span></p>
+            <p class="alasan">Model &amp; produk</p>
+            <p class="ringkas">Setelah meluncurkan platform agen Dots AI awal tahun ini, OpenAI meluncurkan dompet untuk para agen. ChatGPT Wallet diluncurkan mulai hari ini untuk pelanggan ChatGPT Pro di AS yang berusia 18 tahun ke atas menggunakan alamat penagihan AS dan &quot;kartu American Express, Chase, Mastercard, dan Visa yang diterbitkan di AS.&quot; Setelah menambahkan kartu ke dompet, agen Dots Anda dapat menggunakannya untuk membeli barang sebagai tanggapan</p>
+            <p class="juga"><span>juga di</span><a href="https://www.cnbc.com/2026/11/13/openai-chatgpt-wallet-dot-purchases.html">cnbc.com</a><a href="https://news.google.com/rss/articles/CBMirgFBVV95cUxQdjVJaENIMTQ3V1hXQ3pSLUh4SmRkcTdoVEx5el9kTU1fTFBsVVFpaVF5WkpKNTBtX3NYMEE2UEF4V3hkbWhRNzdFREtLZFJtSGtMRTF6RWlfNVowTUktR25NWnRjUEVIUm5TSm9EbE50UWt6cnFIem5XcFBfQWMyUV8xR0w4RWJGalB1TW80OXNsOWJ6RlNGOElzbThzMmt2aDBSTnVaWVliMVNNYXc?oc=5">reuters.com</a><a href="https://techcrunch.com/2026/11/13/chatgpts-new-wallet-lets-ai-agents-shop-and-check-out-for-you/">techcrunch.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">05</span>
+          <div>
+            <h3><a href="https://news.republika.co.id/berita/tof1t3377/diduga-selingkuh-dengan-matamata-china-jensen-huang-mundur-dari-ceo-nvida-rapat-darurat-digelar">Diduga Selingkuh dengan Mata-Mata China, Jensen Huang Mundur dari CEO Nvida, Rapat Darurat Digelar</a></h3>
+            <p class="meta"><span class="media">4 media</span> <span class="sumber">news.republika.co.id</span> <span>08:07 WIB</span></p>
+            <p class="alasan">Chip &amp; infrastruktur</p>
+            <p class="ringkas">JAKARTA -- Jensen Huang secara mendadak mengundurkan diri dari posisinya sebagai CEO raksasa produsen cip AI, Nvidia. Ia mundur menyusul terungkapnya dugaan perselingkuhan. Namun isu perselingkuhan tersebut bukan hal biasa....</p>
+            <p class="juga"><span>juga di</span><a href="https://www.cnbcindonesia.com/news/20261113125306-4-784976/bagaimana-skandal-selingkuh-ceo-nvidia-mempengaruhi-hubungan-as-china">cnbcindonesia.com</a><a href="https://news.google.com/rss/articles/CBMitgFBVV95cUxPSU5UMGVWNk50QmVHQ0YtRmJTeGYwSTdFdEpBM1FWWXNHNUJUWXJFOGVEOW10QnhhOHhvcVRwRElFWEZvT0ZXLXBobF80ZGFYc2pKeDJYeXdpakFxQ3hQb0VRQzk0ZUVUMFVMbTJfX3Q1V25LQ2xqLWxRNFFUWlJTWC1YUERROE9LczNmSi1MdmtLTHppTkVRaV91dlM3S3J2MXRRQlp6b3h5WWdHOHFHTmhyWGpNZ9IBuwFBVV95cUxPMk1NTHlFVWNTYjVMeXJxUXBITVFDVlF1Ti02YnFjRE1sU0lpa1lYN05TUno5R3Qzb3ZQazRwZHhWZk1DWnZ0Ym55b25vMmNCdnpZV3ZHOGNBXzlWV0tpM2YxVjNQSzRqZTZHUkdnaklZV2Rvd0xmeGdRd2NCcUsxZE8zVVQ5Y1BGWFozaWtUN2lvem9DSU1tZ0dwdWoyVlhZMXdqRklaV0JTUU9lR1JMN2lRUHpTQUt6blhj?oc=5">gorontalo.antaranews.com</a><a href="https://news.detik.com/internasional/d-8752258/skandal-selingkuh-dengan-mata-mata-china-berlanjut-ke-parlemen-as">news.detik.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">06</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMi5AFBVV95cUxNNFJwdElCcEsxWU93S0k2RGVOS0xhRzNSU2lqNlhRUC1EemE1Tjk3dk9VMzZoNjN3Y3ZDcENJSHRNTEtWUXp5WHBSTkROdE56RnJybzRlR2RZcVRoZ3VrQU1xdzk3TVlydFFNeHhDdmNuZWM2WnFJTjNZSGpTc2F5eEVxaGRXX0VJWUVRd2VpSnRGd2t5UFpaekNWNWtvWERSNFE0MU9ueEd2anIyU0VzM3VzVFhXOU9BRmtBbGR4OXhTeGVTaXJKcjIybmdHT0dYaWIyOW84REpheGd0NnNHYURhTTg?oc=5" hreflang="en">Rene Haas, Ian Buck, Chris Malachowsky: Wall Street membidik calon penerus CEO Nvidia</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">finance.yahoo.com</span> <span>03:41 WIB</span> <span class="terjemah" title="Rene Haas, Ian Buck, Chris Malachowsky: Wall Street zeroes in on potential Nvidia CEO successors">diterjemahkan</span></p>
+            <p class="alasan">Chip &amp; infrastruktur</p>
+            
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMihAFBVV95cUxQV2dGZ3JjRGJZdHNqSWRVak9nOFhBSnZCc1U3R1NVUVB5MmNyWFdvUlduZ1o5VFpzYkxMNmZXYnVFWXFJazQteUNZNGYzN2xXMGtXYU1ELVgwQjc4TUdEbDVfWTJJRVZqajllWS1RUkt6WkR1RDZ4WUlPWjBXTHc4cXZMaVo?oc=5">ft.com</a><a href="https://news.google.com/rss/articles/CBMihwFBVV95cUxNbXBvOHJYRmdHTG5FaUpvVVRoRFZaLUlWeXNHQ01ZZi1ReXBJRUVIUnNCN0g5blRzNjdCUE9VNGJPQnI2S29obU9SdmpLTU5mMEhJRDVsQTNKM093b3Z6NzhTTF92NDI1T3lIZmZCQzNHSHo1bHpYbExlM05WR0F0cmduSHpwTnc?oc=5">nytimes.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">07</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxNLTRNS3BqaXcwNDJlOTNLZDU2NkdSbmtHUFFPNFJTRFBvdXVselAtVGkyU25RR3Q0Q1djS0N1TDM0VnpNRXNHWmxiVE15bVduU3BUMUlONURZUC1EbTNIa1FqX3liOHBiOUk2S0xKSDMtS0lnZjg3ajVZdTVtTnl3NC1vTWNDM0M4SEFKV3d4N3dieXdvaWhNdEtYc2pvdy0xcVI3VDBGQXM4N00?oc=5" hreflang="en">Bessent menyalahkan Departemen Perdagangan atas kurangnya kontrol ekspor untuk mitra Nvidia, Megaspeed</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">reuters.com</span> <span>01:29 WIB</span> <span class="terjemah" title="Bessent blames Commerce Dept over lack of export controls for Nvidia partner Megaspeed">diterjemahkan</span></p>
+            <p class="alasan">Chip &amp; infrastruktur</p>
+            
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiwAFBVV95cUxNcmRRc05NbWxzcmFLS2ZvWDhIX2IzZkJIZnZSRmhBMWFXaEJMOHdZaVFrQXRKZVhhRFptWTVQcXJnVGNBNG5rUGNOcUdTME1MeFNOQ0U5Y2xMRjZWYTVSWnBtMW9ydFh1WUJUeXAwbWkzTTQtUGg4VDZlRjFsOEI2NWZCLWNjUkxLTkdsNmpUTWJ5Xzk5S2pxcllZOVZOTVVOOTF5NEZQVVh3VW1UTXNjUExFdUtNWUJNaHQzbTZzd0XSAcYBQVVfeXFMTnRaVkFVSUxtTXBVYkZlNWotRHg1QXFWMDdjdnRVSE8wQ1BZLTd4T3JpWjZGOWxXNWlHWUJoY2lnSTBIZ0tabkpzRHJQNkdyRmRVNlZvZTF3T0RIaTNWNEk4WmN2NEoyNGRGTFNFdTJEeXNYQ1NFYzVLdkhJS1B5QmtadHZzMnJ2QlRQZG9kNEFIUmNGc1I5bEM0d0dRWlpsc240d0lxQ1A3b0E4bEZDUUlvQTlWSnRIWVVOWEVpY2t1NWxuNVNR?oc=5">pbs.org</a><a href="https://news.google.com/rss/articles/CBMiowFBVV95cUxQdUdYd0VUTW5TOVFkMFF1VkRjTzQwb1l4MzZCbXJXcGppTGtBTkNoTGRadWh1YU5STUd1Q0pCd0MxbDFzajJXSVdENEozeDRhbTdXWVFHb2hzZDJNVFhMbmR2YWQxQlM2QkQwVDZrQ01fbFBSeklLZWpGTGN5SFdjR2NYLVR3cEZCLWxXWW5zcGZ3RGtHcUZUbloxeWFZektlUlQ4?oc=5">politico.com</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="nomor">08</span>
+          <div>
+            <h3><a href="https://news.google.com/rss/articles/CBMiwgFBVV95cUxPOXdTeG9ZRnhvM2dGRHhiejBYU3JlaDY0S3BVMFNjUzkzNGpDVkFEd1RhQ1VacTVVc0pQSmZXbGh1TUd6SEtRQk5SUG9lb0RNbXE0VTB1YlZ0VGhnc1I1eE9ILWpmVWpkSkhDbGtTN1N5QmsyR1pYaHoxczdwSXJRaWJlMVc4YTN1NFVieTFRT19ld2s0UkZELW5KTHVnV0xGdGRnVEZuT2R4UkJYYWFWYnpCWlVCa21HWnlIOE9lRmxUZw?oc=5">OpenAI luncurkan ChatGPT Wallet untuk dorong perdagangan berbasis AI</a></h3>
+            <p class="meta"><span class="media">3 media</span> <span class="sumber">id.investing.com</span> <span>23:10 WIB</span></p>
+            <p class="alasan">Model &amp; produk</p>
+            
+            <p class="juga"><span>juga di</span><a href="https://news.google.com/rss/articles/CBMiYkFVX3lxTE5ab0pjcFNKdWdXUVFfbEMyNnBKUm56eDlpLXRjWktkSWtKNFBpQml6US05eHBPWnhCajF4V1lnZUhrZHY5U0dJb29BYldsRjlhWUxjVkFPdlhibmRYNkFMb1dn?oc=5">openai.com</a><a href="https://news.google.com/rss/articles/CBMimgFBVV95cUxPS3hUeWU3THRhYy03Ulhod3JDbGZHdjROb2x1NlNCSU9JbExnYzI4VW9YWVJvbnJFN05KMmVhb3pOMGFxZDJJc2NBNEdLbmotRVl4SEFoaEViMERHdzhOdlRoMHV6WXdrTUF0ci0yV29mZjJXb3JsX1psWGJUWmVJSFp4ekVDY1U4SmV3OEpTN2sxWi0ycGhKeE9B?oc=5">pasqualepillitteri.it</a></p>
+          </div>
+        </li>
+      </ol>
+    </section>
+    <footer>
+      Disusun 08:55 WIB · <a href="2026-11-13.html">Edisi sebelumnya</a> · <a href="index.html">Kalender berita</a>.
+      <br>Tautan menuju penerbit aslinya. Kutipan pendek untuk keperluan baca pribadi.
+    </footer>
+  </div>
+</body>
+</html>
